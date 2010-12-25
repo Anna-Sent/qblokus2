@@ -6,6 +6,7 @@
 
 class Player:public QObject, public QGraphicsItem
 {
+        Q_INTERFACES(QGraphicsItem);
 	Q_OBJECT
 
 	public:

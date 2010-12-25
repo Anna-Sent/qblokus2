@@ -75,6 +75,7 @@ class Tile;
 
 class Table : public QObject, public QGraphicsItem
 {
+        Q_INTERFACES(QGraphicsItem);
 	Q_OBJECT
 	public:
 	Table(int w,int h);
