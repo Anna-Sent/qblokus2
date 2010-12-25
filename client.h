@@ -50,7 +50,7 @@ private slots:
 	void localSurrenderMessageReceive(SurrenderMessage);
 	void localConnected();
 	void localDisconnected();
-	void localError();
+        void localError(QAbstractSocket::SocketError);
 	// from timer
 	void localTimerCheck();
 	// from form

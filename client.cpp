@@ -73,7 +73,7 @@ LocalClient::LocalClient():lastpingtime(QTime::currentTime()) {
 	connect(receiver, SIGNAL(surrenderMessageReceive(SurrenderMessage)), this, SLOT(localSurrenderMessageReceive(SurrenderMessage)));
 	connect(socket, SIGNAL(connected()), this, SLOT(localConnected()));
 	connect(socket, SIGNAL(disconnected()), this, SLOT(localDisconnected()));
-	connect(socket, SIGNAL(error()), this, SLOT(localError()));
+        connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(localError(QAbstractSocket::SocketError)));
 }
 
 void LocalClient::localChatMessageReceive(ChatMessage msg) {
@@ -125,7 +125,7 @@ void LocalClient::localDisconnected() {
 	emit lcDisconnected();
 }
 
-void LocalClient::localError() {
+void LocalClient::localError(QAbstractSocket::SocketError) {
 	emit lcError(socket->errorString());
 }
 
