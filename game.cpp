@@ -269,8 +269,7 @@ void Game::updatePlayers(QList<ClientInfo> clients,QList<bool> local)
 {
 	std::cerr << players.size() << " " << clients.size() << " " << local.size() << std::endl;
 	if (!running)
-	{
-		int i=0;
+        {
 		clear();
 		for(int i=0;i<clients.size();++i)
 		{
