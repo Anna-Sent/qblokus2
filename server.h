@@ -3,14 +3,16 @@
 #include <QObject>
 #include <QList>
 #include <QTimer>
+#include <QtNetwork/QTcpServer>
+#include <QtNetwork/QUdpSocket>
 #include "messagerecv.h"
 #include "client.h"
 
 class Server : public QThread {
 	Q_OBJECT
 private:
-	TCPServer serverConnection;
-	UDPSocket listener;
+        QTcpServer serverConnection;
+        QUdpSocket listener;
 	QList<RemoteClient*> clients;
 	QTimer timer;
 	int maxClientsCount;
@@ -18,7 +20,7 @@ public:
 	int getMaxClientsCount() {return maxClientsCount;}
 	Server();
 	QString getErrorString() const {return serverConnection.errorString();}
-	int getPlayersCount() const {int count = 0;for(int i=0;i<clients.size();++i) if (clients[i]->state==2&&clients[i]->socket->isConnected()) ++count;return count;}
+        int getPlayersCount() const {int count = 0;for(int i=0;i<clients.size();++i) if (clients[i]->state==2/*&&clients[i]->socket->isConnected()*/) ++count;return count;}
 	bool start(int maxClientsCount, quint16 port);
 	QList<ClientInfo> getClients() const;
 private:

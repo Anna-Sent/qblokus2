@@ -1,16 +1,15 @@
 #include <stdlib.h>
 #include "messagerecv.h"
-#include "socket.h"
-#include "udpsocket.h"
+#include <QtNetwork/QTcpSocket>
 #include <iostream>
 using namespace std;
 
-void Message::send(TCPSocket* socket) const {
+void Message::send(QTcpSocket* socket) const {
 	QByteArray data = serialize();
 	socket->write(data.data(), data.size());
 }
 
-MessageReceiver::MessageReceiver(TCPSocket* socket) {
+MessageReceiver::MessageReceiver(QTcpSocket* socket) {
 	current = new MessageHeader;
 	this->socket=socket;
 	QObject::connect(socket,SIGNAL(readyRead()), this, SLOT(readyRead()));

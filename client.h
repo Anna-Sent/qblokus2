@@ -1,12 +1,11 @@
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
-#include "socket.h"
-#include "udpsocket.h"
 #include "messagerecv.h"
 #include <QTimer>
 #include <QTime>
 #include <QObject>
 #include <QThread>
+#include <QtNetwork/QTcpSocket>
 #include <iostream>
 using namespace std;
 
@@ -23,7 +22,7 @@ private:
 	QTimer localtimer;
 private:
 	QTime lastpingtime;
-	TCPSocket* socket;
+        QTcpSocket* socket;
 	MessageReceiver* receiver;
 	ClientInfo info;
 	void stop() {socket->close();localtimer.stop();}
@@ -36,7 +35,7 @@ public:
 	void setColor(QColor color) {info.color=color;}
 	QString getNickname() {return info.name;}
 	QColor getColor() {return info.color;}
-	bool isConnected() {return socket->isConnected();}
+        //bool isConnected() {return socket->isConnected();}
 private slots:
 	void localChatMessageReceive(ChatMessage);
 	void localPlayersListMessageReceive(PlayersListMessage);
@@ -78,12 +77,12 @@ class RemoteClient : public QObject {
 public:
 	int state;
 	QTime lastpingtime;
-	TCPSocket* socket;
+        QTcpSocket* socket;
 	MessageReceiver* receiver;
 	ClientInfo info;
 public:
 	~RemoteClient() { delete receiver; }
-	RemoteClient(TCPSocket*);
+        RemoteClient(QTcpSocket*);
 private slots:
 	void remoteChatMessageReceive(ChatMessage);
 	void remoteTryToConnectMessageReceive(TryToConnectMessage);

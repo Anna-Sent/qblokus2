@@ -2,10 +2,10 @@
 #define APP_H
 #include "ui_racingForm.h"
 #include "ui_optionsDialog.h"
-#include "udpsocket.h"
 #include "game.h"
 #include <QTimer>
 #include <QTime>
+#include <QtNetwork/QUdpSocket>
 #include "client.h"
 #include "server.h"
 
@@ -17,7 +17,7 @@ public:
 	OptDialog(App* app);
 private:
 	App *app;
-	UDPSocket socket;
+        QUdpSocket socket;
 	QMap<QString, QList<ClientInfo> > servers;
 	QTimer timer;
 public slots:

@@ -103,17 +103,17 @@ void OptDialog::getServersList() {
 	if (socket.hasPendingDatagrams()) {
 		qint64 datagramSize = socket.pendingDatagramSize();
 		char *data = (char*)::malloc(datagramSize);
-		QString address;
+                QHostAddress address;
 		quint16 port;
-		int res=socket.readDatagram(data, datagramSize, &address, &port);
-		if (!servers.contains(address)) {
+                int res=socket.readDatagram(data, datagramSize, &address, &port);
+                if (!servers.contains(address.toString())) {
 			MessageHeader header;
 			header.len = datagramSize-header.getLength();
 			header.type = mtPlayersList;
 			PlayersListMessage msg(header);
 			msg.fill(QByteArray::fromRawData(data+header.getLength(), header.len));
-			servers.insert(address, msg.getList());
-			lwServersList->addItem(address);
+                        servers.insert(address.toString(), msg.getList());
+                        lwServersList->addItem(address.toString());
 		}
 		free(data);
 	}
@@ -129,7 +129,7 @@ void OptDialog::searchBtnClicked() {
 		lwServersList->clear();
 		textEdit->clear();
 		servers.clear();
-		socket.bind(INADDR_ANY, 0);
+                socket.bind();
 		timer.start();
 		sbPort->setDisabled(true);
 		pbSearch->setText("Stop search");
@@ -137,9 +137,9 @@ void OptDialog::searchBtnClicked() {
 }
 
 void OptDialog::timeout() {
-	int query = MAGIC_NUMBER;
+        int query = MAGIC_NUMBER;
 	quint16 port = sbPort->value();
-	socket.writeDatagram((char*)&query, sizeof(query), INADDR_BROADCAST, port);
+        socket.writeDatagram((char*)&query, sizeof(query), QHostAddress::Broadcast, port);
 }
 //=========================Functions======================================================
 App::App(QWidget *parent) {
@@ -249,12 +249,12 @@ void App::a_disconnectFromServer() {
 }
 
 void App::le_sendMessage() {
-	if (localClient.isConnected()) {
+/*	if (localClient.isConnected()) {*/
 		QString text = lineEdit->text();
 		if (text != "")
-			emit sendMessage(text);
+                        emit sendMessage(text);/*
 	} else
-		perror(QString::fromUtf8("Подключение утеряно"));
+                perror(QString::fromUtf8("Подключение утеряно"));*/
 }
 //===============================LocalClient slots========================================
 void App::localSurrenderMessageReceive(SurrenderMessage msg) {

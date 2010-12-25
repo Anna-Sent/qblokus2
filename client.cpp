@@ -2,7 +2,7 @@
 #define PING_INTERVAL	5000
 #define PING_TIME		1500000
 
-RemoteClient::RemoteClient(TCPSocket *s) : state(1), lastpingtime(QTime::currentTime()) {
+RemoteClient::RemoteClient(QTcpSocket *s) : state(1), lastpingtime(QTime::currentTime()) {
 	MessageReceiver *rr = new MessageReceiver(s);
 	connect(rr, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(remoteChatMessageReceive(ChatMessage)));
 	connect(rr, SIGNAL(tryToConnectMessageReceive(TryToConnectMessage)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage)));
@@ -47,7 +47,7 @@ void RemoteClient::remoteError() {
 LocalClient::LocalClient():lastpingtime(QTime::currentTime()) {
 	localtimer.setInterval(PING_INTERVAL);
 	connect(&localtimer, SIGNAL(timeout()), this, SLOT(localTimerCheck()));
-	socket = new TCPSocket;
+        socket = new QTcpSocket;
 	receiver = new MessageReceiver(socket);
 	qRegisterMetaType<PlayersListMessage>("PlayersListMessage");
 	qRegisterMetaType<ClientConnectMessage>("ClientConnectMessage");

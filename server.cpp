@@ -6,7 +6,7 @@
 QList<ClientInfo> Server::getClients() const {
 	QList<ClientInfo> list;
 	for (int i=0;i<clients.size();++i)
-		if (clients[i]->socket->isConnected()&&clients[i]->state==2)
+                if (/*clients[i]->socket->isConnected()&&*/clients[i]->state==2)
 			list.append(clients[i]->info);
 	return list;
 }
@@ -16,13 +16,13 @@ void Server::readyReadUDP() {
 		qint64 datagramSize = listener.pendingDatagramSize();
 		if (datagramSize == sizeof(int)) {
 			int data;
-			QString address;
+                        QHostAddress address;
 			quint16 port;
 			listener.readDatagram((char*)&data, datagramSize, &address, &port);
 			if (data == MAGIC_NUMBER) {
 				QList<ClientInfo> list;
 				for (int i=0;i<clients.size();++i)
-					if (clients[i]->state==2&&clients[i]->socket->isConnected())
+                                        if (clients[i]->state==2/*&&clients[i]->socket->isConnected()*/)
 						list.append(clients[i]->info);
 				PlayersListMessage msg(list);
 				QByteArray data = msg.serialize();
@@ -50,11 +50,11 @@ Server::Server() {
 }
 
 bool Server::start(int maxClientsCount, quint16 port) {
-	this->maxClientsCount = maxClientsCount;
-	bool listening = serverConnection.listen(port);
+        this->maxClientsCount = maxClientsCount;
+        bool listening = serverConnection.listen(QHostAddress::Any, port);
 	if (listening) {
 		timer.start();
-		listener.bind(INADDR_ANY, port);
+                listener.bind(QHostAddress::Any, port);
 		QThread::start();
 	}
 	return listening;
@@ -78,7 +78,7 @@ void Server::stop() {
 
 void Server::ping() {
 	for (int i=0; i < clients.size(); ++i) {
-		if (clients[i]->socket->isConnected()) {
+                /*if (clients[i]->socket->isConnected()) {*/
 			PingMessage msg;
 			msg.send(clients[i]->socket);
 			QTime last = clients[i]->lastpingtime;
@@ -86,7 +86,7 @@ void Server::ping() {
 			if (elapsed > PING_TIME) {
 				clients[i]->socket->close();
 			}
-		}
+                //}
 	}
 }
 
@@ -127,7 +127,7 @@ void Server::remoteError(RemoteClient *client) {
 
 void Server::newConnection() {
 	if (serverConnection.hasPendingConnections()) {
-		TCPSocket* s = serverConnection.nextPendingConnection();
+                QTcpSocket* s = serverConnection.nextPendingConnection();
 		RemoteClient *client = new RemoteClient(s);
 		connect(client, SIGNAL(rcChatMessageReceive(ChatMessage,RemoteClient*)), this, SLOT(remoteChatMessageReceive(ChatMessage,RemoteClient*)));
 		connect(client, SIGNAL(rcTryToConnectMessageReceive(TryToConnectMessage,RemoteClient*)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage,RemoteClient*)));
@@ -158,7 +158,7 @@ void Server::remoteChatMessageReceive(ChatMessage msg, RemoteClient*) {
 void Server::sendToAll(Message *msg) {
 	QList<RemoteClient*>::iterator i;
 	for (i = clients.begin(); i != clients.end(); ++i)
-		if ((*i)->socket->isConnected()&&(*i)->state==2) {
+                if (/*(*i)->socket->isConnected()&&*/(*i)->state==2) {
 			msg->send((*i)->socket);
 		}
 }
@@ -166,7 +166,7 @@ void Server::sendToAll(Message *msg) {
 void Server::sendPlayersList() {
 	QList<ClientInfo> list;
 	for (int i=0;i<clients.size();++i)
-		if (clients[i]->state==2&&clients[i]->socket->isConnected())
+                if (clients[i]->state==2/*&&clients[i]->socket->isConnected()*/)
 			list.append(clients[i]->info);
 	PlayersListMessage msg(list);
 	sendToAll(&msg);

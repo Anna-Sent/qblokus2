@@ -6,15 +6,13 @@
 #include <QByteArray>
 #include <QString>
 #include <QMetaType>
+#include <QtNetwork/QTcpSocket>
 #include "clientinfo.h"
 
 enum MessageType { mtHeader, mtChat, mtPlayersList,
 	mtClientConnect, mtClientDisconnect, mtServerReady,
 	mtConnectionAccepted, mtPing, mtTryToConnect,
 	mtStartGame, mtRestartGame, mtTurn, mtSurrender };
-
-class TCPSocket;
-class UDPSocket;
 
 class Message {
 	protected:
@@ -24,7 +22,7 @@ class Message {
 		virtual void fill(const QByteArray&) = 0;
 		virtual Message* next() const;
 		virtual QByteArray serialize() const = 0;
-		void send(TCPSocket*) const;
+                void send(QTcpSocket*) const;
 };
 
 class MessageHeader : public Message {
@@ -180,13 +178,13 @@ class SurrenderMessage : public ClientMessage {
 class MessageReceiver : public QObject {
 	Q_OBJECT
 	private:
-		TCPSocket* socket;
+                QTcpSocket* socket;
 		Message* current;
 		QByteArray buffer;
 	public:
-		MessageReceiver(TCPSocket*);
+                MessageReceiver(QTcpSocket*);
 		~MessageReceiver();
-		TCPSocket* getSocket() {return socket;}
+                QTcpSocket* getSocket() {return socket;}
 	public slots:
 		void readyRead();
 	signals:
