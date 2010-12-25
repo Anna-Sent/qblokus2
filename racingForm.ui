@@ -1,0 +1,156 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1182</width>
+    <height>512</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>QBLOKUS</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QHBoxLayout" name="horizontalLayout" >
+    <item>
+     <layout class="QGridLayout" name="gridLayout" >
+      <property name="sizeConstraint" >
+       <enum>QLayout::SetFixedSize</enum>
+      </property>
+      <item row="0" column="0" >
+       <widget class="QLCDNumber" name="score1" />
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLCDNumber" name="score3" />
+      </item>
+      <item row="1" column="0" >
+       <widget class="QGraphicsView" name="gvPlayer1" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <widget class="QGraphicsView" name="gvPlayer3" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLCDNumber" name="score2" />
+      </item>
+      <item row="2" column="2" >
+       <widget class="QLCDNumber" name="score4" />
+      </item>
+      <item rowspan="2" row="3" column="0" >
+       <widget class="QGraphicsView" name="gvPlayer2" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item rowspan="4" row="0" column="1" >
+       <widget class="QGraphicsView" name="gvTable" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item rowspan="2" row="3" column="2" >
+       <widget class="QGraphicsView" name="gvPlayer4" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" >
+       <widget class="QPushButton" name="btnSurrender" >
+        <property name="text" >
+         <string>Сдаться!</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="gridLayout_2" >
+      <item row="0" column="0" >
+       <widget class="QTextEdit" name="textEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QListWidget" name="listWidget" />
+      </item>
+      <item row="1" column="0" colspan="2" >
+       <widget class="QLineEdit" name="lineEdit" />
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1182</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu" >
+    <property name="title" >
+     <string>Меню</string>
+    </property>
+    <addaction name="actionStartGame" />
+    <addaction name="actionDisconnectFromServer" />
+    <addaction name="separator" />
+    <addaction name="actionExit" />
+   </widget>
+   <addaction name="menu" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <action name="actionExit" >
+   <property name="text" >
+    <string>Выход</string>
+   </property>
+  </action>
+  <action name="actionDisconnectFromServer" >
+   <property name="text" >
+    <string>Отключится от сервера</string>
+   </property>
+  </action>
+  <action name="actionReconnectToServer" >
+   <property name="text" >
+    <string>Переподключиться к серверу</string>
+   </property>
+  </action>
+  <action name="actionStartGame" >
+   <property name="text" >
+    <string>Начать игру</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
