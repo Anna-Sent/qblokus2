@@ -1,32 +1,33 @@
 #ifndef APP_H
 #define APP_H
+
 #include "ui_racingForm.h"
 #include "ui_optionsDialog.h"
 #include "game.h"
-#include <QTimer>
-#include <QTime>
-#include <QtNetwork/QUdpSocket>
 #include "client.h"
 #include "server.h"
+#include "clientinfo.h"
+#include "messagerecv.h"
+#include <QtNetwork/QUdpSocket>
 
 class App;
 
 class OptDialog : public QDialog, public Ui::Dialog {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	OptDialog(App* app);
+    OptDialog(App* app);
 private:
-	App *app;
-        QUdpSocket socket;
-	QMap<QString, QList<ClientInfo> > servers;
-	QTimer timer;
+    App *app;
+    QUdpSocket socket;
+    QMap<QString, QList<ClientInfo> > servers;
+    QTimer timer;
 public slots:
     void connectBtnClicked();
     void searchBtnClicked();
-	void toggled(bool);
-	void getServersList();
-	void timeout();
-	void itemClicked ( QListWidgetItem * item );
+    void toggled(bool);
+    void getServersList();
+    void timeout();
+    void itemClicked ( QListWidgetItem * item );
 };
 
 class App : public QMainWindow, public Ui::MainWindow {
@@ -35,42 +36,43 @@ public:
     App(QWidget *parent = 0);
     ~App();
 private:
-	OptDialog *dialog;
-	Server server;
-	LCWrapper lcw;
-	LocalClient localClient;
-	friend class OptDialog;
-	void perror(QString);
-	void pinfo(QString);
+    OptDialog *dialog;
+    Server server;
+    LCWrapper lcw;
+    LocalClient localClient;
+    friend class OptDialog;
+    void perror(QString);
+    void pinfo(QString);
 public:
-	Game *game;
+    Game *game;
 public slots:
-	// from graphics
-	void a_startGame();
-	void le_sendMessage();
-	void a_exit();
-	void a_disconnectFromServer();
-	// from local client
-	void localError(QString);
-	void localConnected();
-	void localDisconnected();
-	void localChatMessageReceive(ChatMessage);
-	void localPlayersListMessageReceive(PlayersListMessage);
-	void localClientConnectMessageReceive(ClientConnectMessage);
-	void localClientDisconnectMessageReceive(ClientDisconnectMessage);
-	void localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage);
-	// game signals
-	void localTurnMessageReceive(TurnMessage);
-	void localStartGameMessageReceive(StartGameMessage);
-	void localRestartGameMessageReceive(RestartGameMessage);
-	void localSurrenderMessageReceive(SurrenderMessage);
+    // from graphics
+    void a_startGame();
+    void le_sendMessage();
+    void a_exit();
+    void a_disconnectFromServer();
+    // from local client
+    void localError(QString);
+    void localConnected();
+    void localDisconnected();
+    void localChatMessageReceive(ChatMessage);
+    void localPlayersListMessageReceive(PlayersListMessage);
+    void localClientConnectMessageReceive(ClientConnectMessage);
+    void localClientDisconnectMessageReceive(ClientDisconnectMessage);
+    void localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage);
+    // game signals
+    void localTurnMessageReceive(TurnMessage);
+    void localStartGameMessageReceive(StartGameMessage);
+    void localRestartGameMessageReceive(RestartGameMessage);
+    void localSurrenderMessageReceive(SurrenderMessage);
 signals:
-	// to server
-	void startGame();
-	void restartGame(QList<ClientInfo>);
-	// to client
-	void sendMessage(QString);
-	void tolcTurnDone(QString name,QColor color,QString tile,int id,int x,int y);
-	void tolcPlayerSurrendered(QString name,QColor color);
+    // to server
+    void startGame();
+    void restartGame(QList<ClientInfo>);
+    // to client
+    void sendMessage(QString);
+    void tolcTurnDone(QString name,QColor color,QString tile,int id,int x,int y);
+    void tolcPlayerSurrendered(QString name,QColor color);
 };
+
 #endif
