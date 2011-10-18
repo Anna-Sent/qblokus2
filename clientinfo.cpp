@@ -17,5 +17,5 @@ void ClientInfo::fill(const char* data) {
     data += sizeof(int);
     name = QString::fromUtf8(data,size);
     data += size;
-    ::bcopy(data, &color, sizeof(QColor));
+    ::memmove(&color, data, sizeof(QColor));
 }

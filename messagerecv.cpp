@@ -1,4 +1,5 @@
 #include "messagerecv.h"
+#include <strings.h>
 
 void Message::send(QTcpSocket* socket) const {
     QByteArray data = serialize();
@@ -95,9 +96,9 @@ Message* Message::next() const {
 
 void MessageHeader::fill(const QByteArray& buffer) {
     const char* data = buffer.data();
-    ::bcopy(data, &type, sizeof(MessageType));
+    ::memmove(&type, data, sizeof(MessageType));
     data += sizeof(MessageType);
-    ::bcopy(data, &len, sizeof(qint64));
+    ::memmove(&len, data, sizeof(qint64));
 }
 
 Message* MessageHeader::next() const {
@@ -290,5 +291,5 @@ QByteArray ConnectionAcceptedMessage::serialize() const {
 
 void ConnectionAcceptedMessage::fill(const QByteArray& buffer) {
     const char* data = buffer.data();
-    ::bcopy(data, (void*)(&errorCode), sizeof(int));
+    ::memmove((void*)(&errorCode),data, sizeof(int));
 }
