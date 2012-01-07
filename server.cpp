@@ -16,7 +16,7 @@ void Server::readyReadUDP() {
         qint64 datagramSize = listener.pendingDatagramSize();
         if (datagramSize == sizeof(int)) {
             int data;
-                        QHostAddress address;
+            QHostAddress address;
             quint16 port;
             listener.readDatagram((char*)&data, datagramSize, &address, &port);
             if (data == MAGIC_NUMBER) {

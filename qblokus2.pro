@@ -1,4 +1,4 @@
-CONFIG += console
+CONFIG += console qt thread
 SOURCES = main.cpp \
     app.cpp \
     messagerecv.cpp \
