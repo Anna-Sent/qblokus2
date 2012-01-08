@@ -103,17 +103,17 @@ void OptDialog::getServersList() {
     if (socket.hasPendingDatagrams()) {
         qint64 datagramSize = socket.pendingDatagramSize();
         char *data = (char*)::malloc(datagramSize);
-                QHostAddress address;
+        QHostAddress address;
         quint16 port;
-                int res=socket.readDatagram(data, datagramSize, &address, &port);
-                if (!servers.contains(address.toString())) {
+        int res=socket.readDatagram(data, datagramSize, &address, &port);
+        if (!servers.contains(address.toString())) {
             MessageHeader header;
             header.len = datagramSize-header.getLength();
             header.type = mtPlayersList;
             PlayersListMessage msg(header);
             msg.fill(QByteArray::fromRawData(data+header.getLength(), header.len));
-                        servers.insert(address.toString(), msg.getList());
-                        lwServersList->addItem(address.toString());
+            servers.insert(address.toString(), msg.getList());
+            lwServersList->addItem(address.toString());
         }
         free(data);
     }
