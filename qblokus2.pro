@@ -26,5 +26,4 @@ HEADERS += coloritem.h \
     networkplayer.h
 QT += network
 
-FORMS += racingForm.ui \
-    optionsDialog.ui
+FORMS += racingForm.ui

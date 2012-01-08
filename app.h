@@ -2,7 +2,6 @@
 #define APP_H
 
 #include "ui_racingForm.h"
-#include "ui_optionsDialog.h"
 #include "game.h"
 #include "client.h"
 #include "server.h"
@@ -10,37 +9,18 @@
 #include "messagerecv.h"
 #include <QtNetwork/QUdpSocket>
 
-class App;
-
-class OptDialog : public QDialog, public Ui::Dialog {
-    Q_OBJECT
-public:
-    OptDialog(App* app);
-private:
-    App *app;
-    QUdpSocket socket;
-    QMap<QString, QList<ClientInfo> > servers;
-    QTimer timer;
-public slots:
-    void connectBtnClicked();
-    void searchBtnClicked();
-    void toggled(bool);
-    void getServersList();
-    void timeout();
-    void itemClicked ( QListWidgetItem * item );
-};
-
 class App : public QMainWindow, public Ui::MainWindow {
     Q_OBJECT
 public:
     App(QWidget *parent = 0);
     ~App();
 private:
-    OptDialog *dialog;
+    QUdpSocket socket;
+    QMap<QString, QList<ClientInfo> > servers;
+    QTimer timer;
     Server server;
     LCWrapper lcw;
     LocalClient localClient;
-    friend class OptDialog;
     void perror(QString);
     void pinfo(QString);
 public:
@@ -65,6 +45,13 @@ public slots:
     void localStartGameMessageReceive(StartGameMessage);
     void localRestartGameMessageReceive(RestartGameMessage);
     void localSurrenderMessageReceive(SurrenderMessage);
+
+    void connectBtnClicked();
+    void searchBtnClicked();
+    void toggled(bool);
+    void getServersList();
+    void timeout();
+    void itemClicked ( QListWidgetItem * item );
 signals:
     // to server
     void startGame();

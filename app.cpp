@@ -4,27 +4,14 @@
 #define MAGIC_NUMBER 110807
 using namespace std;
 
-//=====================================OptDialog============================================
-OptDialog::OptDialog(App* app) {
-    setupUi(this);
-    this->app = app;
-    connect(pbSearch, SIGNAL(clicked()), this, SLOT(searchBtnClicked()));
-    connect(pbConnect, SIGNAL(clicked()), this, SLOT(connectBtnClicked()));
-    connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(toggled(bool)));
-    connect(&socket, SIGNAL(readyRead()), this, SLOT(getServersList()));
-    timer.setInterval(1000);
-    connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
-    connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
-}
-
-void OptDialog::toggled(bool checked) {
+void App::toggled(bool checked) {
     if (checked)
         pbConnect->setText("Create server and connect to it");
     else
         pbConnect->setText("Connect to server");
 }
 
-void OptDialog::connectBtnClicked() {
+void App::connectBtnClicked() {
     if (timer.isActive()) {
         timer.stop();
         socket.close();
@@ -32,23 +19,23 @@ void OptDialog::connectBtnClicked() {
         sbPort->setDisabled(false);
     }
     switch (comboBox->currentIndex()) {
-        case 0: app->localClient.setColor(Qt::red); break;
-        case 1: app->localClient.setColor(Qt::darkYellow); break;
-        case 2: app->localClient.setColor(Qt::green); break;
-        case 3: app->localClient.setColor(Qt::blue); break;
-        default: QMessageBox::warning(this, "Error", "Incorrect color"); return;
+    case 0: localClient.setColor(Qt::red); break;
+    case 1: localClient.setColor(Qt::darkYellow); break;
+    case 2: localClient.setColor(Qt::green); break;
+    case 3: localClient.setColor(Qt::blue); break;
+    default: QMessageBox::warning(this, "Error", "Incorrect color"); return;
     }
-    app->localClient.setNickname(leNickname->text());
-    if (app->localClient.getNickname()=="") {
+    localClient.setNickname(leNickname->text());
+    if (localClient.getNickname()=="") {
         QMessageBox::warning(this, "Error", "Enter nickname");
         return;
-    } else if (app->localClient.getNickname().toUtf8().size()>100) {
+    } else if (localClient.getNickname().toUtf8().size()>100) {
         QMessageBox::warning(this, "Error", "Your nickname is too long");
         return;
     }
-    app->textEdit->clear();
-    app->listWidget->clear();
-    app->lineEdit->clear();
+    textEdit->clear();
+    listWidget->clear();
+    lineEdit->clear();
     int port = sbPort->value();
     if (!cbCreateServer->checkState()) { // connect to some server
         QString hostname = leServerIP->text();
@@ -59,36 +46,28 @@ void OptDialog::connectBtnClicked() {
         textEdit->clear();
         lwServersList->clear();
         servers.clear();
-        close();
-        app->game = new Game(app);
-        //game signals
-        connect(app->game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)), &(app->localClient), SLOT(turnDone(QString,QColor,QString,int,int,int)));
-        connect(app->game, SIGNAL(playerRetired(QString, QColor)), &(app->localClient), SLOT(playerSurrendered(QString,QColor)));
-        app->show();
-        app->localClient.start(hostname,port);
+        connect(game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)), &(localClient), SLOT(turnDone(QString,QColor,QString,int,int,int)));
+        connect(game, SIGNAL(playerRetired(QString, QColor)), &(localClient), SLOT(playerSurrendered(QString,QColor)));
+        localClient.start(hostname,port);
     } else { // create server and connect to it
         QString hostname = "localhost";
         int maxClientsCount = sbClientsCount->value();
-        bool listening = app->server.start(maxClientsCount,port);
+        bool listening = server.start(maxClientsCount,port);
         if (listening) {
             textEdit->clear();
             lwServersList->clear();
             servers.clear();
-            close();
-            app->game = new Game(app);
-            //game signals
-            connect(app->game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)), &(app->localClient), SLOT(turnDone(QString,QColor,QString,int,int,int)));
-            connect(app->game, SIGNAL(playerRetired(QString, QColor)), &(app->localClient), SLOT(playerSurrendered(QString,QColor)));
-            app->show();
-            app->localClient.start(hostname, port);
+            connect(game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)), &(localClient), SLOT(turnDone(QString,QColor,QString,int,int,int)));
+            connect(game, SIGNAL(playerRetired(QString, QColor)), &(localClient), SLOT(playerSurrendered(QString,QColor)));
+            localClient.start(hostname, port);
         } else {
-            QMessageBox::critical(this, "Error", app->server.getErrorString());
+            QMessageBox::critical(this, "Error", server.getErrorString());
             return;
         }
     }
 }
 
-void OptDialog::itemClicked ( QListWidgetItem * item ) {
+void App::itemClicked ( QListWidgetItem * item ) {
     textEdit->clear();
     if (servers.contains(item->text())) {
         QList<ClientInfo> list = servers.value(item->text());
@@ -99,7 +78,7 @@ void OptDialog::itemClicked ( QListWidgetItem * item ) {
     }
 }
 
-void OptDialog::getServersList() {
+void App::getServersList() {
     if (socket.hasPendingDatagrams()) {
         qint64 datagramSize = socket.pendingDatagramSize();
         char *data = (char*)::malloc(datagramSize);
@@ -119,7 +98,7 @@ void OptDialog::getServersList() {
     }
 }
 
-void OptDialog::searchBtnClicked() {
+void App::searchBtnClicked() {
     if (timer.isActive()) { // stop pressed
         timer.stop();
         socket.close();
@@ -129,19 +108,19 @@ void OptDialog::searchBtnClicked() {
         lwServersList->clear();
         textEdit->clear();
         servers.clear();
-                socket.bind();
+        socket.bind();
         timer.start();
         sbPort->setDisabled(true);
         pbSearch->setText("Stop search");
     }
 }
 
-void OptDialog::timeout() {
-        int query = MAGIC_NUMBER;
+void App::timeout() {
+    int query = MAGIC_NUMBER;
     quint16 port = sbPort->value();
-        socket.writeDatagram((char*)&query, sizeof(query), QHostAddress::Broadcast, port);
+    socket.writeDatagram((char*)&query, sizeof(query), QHostAddress::Broadcast, port);
 }
-//=========================Functions======================================================
+
 App::App(QWidget *parent) {
     setupUi(this);
     connect(&localClient, SIGNAL(lcChatMessageReceive(ChatMessage)), this, SLOT(localChatMessageReceive(ChatMessage)));
@@ -168,13 +147,21 @@ App::App(QWidget *parent) {
     connect(this, SIGNAL(sendMessage(QString)), &localClient, SLOT(sendMessage(QString)));
     localClient.moveToThread(&lcw);
     lcw.start();
-    dialog = new OptDialog(this);
-    dialog->show();
+
+    connect(pbSearch, SIGNAL(clicked()), this, SLOT(searchBtnClicked()));
+    connect(pbConnect, SIGNAL(clicked()), this, SLOT(connectBtnClicked()));
+    connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(toggled(bool)));
+    connect(&socket, SIGNAL(readyRead()), this, SLOT(getServersList()));
+    timer.setInterval(1000);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
+    connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
+    game = new Game(this);
 }
 
 void App::perror(QString text) {
     textEdit->setTextColor(Qt::darkRed);
     textEdit->append(text);
+    QMessageBox::critical(this, "Error", text, QMessageBox::Ok);
 }
 
 void App::pinfo(QString text) {
@@ -183,7 +170,6 @@ void App::pinfo(QString text) {
 }
 
 App::~App() {
-    delete dialog;
     server.quit();
     localClient.quit();
 }
@@ -201,8 +187,8 @@ void App::a_startGame() {
                     msgBox.setIcon(QMessageBox::Warning);
                     int ret = msgBox.exec();
                     switch(ret) {
-                        case(QMessageBox::No): return;
-                        case(QMessageBox::Yes): break;
+                    case(QMessageBox::No): return;
+                    case(QMessageBox::Yes): break;
                     }
                     delete game;
                     game=new Game(this);
@@ -238,23 +224,18 @@ void App::a_disconnectFromServer() {
         msgBox.setIcon(QMessageBox::Warning);
         int ret = msgBox.exec();
         switch(ret) {
-            case(QMessageBox::No): return;
-            case(QMessageBox::Yes): break;
+        case(QMessageBox::No): return;
+        case(QMessageBox::Yes): break;
         }
     }
     localClient.quit();
     server.quit();
-    close();
-    dialog->show();
 }
 
 void App::le_sendMessage() {
-/*    if (localClient.isConnected()) {*/
-        QString text = lineEdit->text();
-        if (text != "")
-                        emit sendMessage(text);/*
-    } else
-                perror(QString::fromUtf8("Подключение утеряно"));*/
+    QString text = lineEdit->text();
+    if (text != "")
+        emit sendMessage(text);
 }
 //===============================LocalClient slots========================================
 void App::localSurrenderMessageReceive(SurrenderMessage msg) {
@@ -268,7 +249,7 @@ void App::localStartGameMessageReceive(StartGameMessage msg) {
 void App::localRestartGameMessageReceive(RestartGameMessage msg) {
     if (game) {
         delete game;
-        game=new Game(this);
+        game = new Game(this);
         connect(game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)), &localClient, SLOT(turnDone(QString,QColor,QString,int,int,int)));
         connect(game, SIGNAL(playerRetired(QString, QColor)), &localClient, SLOT(playerSurrendered(QString,QColor)));
         QList<ClientInfo> list = msg.getList();
@@ -307,11 +288,11 @@ void App::localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage msg) {
     int code = msg.getCode();
     if (code != 0) {
         switch (msg.getCode()) {
-            case 1: perror(QString::fromUtf8("Этот цвет уже используется")); break;
-            case 2: perror(QString::fromUtf8("Этот ник уже используется")); break;
-            case 4: perror(QString::fromUtf8("К игре уже подключились ")+
-                QString::number(server.getMaxClientsCount())
-                +QString::fromUtf8(" игрока")); break;
+        case 1: perror(QString::fromUtf8("Этот цвет уже используется")); break;
+        case 2: perror(QString::fromUtf8("Этот ник уже используется")); break;
+        case 4: perror(QString::fromUtf8("К игре уже подключились ")+
+                       QString::number(server.getMaxClientsCount())
+                       +QString::fromUtf8(" игрока")); break;
         }
         localClient.quit();
     }
