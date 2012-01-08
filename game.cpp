@@ -10,7 +10,7 @@ Game::Game(QWidget* widget):currplayer(0),running(false)
     //ui = new Ui::BlokusUi;
     //ui->setupUi(widget);
     ui = dynamic_cast<Ui::MainWindow*>(widget);
-        if (ui==0) cerr<<"bug!!!!!!" << endl;
+    if (ui==0) cerr<<"bug!!!!!!" << endl;
     table = new Table(20,20);
     tablescene = new QGraphicsScene;
     //scenes.append(tablescene);
@@ -30,15 +30,15 @@ void Game::addPlayer(QString name,QColor color, PlayerType type)
 {
     Player* player;
     switch(type) {
-        case(ptLocal):
-            player = new LocalPlayer(color);
-            break;
-        case(ptNetwork):
-            player = new NetworkPlayer(color,table);
-            break;
-        default:
-            return;
-            break;
+    case(ptLocal):
+        player = new LocalPlayer(color);
+        break;
+    case(ptNetwork):
+        player = new NetworkPlayer(color,table);
+        break;
+    default:
+        return;
+        break;
     }
     int i=playersleft;
     QString playerwidget("gvPlayer");
@@ -72,7 +72,7 @@ void Game::turnDone(QColor color, QString tile,int id,int x,int y)
 {
     if (color!=players[currplayer]->getColor()) return;
     if (dynamic_cast<Table*>(sender())) {
-                cerr << "111\n";
+        cerr << "111\n";
         emit turnDone(players[currplayer]->getName(),color,tile,id,x,y);
     }
     players[currplayer]->turnComplete(color,tile,id,x,y);
@@ -87,7 +87,7 @@ void Game::turnDone(QColor color, QString tile,int id,int x,int y)
         surrender->setEnabled(false);
     }
     players[currplayer]->startTurn();
-        cerr << "===== " << currplayer << " ====\n";
+    cerr << "===== " << currplayer << " ====\n";
 }
 
 void Game::remotePlayerRetired(QString name,QColor color)
@@ -111,10 +111,10 @@ void Game::playerRetired()
         msgBox.setIcon(QMessageBox::Warning);
         int ret = msgBox.exec();
         switch(ret) {
-            case(QMessageBox::No):{
+        case(QMessageBox::No):{
                 return;
             }
-            case(QMessageBox::Yes):break;
+        case(QMessageBox::Yes):break;
         }
         emit playerRetired(players[currplayer]->getName(),players[currplayer]->getColor());
     }
@@ -155,9 +155,9 @@ void Game::playerRetired()
 Game::~Game()
 {
 #ifdef DEBUG_DESTRUCTORS
-        cerr << "Game over" << endl;
+    cerr << "Game over" << endl;
 #endif
-/*    for (int i=0;i<scenes.size();++i)
+    /*    for (int i=0;i<scenes.size();++i)
     {
         //scenes[i]->deleteLater();
         delete scenes[i];
@@ -175,7 +175,7 @@ void Game::clear() {
     {
         //scenes[i]->deleteLater();
         delete scenes[i];
-//        scenes.removeAt(1);
+        //        scenes.removeAt(1);
         //delete players[i];
     }
     playersleft=0;
@@ -189,7 +189,7 @@ void Game::clear() {
         lcds[i]->setPalette(QPalette());
         lcds[i]->display(0);
     }
-//    delete table;
+    //    delete table;
 }
 
 void Game::start()
@@ -210,7 +210,7 @@ void Game::start()
 
 void Game::winner(Player* winner)
 {
-        //cerr << winner->getName().toStdString() << "\n";
+    //cerr << winner->getName().toStdString() << "\n";
     QString winners;
     int count=0;
     for(int i=0;i<players.size();++i)

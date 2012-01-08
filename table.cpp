@@ -11,12 +11,12 @@ typedef pair<int,QString> intstr_t;
 intstr_t dataparse(QString what)
 {
     QStringList parts = what.split(QChar(':'));
-        return make_pair(parts[0].toInt(),parts[1]);
+    return make_pair(parts[0].toInt(),parts[1]);
 }
 
 
 TableCell::TableCell(QGraphicsItem *parent,int x,int y)
-: QGraphicsItem(parent), color(Qt::lightGray), dragOver(false), xpos(x), ypos(y)
+    : QGraphicsItem(parent), color(Qt::lightGray), dragOver(false), xpos(x), ypos(y)
 {
     setAcceptDrops(true);
 }
@@ -47,10 +47,10 @@ void TableCell::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 void TableCell::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
     Q_UNUSED(event);
-//    dragOver = false;
-/*    Table* table = qgraphicsitem_cast<Table*>(parentItem());
+    //    dragOver = false;
+    /*    Table* table = qgraphicsitem_cast<Table*>(parentItem());
     if (table) table->clearDrags();*/
-//    update();
+    //    update();
 }
 
 void TableCell::dropEvent(QGraphicsSceneDragDropEvent *event)
@@ -76,7 +76,7 @@ void TableCell::dropEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 void TableCell::paint(QPainter *painter,
-        const QStyleOptionGraphicsItem *option, QWidget *widget)
+                      const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
@@ -109,7 +109,7 @@ QRectF Table::boundingRect() const
 }
 
 void Table::paint(QPainter *painter,
-        const QStyleOptionGraphicsItem *option, QWidget *widget)
+                  const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
@@ -120,18 +120,18 @@ void Table::paint(QPainter *painter,
 string readColor(QColor color)
 {
     QString res = QString("QColor(%1, %2, %3)\n")
-                .arg(color.red()).arg(color.green()).arg(color.blue());
+                  .arg(color.red()).arg(color.green()).arg(color.blue());
     return res.toStdString();
 }
 
 bool Table::Accept(int x,int y,const Tile& what,int id,bool really,bool local,QColor color)
-//bool Table::Accept(int x,int y,Tile what,bool really,QColor color)
+        //bool Table::Accept(int x,int y,Tile what,bool really,QColor color)
 
 {
     if (x+what.getWidth()>width) return false;
     if (y+what.getHeight()>height) return false;
     clearDrags();
-//    cout << "accepting...\n";
+    //    cout << "accepting...\n";
     bool inAngle=false;
     bool touchAngles=false;
     bool valid=true;
@@ -149,7 +149,7 @@ bool Table::Accept(int x,int y,const Tile& what,int id,bool really,bool local,QC
                 {
                     cells[j][i]->dragOver=true;
                     if (cells[j][i]->color!=Qt::lightGray) return false;
-//                    cout << j << " " << height << "\n";
+                    //                    cout << j << " " << height << "\n";
                     if (j>0)
                     {
                         if (cells[j-1][i]->color==color) valid=false;
@@ -185,7 +185,7 @@ bool Table::Accept(int x,int y,const Tile& what,int id,bool really,bool local,QC
                     if ((i==0&&j==0)||(i==width-1&&j==height-1)||(j==0&&i==width-1)||(i==0&&j==height-1))
                         inAngle=true;
 
-//                    cout << valid << "\n";
+                    //                    cout << valid << "\n";
                     if (!valid) return false;
 
                 }
@@ -193,12 +193,12 @@ bool Table::Accept(int x,int y,const Tile& what,int id,bool really,bool local,QC
             }
         }
     }
-//    cout << "!accepting\n";
+    //    cout << "!accepting\n";
     if (really&&local)
     {
         emit turnComplete(color,what.getAsQString(),id,x,y);
     }
-        if (really) cerr << what << endl;
+    if (really) cerr << what << endl;
 
     if (inAngle||touchAngles)
     {
@@ -209,13 +209,13 @@ bool Table::Accept(int x,int y,const Tile& what,int id,bool really,bool local,QC
 
 void Table::clearDrags()
 {
-//    cout << "clear\n";
+    //    cout << "clear\n";
     for(int i=0;i<width;++i)
         for(int j=0;j<height;++j)
         {
-            cells[i][j]->dragOver=false;
-            cells[i][j]->update();
-//            cout << i << " " << j << "\n";
-        }
+        cells[i][j]->dragOver=false;
+        cells[i][j]->update();
+        //            cout << i << " " << j << "\n";
+    }
 
 }

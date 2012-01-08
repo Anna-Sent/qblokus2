@@ -8,10 +8,10 @@
 #include <QtNetwork/QTcpSocket>
 
 class LCWrapper : public QThread {
-    protected:
-        void run() {
-            exec();
-        }
+protected:
+    void run() {
+        exec();
+    }
 };
 
 class LocalClient: public QObject {

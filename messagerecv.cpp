@@ -25,7 +25,7 @@ void MessageReceiver::readyRead() {
         {
             ChatMessage *msg;
             if ((msg=dynamic_cast<ChatMessage*>(current)))
-                    emit chatMessageReceive(*msg);
+                emit chatMessageReceive(*msg);
         }
         {
             PlayersListMessage *msg;
@@ -103,34 +103,34 @@ void MessageHeader::fill(const QByteArray& buffer) {
 
 Message* MessageHeader::next() const {
     switch(type) {
-        case (mtHeader):
-            return new MessageHeader;
-        case (mtChat):
-            return new ChatMessage(*this);
-        case (mtPlayersList):
-            return new PlayersListMessage(*this);
-        case (mtClientConnect):
-            return new ClientConnectMessage(*this);
-        case (mtClientDisconnect):
-            return new ClientDisconnectMessage(*this);
-        case (mtServerReady):
-            return new ServerReadyMessage(*this);
-        case (mtConnectionAccepted):
-            return new ConnectionAcceptedMessage(*this);
-        case (mtPing):
-            return new PingMessage(*this);
-        case (mtTryToConnect):
-            return new TryToConnectMessage(*this);
-        case (mtStartGame):
-            return new StartGameMessage(*this);
-        case (mtRestartGame):
-            return new RestartGameMessage(*this);
-        case (mtTurn):
-            return new TurnMessage(*this);
-        case (mtSurrender):
-            return new SurrenderMessage(*this);
-        default:
-            return NULL;
+    case (mtHeader):
+        return new MessageHeader;
+    case (mtChat):
+        return new ChatMessage(*this);
+    case (mtPlayersList):
+        return new PlayersListMessage(*this);
+    case (mtClientConnect):
+        return new ClientConnectMessage(*this);
+    case (mtClientDisconnect):
+        return new ClientDisconnectMessage(*this);
+    case (mtServerReady):
+        return new ServerReadyMessage(*this);
+    case (mtConnectionAccepted):
+        return new ConnectionAcceptedMessage(*this);
+    case (mtPing):
+        return new PingMessage(*this);
+    case (mtTryToConnect):
+        return new TryToConnectMessage(*this);
+    case (mtStartGame):
+        return new StartGameMessage(*this);
+    case (mtRestartGame):
+        return new RestartGameMessage(*this);
+    case (mtTurn):
+        return new TurnMessage(*this);
+    case (mtSurrender):
+        return new SurrenderMessage(*this);
+    default:
+        return NULL;
     }
 }
 

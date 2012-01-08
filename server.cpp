@@ -6,7 +6,7 @@
 QList<ClientInfo> Server::getClients() const {
     QList<ClientInfo> list;
     for (int i=0;i<clients.size();++i)
-                if (/*clients[i]->socket->isConnected()&&*/clients[i]->state==2)
+        if (/*clients[i]->socket->isConnected()&&*/clients[i]->state==2)
             list.append(clients[i]->info);
     return list;
 }
@@ -22,7 +22,7 @@ void Server::readyReadUDP() {
             if (data == MAGIC_NUMBER) {
                 QList<ClientInfo> list;
                 for (int i=0;i<clients.size();++i)
-                                        if (clients[i]->state==2/*&&clients[i]->socket->isConnected()*/)
+                    if (clients[i]->state==2/*&&clients[i]->socket->isConnected()*/)
                         list.append(clients[i]->info);
                 PlayersListMessage msg(list);
                 QByteArray data = msg.serialize();
@@ -50,8 +50,8 @@ Server::Server() {
 }
 
 bool Server::start(int maxClientsCount, quint16 port) {
-        this->maxClientsCount = maxClientsCount;
-        bool listening = serverConnection.listen(QHostAddress::Any, port);
+    this->maxClientsCount = maxClientsCount;
+    bool listening = serverConnection.listen(QHostAddress::Any, port);
     if (listening) {
         timer.start();
         listener.bind(QHostAddress::Any, port);
@@ -78,15 +78,13 @@ void Server::stop() {
 
 void Server::ping() {
     for (int i=0; i < clients.size(); ++i) {
-                /*if (clients[i]->socket->isConnected()) {*/
-            PingMessage msg;
-            msg.send(clients[i]->socket);
-            QTime last = clients[i]->lastpingtime;
-            int elapsed = last.elapsed();
-            if (elapsed > PING_TIME) {
-                clients[i]->socket->close();
-            }
-                //}
+        PingMessage msg;
+        msg.send(clients[i]->socket);
+        QTime last = clients[i]->lastpingtime;
+        int elapsed = last.elapsed();
+        if (elapsed > PING_TIME) {
+            clients[i]->socket->close();
+        }
     }
 }
 
@@ -159,8 +157,8 @@ void Server::sendToAll(Message *msg) {
     QList<RemoteClient*>::iterator i;
     for (i = clients.begin(); i != clients.end(); ++i)
         if (/*(*i)->socket->isConnected()&&*/(*i)->state==2) {
-            msg->send((*i)->socket);
-        }
+        msg->send((*i)->socket);
+    }
 }
 
 void Server::sendPlayersList() {

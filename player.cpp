@@ -17,12 +17,12 @@ Player::Player(QColor clr,int wid,int hei , QGraphicsItem * parent, QGraphicsSce
     int realwidth=0;
     int realheight=0;
 
-         for (size_t i = 0; i < tiles.size(); ++i) {
-            ColorItem *item = new ColorItem(tiles[i],color,i);
+    for (size_t i = 0; i < tiles.size(); ++i) {
+        ColorItem *item = new ColorItem(tiles[i],color,i);
         items.append(item);
         item->setParentItem(this);
         item->setPos(xs,ys);
-                int dim = max(item->getHeight(),item->getWidth());
+        int dim = max(item->getHeight(),item->getWidth());
         xs+=dim*20*dscale+10;
         int height=(dim*20*dscale+10);
         item->scale(dscale,dscale);
@@ -44,7 +44,7 @@ Player::Player(QColor clr,int wid,int hei , QGraphicsItem * parent, QGraphicsSce
 
 Player::~Player()
 {
-/*    for(int i=0;i<items.size();++i)
+    /*    for(int i=0;i<items.size();++i)
     {
         delete items[i];
     }*/
