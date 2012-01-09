@@ -26,7 +26,7 @@ private:
     void stop() {socket->close();localtimer.stop();}
 public:
     ~LocalClient() { delete receiver; }
-    void quit() {stop();}
+    void quit() { stop(); }
     LocalClient();
     void start(QString hostname, quint16 port) {socket->connectToHost(hostname, port);localtimer.start();}
     void setNickname(QString name) {info.name=name;}

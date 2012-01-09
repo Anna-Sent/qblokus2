@@ -111,7 +111,6 @@ public:
     ServerReadyMessage() { header.len = 0; header.type = mtServerReady;}
 };
 
-
 class PingMessage : public ComplexMessage {
 private:
 public:
