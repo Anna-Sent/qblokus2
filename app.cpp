@@ -1,7 +1,6 @@
 #include "app.h"
 #include <cstdlib>
 #include <QMessageBox>
-#define MAGIC_NUMBER 110807
 using namespace std;
 
 void App::toggled(bool checked) {
@@ -12,12 +11,6 @@ void App::toggled(bool checked) {
 }
 
 void App::connectBtnClicked() {
-    if (timer.isActive()) {
-        timer.stop();
-        socket.close();
-        pbSearch->setText("Start search");
-        sbPort->setDisabled(false);
-    }
     switch (comboBox->currentIndex()) {
     case 0: localClient.setColor(Qt::red); break;
     case 1: localClient.setColor(Qt::darkYellow); break;
@@ -46,6 +39,7 @@ void App::connectBtnClicked() {
         textEdit->clear();
         lwServersList->clear();
         servers.clear();
+        serversSearcher.stop();
         connect(game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)), &(localClient), SLOT(turnDone(QString,QColor,QString,int,int,int)));
         connect(game, SIGNAL(playerRetired(QString, QColor)), &(localClient), SLOT(playerSurrendered(QString,QColor)));
         localClient.start(hostname,port);
@@ -57,6 +51,7 @@ void App::connectBtnClicked() {
             textEdit->clear();
             lwServersList->clear();
             servers.clear();
+            serversSearcher.stop();
             connect(game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)), &(localClient), SLOT(turnDone(QString,QColor,QString,int,int,int)));
             connect(game, SIGNAL(playerRetired(QString, QColor)), &(localClient), SLOT(playerSurrendered(QString,QColor)));
             localClient.start(hostname, port);
@@ -78,50 +73,31 @@ void App::itemClicked ( QListWidgetItem * item ) {
     }
 }
 
-void App::getServersList() {
-    if (socket.hasPendingDatagrams()) {
-        qint64 datagramSize = socket.pendingDatagramSize();
-        char *data = (char*)::malloc(datagramSize);
-        QHostAddress address;
-        quint16 port;
-        int res=socket.readDatagram(data, datagramSize, &address, &port);
-        if (!servers.contains(address.toString())) {
-            MessageHeader header;
-            header.len = datagramSize-header.getLength();
-            header.type = mtPlayersList;
-            PlayersListMessage msg(header);
-            msg.fill(QByteArray::fromRawData(data+header.getLength(), header.len));
-            servers.insert(address.toString(), msg.getList());
-            lwServersList->addItem(address.toString());
-        }
-        free(data);
+void App::getServer(QString address, QList<ClientInfo> clients) {
+    if (servers.contains(address))
+    {
     }
+    servers.insert(address, clients);
+    lwServersList->addItem(address);
 }
 
 void App::searchBtnClicked() {
-    if (timer.isActive()) { // stop pressed
-        timer.stop();
-        socket.close();
+    if (serversSearcher.isActive()) { // stop pressed
+        serversSearcher.stop();
         pbSearch->setText("Start search");
         sbPort->setDisabled(false);
     } else { // start pressed
         lwServersList->clear();
         textEdit->clear();
         servers.clear();
-        socket.bind();
-        timer.start();
+        serversSearcher.start();
         sbPort->setDisabled(true);
         pbSearch->setText("Stop search");
     }
 }
 
-void App::timeout() {
-    int query = MAGIC_NUMBER;
-    quint16 port = sbPort->value();
-    socket.writeDatagram((char*)&query, sizeof(query), QHostAddress::Broadcast, port);
-}
-
 App::App(QWidget *parent) {
+    Q_UNUSED(parent);
     setupUi(this);
     connect(&localClient, SIGNAL(lcChatMessageReceive(ChatMessage)), this, SLOT(localChatMessageReceive(ChatMessage)));
     connect(&localClient, SIGNAL(lcPlayersListMessageReceive(PlayersListMessage)), this, SLOT(localPlayersListMessageReceive(PlayersListMessage)));
@@ -151,9 +127,9 @@ App::App(QWidget *parent) {
     connect(pbSearch, SIGNAL(clicked()), this, SLOT(searchBtnClicked()));
     connect(pbConnect, SIGNAL(clicked()), this, SLOT(connectBtnClicked()));
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(toggled(bool)));
-    connect(&socket, SIGNAL(readyRead()), this, SLOT(getServersList()));
-    timer.setInterval(1000);
-    connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
+    serversSearcher.setPort(sbPort->value());
+    connect(&serversSearcher, SIGNAL(getServer(QString,QList<ClientInfo>)), this, SLOT(getServer(QString,QList<ClientInfo>)));
+    connect(sbPort, SIGNAL(valueChanged(int)), &serversSearcher, SLOT(setPort(int)));
     connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
     game = new Game(this);
 }
@@ -228,6 +204,7 @@ void App::a_disconnectFromServer() {
         case(QMessageBox::Yes): break;
         }
     }
+    serversSearcher.start();
     localClient.quit();
     server.quit();
 }
@@ -243,6 +220,7 @@ void App::localSurrenderMessageReceive(SurrenderMessage msg) {
 }
 
 void App::localStartGameMessageReceive(StartGameMessage msg) {
+    Q_UNUSED(msg);
     game->start();
 }
 
@@ -306,10 +284,12 @@ void App::localDisconnected() {
     pinfo("Disconnected");
     listWidget->clear();
     if (game) {delete game;game=NULL;}
+    serversSearcher.start();
 }
 
 void App::localError(QString msg) {
     perror("Local error "+msg);
+    serversSearcher.start();
     localClient.quit();
     server.quit();
 }

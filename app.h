@@ -7,7 +7,7 @@
 #include "server.h"
 #include "clientinfo.h"
 #include "messagerecv.h"
-#include <QtNetwork/QUdpSocket>
+#include "serverssearcher.h"
 
 class App : public QMainWindow, public Ui::MainWindow {
     Q_OBJECT
@@ -15,12 +15,11 @@ public:
     App(QWidget *parent = 0);
     ~App();
 private:
-    QUdpSocket socket;
     QMap<QString, QList<ClientInfo> > servers;
-    QTimer timer;
     Server server;
     LCWrapper lcw;
     LocalClient localClient;
+    ServersSearcher serversSearcher;
     void perror(QString);
     void pinfo(QString);
 public:
@@ -49,8 +48,7 @@ public slots:
     void connectBtnClicked();
     void searchBtnClicked();
     void toggled(bool);
-    void getServersList();
-    void timeout();
+    void getServer(QString, QList<ClientInfo>);
     void itemClicked ( QListWidgetItem * item );
 signals:
     // to server

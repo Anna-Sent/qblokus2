@@ -1,5 +1,5 @@
 #include "server.h"
-#define MAGIC_NUMBER 110807
+#include "constants.h"
 #define PING_INTERVAL 5000
 #define PING_TIME 1500000
 

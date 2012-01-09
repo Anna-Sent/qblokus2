@@ -4,12 +4,15 @@ SOURCES = main.cpp \
     messagerecv.cpp \
     clientinfo.cpp \
     client.cpp \
-    server.cpp
+    server.cpp \
+    serverssearcher.cpp
 HEADERS = app.h \
     messagerecv.h \
     clientinfo.h \
     client.h \
-    server.h
+    server.h \
+    serverssearcher.h \
+    constants.h
 SOURCES += coloritem.cpp \
     tile.cpp \
     table.cpp \
