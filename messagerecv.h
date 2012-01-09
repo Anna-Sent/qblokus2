@@ -178,7 +178,7 @@ private:
 public:
     MessageReceiver(QTcpSocket*);
     ~MessageReceiver();
-    QTcpSocket* getSocket() {return socket;}
+    //QTcpSocket* getSocket() {return socket;}
 public slots:
     void readyRead();
 signals:
