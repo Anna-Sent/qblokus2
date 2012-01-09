@@ -7,13 +7,6 @@
 #include <QThread>
 #include <QtNetwork/QTcpSocket>
 
-class LCWrapper : public QThread {
-protected:
-    void run() {
-        exec();
-    }
-};
-
 class LocalClient: public QObject {
     Q_OBJECT
 private:
@@ -33,7 +26,6 @@ public:
     void setColor(QColor color) {info.color=color;}
     QString getNickname() {return info.name;}
     QColor getColor() {return info.color;}
-    //bool isConnected() {return socket->isConnected();}
 private slots:
     void localChatMessageReceive(ChatMessage);
     void localPlayersListMessageReceive(PlayersListMessage);

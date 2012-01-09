@@ -17,7 +17,6 @@ public:
 private:
     QMap<QString, QList<ClientInfo> > servers;
     Server server;
-    LCWrapper lcw;
     LocalClient localClient;
     ServersSearcher serversSearcher;
     void perror(QString);

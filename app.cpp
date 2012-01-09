@@ -121,8 +121,6 @@ App::App(QWidget *parent) {
     connect(this, SIGNAL(startGame()), &server, SLOT(startGame()));
     connect(this, SIGNAL(restartGame(QList<ClientInfo>)), &server, SLOT(restartGame(QList<ClientInfo>)));
     connect(this, SIGNAL(sendMessage(QString)), &localClient, SLOT(sendMessage(QString)));
-    localClient.moveToThread(&lcw);
-    lcw.start();
 
     connect(pbSearch, SIGNAL(clicked()), this, SLOT(searchBtnClicked()));
     connect(pbConnect, SIGNAL(clicked()), this, SLOT(connectBtnClicked()));
