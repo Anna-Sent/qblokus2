@@ -41,9 +41,10 @@ App::App(QWidget *parent)
     connect(this, SIGNAL(restartGame(QList<ClientInfo>)), &server, SLOT(restartGame(QList<ClientInfo>)));
     connect(this, SIGNAL(sendMessage(QString)), &localClient, SLOT(sendMessage(QString)));
 
-    connect(pbConnect, SIGNAL(clicked()), this, SLOT(connectBtnClicked()));
+    connect(pbConnect, SIGNAL(clicked()), this, SLOT(connectClicked()));
     connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(serversListItemClicked(QListWidgetItem*)));
     connect(lwServersList, SIGNAL(currentTextChanged(QString)), this, SLOT(serversListCurrentTextChanged(QString)));
+    connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(createServerToggled(bool)));
 
     // from servers searcher
     connect(&serversSearcher, SIGNAL(getServer(QString,QList<ClientInfo>)), this, SLOT(getServer(QString,QList<ClientInfo>)));
@@ -307,7 +308,7 @@ void App::localSurrenderMessageReceive(SurrenderMessage msg)
     game->remotePlayerRetired(msg.getName(), msg.getColor());
 }
 
-void App::connectBtnClicked()
+void App::connectClicked()
 {
     if (localClient.isStarted())
     {
@@ -387,6 +388,21 @@ void App::serversListCurrentTextChanged(QString text)
     if (text != "")
     {
         leServerAddress->setText(text);
+    }
+}
+
+void App::createServerToggled(bool value)
+{
+    if (value)
+    {
+        leServerAddress->setText("localhost");
+        serversSearcher.stop();
+        lwServersList->clear();
+        lwPlayersList->clear();
+    }
+    else
+    {
+        serversSearcher.start();
     }
 }
 

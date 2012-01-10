@@ -46,9 +46,10 @@ public slots:
     void localRestartGameMessageReceive(RestartGameMessage);
     void localSurrenderMessageReceive(SurrenderMessage);
 
-    void connectBtnClicked();
+    void connectClicked();
     void serversListItemClicked(QListWidgetItem *item);
     void serversListCurrentTextChanged(QString);
+    void createServerToggled(bool);
 
     // from servers searcher
     void getServer(QString, QList<ClientInfo>);

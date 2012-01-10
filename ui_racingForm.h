@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Tue Jan 10 19:08:42 2012
+** Created: Wed Jan 11 00:03:03 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -339,11 +339,10 @@ public:
 
         retranslateUi(MainWindow);
         QObject::connect(actionConnectionWindow, SIGNAL(toggled(bool)), dockWidget, SLOT(setVisible(bool)));
-        QObject::connect(cbCreateServer, SIGNAL(clicked(bool)), lServersList, SLOT(setDisabled(bool)));
-        QObject::connect(cbCreateServer, SIGNAL(clicked(bool)), lwServersList, SLOT(setDisabled(bool)));
-        QObject::connect(cbCreateServer, SIGNAL(clicked(bool)), lServerAddress, SLOT(setDisabled(bool)));
-        QObject::connect(cbCreateServer, SIGNAL(clicked(bool)), leServerAddress, SLOT(setDisabled(bool)));
-        QObject::connect(cbCreateServer, SIGNAL(clicked(bool)), sbClientsCount, SLOT(setEnabled(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lServersList, SLOT(setDisabled(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lServerAddress, SLOT(setDisabled(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), leServerAddress, SLOT(setDisabled(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), sbClientsCount, SLOT(setEnabled(bool)));
         QObject::connect(dockWidget, SIGNAL(visibilityChanged(bool)), actionConnectionWindow, SLOT(setChecked(bool)));
 
         QMetaObject::connectSlotsByName(MainWindow);

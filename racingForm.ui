@@ -369,7 +369,7 @@
   </connection>
   <connection>
    <sender>cbCreateServer</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>lServersList</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
@@ -385,23 +385,7 @@
   </connection>
   <connection>
    <sender>cbCreateServer</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>lwServersList</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>71</x>
-     <y>317</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>74</x>
-     <y>163</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cbCreateServer</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>lServerAddress</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
@@ -417,7 +401,7 @@
   </connection>
   <connection>
    <sender>cbCreateServer</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>leServerAddress</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
@@ -433,7 +417,7 @@
   </connection>
   <connection>
    <sender>cbCreateServer</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>sbClientsCount</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
