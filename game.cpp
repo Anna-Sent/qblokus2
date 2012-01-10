@@ -232,7 +232,7 @@ void Game::winner(Player* winner)
 
 bool operator==(const ClientInfo& a1,const ClientInfo& a2)
 {
-    return a1.name==a2.name&&a1.color==a2.color;
+    return a1.name()==a2.name()&&a1.color()==a2.color();
 }
 
 void Game::retirePlayer(int i)
@@ -270,7 +270,7 @@ void Game::updatePlayers(QList<ClientInfo> clients,QList<bool> local)
         clear();
         for(int i=0;i<clients.size();++i)
         {
-            addPlayer(clients[i].name,clients[i].color,local[i]?ptLocal:ptNetwork);
+            addPlayer(clients[i].name(),clients[i].color(),local[i]?ptLocal:ptNetwork);
         }
     }
     else
@@ -283,7 +283,7 @@ void Game::updatePlayers(QList<ClientInfo> clients,QList<bool> local)
             {
                 if (pl==players.size())
                 {
-                    addPlayer(clients[cl].name,clients[cl].color,local[cl]?ptLocal:ptNetwork);
+                    addPlayer(clients[cl].name(),clients[cl].color(),local[cl]?ptLocal:ptNetwork);
                 }
                 if (cl==clients.size())
                 {
@@ -295,8 +295,8 @@ void Game::updatePlayers(QList<ClientInfo> clients,QList<bool> local)
                     pl=players.size();
                 }
             } else {
-                cerr << players[pl]->getName().toStdString() << " " << clients[cl].name.toStdString() << endl;
-                if (players[pl]->getName()==clients[cl].name&&players[pl]->getColor()==clients[cl].color)
+                cerr << players[pl]->getName().toStdString() << " " << clients[cl].name().toStdString() << endl;
+                if (players[pl]->getName()==clients[cl].name()&&players[pl]->getColor()==clients[cl].color())
                 {
                     ++pl;
                     ++cl;

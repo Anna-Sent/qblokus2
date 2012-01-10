@@ -1,33 +1,40 @@
 #include "clientinfo.h"
 
-QDataStream &operator<<(QDataStream &out, const ClientInfo& ci)
+QByteArray ClientInfo::serialize() const
 {
-    out << ci.name << ci.color;
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, ClientInfo& ci)
-{
-    in >> ci.name >> ci.color;
-    return in;
-}
-
-int ClientInfo::size() const { return name.toUtf8().size() + sizeof(int) + sizeof(QColor); }
-
-QByteArray ClientInfo::serialize() const {
     QByteArray result;
-    QByteArray tmp = name.toUtf8();
+    QByteArray tmp = _name.toUtf8();
     int size = tmp.size();
-    result.append(QByteArray::fromRawData((const char*)&size,sizeof(int)));
+    result.append(QByteArray::fromRawData((const char *)&size,sizeof(int)));
     result.append(tmp);
-    result.append(QByteArray::fromRawData((const char*)&color,sizeof(QColor)));
+    result.append(QByteArray::fromRawData((const char *)&_color,sizeof(QColor)));
     return result;
 }
 
-void ClientInfo::fill(const char* data) {
-    int size = *((int*)data);
+int ClientInfo::size() const
+{
+    return _name.toUtf8().size() + sizeof(int) + sizeof(QColor);
+}
+
+void ClientInfo::fill(const char *data)
+{
+    int size = *((int *)data);
     data += sizeof(int);
-    name = QString::fromUtf8(data,size);
+    _name = QString::fromUtf8(data, size);
     data += size;
-    ::memmove(&color, data, sizeof(QColor));
+    ::memmove(&_color, data, sizeof(QColor));
+}
+
+QDataStream &operator<<(QDataStream &out, const ClientInfo &ci)
+{
+    out << ci.name() << ci.color();
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, ClientInfo &ci)
+{
+    QString name = ci.name();
+    QColor color = ci.color();
+    in >> name >> color;
+    return in;
 }

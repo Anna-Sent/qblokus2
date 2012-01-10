@@ -46,9 +46,9 @@ private:
 public:
     ChatMessage() {}
     ChatMessage(const MessageHeader& header);
-    QString getName() const {return info.name;}
+    QString getName() const {return info.name();}
     QString getText() const {return text;}
-    QColor getColor() const {return info.color;}
+    QColor getColor() const {return info.color();}
     ChatMessage(QString name, QString text, QColor color);
     QByteArray serialize() const;
     void fill(const QByteArray&);
@@ -77,8 +77,8 @@ class ClientMessage : public ComplexMessage {
 protected:
     ClientInfo info;
 public:
-    QString getName() const {return info.name;}
-    QColor getColor() const {return info.color;}
+    QString getName() const {return info.name();}
+    QColor getColor() const {return info.color();}
     ClientInfo getInfo() const {return info;}
     virtual QByteArray serialize() const;
     virtual void fill(const QByteArray&);
@@ -158,8 +158,8 @@ public:
     SurrenderMessage() {}
     SurrenderMessage(QString name, QColor color)
     {
-        info.name=name;
-        info.color=color;
+        info.setName(name);
+        info.setColor(color);
         header.type=mtSurrender;
         header.len=info.size();
     }

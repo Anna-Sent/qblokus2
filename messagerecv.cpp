@@ -142,8 +142,8 @@ QByteArray MessageHeader::serialize() const {
 }
 
 ChatMessage::ChatMessage(QString name, QString text, QColor color) {
-    this->info.name = name;
-    this->info.color = color;
+    info.setName(name);
+    info.setColor(color);
     header.len = info.size();
     header.len += (text.toUtf8().size() + sizeof(int));
     header.type = mtChat;
@@ -221,22 +221,22 @@ void ClientMessage::fill(const QByteArray& buffer) {
 }
 
 ClientConnectMessage::ClientConnectMessage(QString name, QColor color) {
-    this->info.name = name;
-    this->info.color = color;
+    info.setName(name);
+    info.setColor(color);
     header.len = info.size();
     header.type = mtClientConnect;
 }
 
 ClientDisconnectMessage::ClientDisconnectMessage(QString name, QColor color) {
-    this->info.name = name;
-    this->info.color = color;
+    info.setName(name);
+    info.setColor(color);
     header.len = info.size();
     header.type = mtClientDisconnect;
 }
 
 TurnMessage::TurnMessage(QString name, QColor color,QString tile, int id, int x, int y) {
-    this->info.name = name;
-    this->info.color = color;
+    info.setName(name);
+    info.setColor(color);
     this->id = id;
     this->x = x;
     this->y = y;

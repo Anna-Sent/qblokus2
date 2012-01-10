@@ -23,10 +23,10 @@ public:
     ~LocalClient() { delete receiver; }
     void quit() { stop(); }
     void start(QString hostname, quint16 port) {socket->connectToHost(hostname, port);localtimer.start();_isStarted=true;}
-    void setNickname(QString name) {info.name=name;}
-    void setColor(QColor color) {info.color=color;}
-    QString getNickname() {return info.name;}
-    QColor getColor() {return info.color;}
+    void setNickname(QString name) {info.setName(name);}
+    void setColor(QColor color) {info.setColor(color);}
+    QString getNickname() {return info.name();}
+    QColor getColor() {return info.color();}
     bool isStarted() const {return _isStarted;}
 private slots:
     void localChatMessageReceive(ChatMessage);

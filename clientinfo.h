@@ -6,15 +6,21 @@
 #include <QMetaType>
 
 class ClientInfo {
+private:
+    QColor _color;
+    QString _name;
+
 public:
-    QString name;
-    QColor color;
+    ClientInfo() : _color(Qt::black), _name("") { }
+    ClientInfo(const ClientInfo &other) { _color = other._color; _name = other._name; }
+    ~ClientInfo() { }
+    QColor color() const { return _color; }
+    QString name() const { return _name; }
+    void setColor(const QColor &value) { _color = value; }
+    void setName(const QString &value) { _name = value; }
     QByteArray serialize() const;
-    void fill(const char*);
     int size() const;
-    ClientInfo():name(""),color(Qt::black){}
-    ClientInfo(const ClientInfo &other) {name = other.name;color = other.color;}
-    ~ClientInfo() {}
+    void fill(const char*);
 };
 
 Q_DECLARE_METATYPE(ClientInfo)

@@ -104,8 +104,8 @@ void App::userStartGame()
                     QList<bool> isLocal;
                     for (int i = 0; i < list.size(); ++i)
                     {
-                        isLocal.append(list[i].name == localClient.getNickname()
-                                       && list[i].color == localClient.getColor());
+                        isLocal.append(list[i].name() == localClient.getNickname()
+                                       && list[i].color() == localClient.getColor());
                     }
 
                     game->updatePlayers(list, isLocal);
@@ -231,12 +231,12 @@ void App::localPlayersListMessageReceive(PlayersListMessage msg)
     {
         QListWidgetItem *item = new QListWidgetItem();
         QBrush brush = item->foreground();
-        brush.setColor(clients[i].color);
+        brush.setColor(clients[i].color());
         item->setForeground(brush);
-        item->setText(clients[i].name);
+        item->setText(clients[i].name());
         lwPlayersList->addItem(item);
-        isLocal.append(clients[i].name == localClient.getNickname()
-                       && clients[i].color == localClient.getColor());
+        isLocal.append(clients[i].name() == localClient.getNickname()
+                       && clients[i].color() == localClient.getColor());
     }
 
     lwPlayersList->sortItems();
@@ -294,8 +294,8 @@ void App::localRestartGameMessageReceive(RestartGameMessage msg)
         QList<bool> isLocal;
         for (int i = 0; i < list.size(); ++i)
         {
-            isLocal.append(list[i].name == localClient.getNickname()
-                           && list[i].color == localClient.getColor());
+            isLocal.append(list[i].name() == localClient.getNickname()
+                           && list[i].color() == localClient.getColor());
         }
 
         game->updatePlayers(list, isLocal);
@@ -376,9 +376,9 @@ void App::serversListItemClicked(QListWidgetItem *item)
     {
         QListWidgetItem *item = new QListWidgetItem();
         QBrush brush = item->foreground();
-        brush.setColor(clients[i].color);
+        brush.setColor(clients[i].color());
         item->setForeground(brush);
-        item->setText(clients[i].name);
+        item->setText(clients[i].name());
         lwPlayersList->addItem(item);
     }
 }
