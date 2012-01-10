@@ -1,5 +1,17 @@
 #include "clientinfo.h"
 
+QDataStream &operator<<(QDataStream &out, const ClientInfo& ci)
+{
+    out << ci.name << ci.color;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, ClientInfo& ci)
+{
+    in >> ci.name >> ci.color;
+    return in;
+}
+
 int ClientInfo::size() const { return name.toUtf8().size() + sizeof(int) + sizeof(QColor); }
 
 QByteArray ClientInfo::serialize() const {
