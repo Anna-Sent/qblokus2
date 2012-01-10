@@ -21,14 +21,14 @@ signals:
     void getServer(QString address, QList<ClientInfo> clients);
 
 private slots:
-    void timeout();
     void readFromSocket();
+    void timeout();
 
 public slots:
-    bool isActive() const {return timer.isActive();}
-    void start() {socket.bind();timer.start();}
-    void stop() {timer.stop();socket.close();}
-    void setPort(int port) {this->port = port;}
+    bool isActive() const;
+    void setPort(int port);
+    void start();
+    void stop();
 };
 
 #endif // SERVERSSEARCHER_H
