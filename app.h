@@ -5,30 +5,31 @@
 #include "game.h"
 #include "client.h"
 #include "server.h"
-#include "clientinfo.h"
 #include "messagerecv.h"
 #include "serverssearcher.h"
 
 class App : public QMainWindow, public Ui::MainWindow {
     Q_OBJECT
+
 public:
     App(QWidget *parent = 0);
     ~App();
+
 private:
-    QMap<QString, QList<ClientInfo> > servers;
+    Game *game;
     Server server;
     LocalClient localClient;
     ServersSearcher serversSearcher;
     void perror(QString);
     void pinfo(QString);
-public:
-    Game *game;
+
 public slots:
     // from graphics
-    void a_startGame();
-    void le_sendMessage();
-    void a_exit();
-    void a_disconnectFromServer();
+    void userStartGame();
+    void userQuit();
+    void userDisconnectFromServer();
+    void userSendMessage();
+
     // from local client
     void localError(QString);
     void localConnected();
@@ -38,6 +39,7 @@ public slots:
     void localClientConnectMessageReceive(ClientConnectMessage);
     void localClientDisconnectMessageReceive(ClientDisconnectMessage);
     void localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage);
+
     // game signals
     void localTurnMessageReceive(TurnMessage);
     void localStartGameMessageReceive(StartGameMessage);
@@ -45,18 +47,21 @@ public slots:
     void localSurrenderMessageReceive(SurrenderMessage);
 
     void connectBtnClicked();
-    void searchBtnClicked();
-    void toggled(bool);
+    void serversListItemClicked(QListWidgetItem *item);
+    void serversListCurrentTextChanged(QString);
+
+    // from servers searcher
     void getServer(QString, QList<ClientInfo>);
-    void itemClicked ( QListWidgetItem * item );
+
 signals:
     // to server
     void startGame();
     void restartGame(QList<ClientInfo>);
+
     // to client
     void sendMessage(QString);
-    void tolcTurnDone(QString name,QColor color,QString tile,int id,int x,int y);
-    void tolcPlayerSurrendered(QString name,QColor color);
+    void turnDone(QString name, QColor color, QString tile, int id, int x, int y);
+    void playerSurrendered(QString name, QColor color);
 };
 
 #endif

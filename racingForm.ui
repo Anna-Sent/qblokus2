@@ -7,15 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>1182</width>
-    <height>590</height>
+    <height>670</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>QBLOKUS</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_11">
+    <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
       <property name="sizeConstraint">
        <enum>QLayout::SetFixedSize</enum>
@@ -83,7 +83,7 @@
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="QPushButton" name="btnSurrender">
+       <widget class="QPushButton" name="pbSurrender">
         <property name="text">
          <string>Сдаться!</string>
         </property>
@@ -104,65 +104,36 @@
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>Меню</string>
+     <string>Menu</string>
     </property>
     <addaction name="actionStartGame"/>
     <addaction name="actionDisconnectFromServer"/>
     <addaction name="separator"/>
-    <addaction name="actionExit"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionConnectionWindow"/>
    </widget>
    <addaction name="menu"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget">
    <property name="floating">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+    <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <attribute name="dockWidgetArea">
-    <number>2</number>
+    <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QGridLayout" name="gridLayout_9">
-     <item row="4" column="0">
-      <widget class="QLineEdit" name="lineEdit"/>
-     </item>
-     <item row="0" column="0">
-      <widget class="QListWidget" name="listWidget"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QTextEdit" name="textEdit">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dockWidget_3">
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
     <layout class="QGridLayout" name="gridLayout_10">
-     <item row="0" column="0">
+     <item row="2" column="0">
       <layout class="QGridLayout" name="gridLayout_7">
        <property name="sizeConstraint">
         <enum>QLayout::SetMaximumSize</enum>
@@ -171,10 +142,10 @@
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="0" column="0">
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QListWidget" name="lwServersList"/>
            </item>
-           <item row="2" column="0">
+           <item row="5" column="0">
             <layout class="QGridLayout" name="gridLayout_3">
              <item row="0" column="0">
               <widget class="QCheckBox" name="cbCreateServer">
@@ -214,10 +185,24 @@
              </item>
             </layout>
            </item>
-           <item row="1" column="0">
-            <widget class="QLineEdit" name="leServerIP">
+           <item row="3" column="0">
+            <widget class="QLineEdit" name="leServerAddress">
              <property name="text">
               <string>localhost</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="lServersList">
+             <property name="text">
+              <string>Local servers list</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="lServerAddress">
+             <property name="text">
+              <string>Server address</string>
              </property>
             </widget>
            </item>
@@ -227,44 +212,26 @@
        </item>
        <item row="0" column="1">
         <layout class="QGridLayout" name="gridLayout_6">
-         <item row="0" column="0">
-          <layout class="QGridLayout" name="gridLayout_5">
-           <item row="0" column="0">
-            <widget class="QPushButton" name="pbSearch">
-             <property name="text">
-              <string>Start search</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QPushButton" name="pbConnect">
-             <property name="text">
-              <string>Connect to server</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
          <item row="4" column="0">
           <layout class="QGridLayout" name="gridLayout_8">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QLabel" name="lPort">
              <property name="text">
               <string>Port</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item row="4" column="0">
             <widget class="QLabel" name="lNickname">
              <property name="text">
               <string>Nickname</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="5" column="0">
             <widget class="QLineEdit" name="leNickname"/>
            </item>
-           <item row="1" column="0">
+           <item row="2" column="0">
             <widget class="QSpinBox" name="sbPort">
              <property name="minimum">
               <number>1024</number>
@@ -275,6 +242,37 @@
              <property name="value">
               <number>1500</number>
              </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QPushButton" name="pbConnect">
+             <property name="text">
+              <string>Connect to server</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QComboBox" name="cbColor">
+             <item>
+              <property name="text">
+               <string>Red</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Yellow</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Green</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Blue</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
@@ -292,34 +290,13 @@
            </property>
           </spacer>
          </item>
-         <item row="3" column="0">
-          <widget class="QComboBox" name="comboBox">
-           <item>
-            <property name="text">
-             <string>Красный</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Желтый</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Зеленый</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Синий</string>
-            </property>
-           </item>
-          </widget>
-         </item>
          <item row="1" column="0">
-          <widget class="QTextEdit" name="textEdit_2">
-           <property name="readOnly">
-            <bool>true</bool>
+          <widget class="QListWidget" name="lwPlayersList"/>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="lPlayersList">
+           <property name="text">
+            <string>Players list</string>
            </property>
           </widget>
          </item>
@@ -327,17 +304,27 @@
        </item>
       </layout>
      </item>
+     <item row="4" column="0">
+      <widget class="QTextEdit" name="textEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLineEdit" name="lineEdit"/>
+     </item>
     </layout>
    </widget>
   </widget>
-  <action name="actionExit">
+  <action name="actionQuit">
    <property name="text">
-    <string>Выход</string>
+    <string>Quit</string>
    </property>
   </action>
   <action name="actionDisconnectFromServer">
    <property name="text">
-    <string>Отключится от сервера</string>
+    <string>Disconnect from server</string>
    </property>
   </action>
   <action name="actionReconnectToServer">
@@ -347,10 +334,134 @@
   </action>
   <action name="actionStartGame">
    <property name="text">
-    <string>Начать игру</string>
+    <string>Start game</string>
+   </property>
+  </action>
+  <action name="actionConnectionWindow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Connection window</string>
    </property>
   </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionConnectionWindow</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dockWidget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>190</x>
+     <y>335</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCreateServer</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>lServersList</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>74</x>
+     <y>68</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCreateServer</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>lwServersList</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>74</x>
+     <y>163</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCreateServer</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>lServerAddress</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>74</x>
+     <y>258</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCreateServer</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>leServerAddress</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>74</x>
+     <y>286</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCreateServer</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>sbClientsCount</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>412</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>71</x>
+     <y>443</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dockWidget</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>actionConnectionWindow</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>190</x>
+     <y>335</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Sun Jan 8 21:09:50 2012
+** Created: Tue Jan 10 19:08:42 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -17,10 +17,8 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QComboBox>
 #include <QtGui/QDockWidget>
-#include <QtGui/QFrame>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QGridLayout>
-#include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLCDNumber>
 #include <QtGui/QLabel>
@@ -41,12 +39,13 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
-    QAction *actionExit;
+    QAction *actionQuit;
     QAction *actionDisconnectFromServer;
     QAction *actionReconnectToServer;
     QAction *actionStartGame;
+    QAction *actionConnectionWindow;
     QWidget *centralwidget;
-    QHBoxLayout *horizontalLayout;
+    QGridLayout *gridLayout_11;
     QGridLayout *gridLayout;
     QLCDNumber *score1;
     QLCDNumber *score3;
@@ -57,20 +56,13 @@ public:
     QGraphicsView *gvPlayer2;
     QGraphicsView *gvTable;
     QGraphicsView *gvPlayer4;
-    QPushButton *btnSurrender;
+    QPushButton *pbSurrender;
     QMenuBar *menubar;
     QMenu *menu;
+    QMenu *menuView;
     QStatusBar *statusbar;
     QDockWidget *dockWidget;
     QWidget *dockWidgetContents;
-    QGridLayout *gridLayout_9;
-    QLineEdit *lineEdit;
-    QListWidget *listWidget;
-    QFrame *line;
-    QTextEdit *textEdit;
-    QFrame *line_2;
-    QDockWidget *dockWidget_3;
-    QWidget *dockWidgetContents_3;
     QGridLayout *gridLayout_10;
     QGridLayout *gridLayout_7;
     QGridLayout *gridLayout_4;
@@ -80,37 +72,44 @@ public:
     QCheckBox *cbCreateServer;
     QSpinBox *sbClientsCount;
     QSpacerItem *horizontalSpacer;
-    QLineEdit *leServerIP;
+    QLineEdit *leServerAddress;
+    QLabel *lServersList;
+    QLabel *lServerAddress;
     QGridLayout *gridLayout_6;
-    QGridLayout *gridLayout_5;
-    QPushButton *pbSearch;
-    QPushButton *pbConnect;
     QGridLayout *gridLayout_8;
     QLabel *lPort;
     QLabel *lNickname;
     QLineEdit *leNickname;
     QSpinBox *sbPort;
+    QPushButton *pbConnect;
+    QComboBox *cbColor;
     QSpacerItem *verticalSpacer;
-    QComboBox *comboBox;
-    QTextEdit *textEdit_2;
+    QListWidget *lwPlayersList;
+    QLabel *lPlayersList;
+    QTextEdit *textEdit;
+    QLineEdit *lineEdit;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(1182, 590);
-        actionExit = new QAction(MainWindow);
-        actionExit->setObjectName(QString::fromUtf8("actionExit"));
+        MainWindow->resize(1182, 670);
+        actionQuit = new QAction(MainWindow);
+        actionQuit->setObjectName(QString::fromUtf8("actionQuit"));
         actionDisconnectFromServer = new QAction(MainWindow);
         actionDisconnectFromServer->setObjectName(QString::fromUtf8("actionDisconnectFromServer"));
         actionReconnectToServer = new QAction(MainWindow);
         actionReconnectToServer->setObjectName(QString::fromUtf8("actionReconnectToServer"));
         actionStartGame = new QAction(MainWindow);
         actionStartGame->setObjectName(QString::fromUtf8("actionStartGame"));
+        actionConnectionWindow = new QAction(MainWindow);
+        actionConnectionWindow->setObjectName(QString::fromUtf8("actionConnectionWindow"));
+        actionConnectionWindow->setCheckable(true);
+        actionConnectionWindow->setChecked(true);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        horizontalLayout = new QHBoxLayout(centralwidget);
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        gridLayout_11 = new QGridLayout(centralwidget);
+        gridLayout_11->setObjectName(QString::fromUtf8("gridLayout_11"));
         gridLayout = new QGridLayout();
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         gridLayout->setSizeConstraint(QLayout::SetFixedSize);
@@ -172,13 +171,13 @@ public:
 
         gridLayout->addWidget(gvPlayer4, 3, 2, 2, 1);
 
-        btnSurrender = new QPushButton(centralwidget);
-        btnSurrender->setObjectName(QString::fromUtf8("btnSurrender"));
+        pbSurrender = new QPushButton(centralwidget);
+        pbSurrender->setObjectName(QString::fromUtf8("pbSurrender"));
 
-        gridLayout->addWidget(btnSurrender, 4, 1, 1, 1);
+        gridLayout->addWidget(pbSurrender, 4, 1, 1, 1);
 
 
-        horizontalLayout->addLayout(gridLayout);
+        gridLayout_11->addLayout(gridLayout, 0, 0, 1, 1);
 
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
@@ -186,55 +185,19 @@ public:
         menubar->setGeometry(QRect(0, 0, 1182, 23));
         menu = new QMenu(menubar);
         menu->setObjectName(QString::fromUtf8("menu"));
+        menuView = new QMenu(menubar);
+        menuView->setObjectName(QString::fromUtf8("menuView"));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
         MainWindow->setStatusBar(statusbar);
         dockWidget = new QDockWidget(MainWindow);
         dockWidget->setObjectName(QString::fromUtf8("dockWidget"));
-        dockWidget->setFloating(false);
-        dockWidget->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
+        dockWidget->setFloating(true);
+        dockWidget->setFeatures(QDockWidget::AllDockWidgetFeatures);
         dockWidgetContents = new QWidget();
         dockWidgetContents->setObjectName(QString::fromUtf8("dockWidgetContents"));
-        gridLayout_9 = new QGridLayout(dockWidgetContents);
-        gridLayout_9->setObjectName(QString::fromUtf8("gridLayout_9"));
-        lineEdit = new QLineEdit(dockWidgetContents);
-        lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
-
-        gridLayout_9->addWidget(lineEdit, 4, 0, 1, 1);
-
-        listWidget = new QListWidget(dockWidgetContents);
-        listWidget->setObjectName(QString::fromUtf8("listWidget"));
-
-        gridLayout_9->addWidget(listWidget, 0, 0, 1, 1);
-
-        line = new QFrame(dockWidgetContents);
-        line->setObjectName(QString::fromUtf8("line"));
-        line->setFrameShape(QFrame::HLine);
-        line->setFrameShadow(QFrame::Sunken);
-
-        gridLayout_9->addWidget(line, 1, 0, 1, 1);
-
-        textEdit = new QTextEdit(dockWidgetContents);
-        textEdit->setObjectName(QString::fromUtf8("textEdit"));
-        textEdit->setReadOnly(true);
-
-        gridLayout_9->addWidget(textEdit, 2, 0, 1, 1);
-
-        line_2 = new QFrame(dockWidgetContents);
-        line_2->setObjectName(QString::fromUtf8("line_2"));
-        line_2->setFrameShape(QFrame::HLine);
-        line_2->setFrameShadow(QFrame::Sunken);
-
-        gridLayout_9->addWidget(line_2, 3, 0, 1, 1);
-
-        dockWidget->setWidget(dockWidgetContents);
-        MainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget);
-        dockWidget_3 = new QDockWidget(MainWindow);
-        dockWidget_3->setObjectName(QString::fromUtf8("dockWidget_3"));
-        dockWidgetContents_3 = new QWidget();
-        dockWidgetContents_3->setObjectName(QString::fromUtf8("dockWidgetContents_3"));
-        gridLayout_10 = new QGridLayout(dockWidgetContents_3);
+        gridLayout_10 = new QGridLayout(dockWidgetContents);
         gridLayout_10->setObjectName(QString::fromUtf8("gridLayout_10"));
         gridLayout_7 = new QGridLayout();
         gridLayout_7->setObjectName(QString::fromUtf8("gridLayout_7"));
@@ -243,19 +206,19 @@ public:
         gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
         gridLayout_2 = new QGridLayout();
         gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
-        lwServersList = new QListWidget(dockWidgetContents_3);
+        lwServersList = new QListWidget(dockWidgetContents);
         lwServersList->setObjectName(QString::fromUtf8("lwServersList"));
 
-        gridLayout_2->addWidget(lwServersList, 0, 0, 1, 1);
+        gridLayout_2->addWidget(lwServersList, 1, 0, 1, 1);
 
         gridLayout_3 = new QGridLayout();
         gridLayout_3->setObjectName(QString::fromUtf8("gridLayout_3"));
-        cbCreateServer = new QCheckBox(dockWidgetContents_3);
+        cbCreateServer = new QCheckBox(dockWidgetContents);
         cbCreateServer->setObjectName(QString::fromUtf8("cbCreateServer"));
 
         gridLayout_3->addWidget(cbCreateServer, 0, 0, 1, 1);
 
-        sbClientsCount = new QSpinBox(dockWidgetContents_3);
+        sbClientsCount = new QSpinBox(dockWidgetContents);
         sbClientsCount->setObjectName(QString::fromUtf8("sbClientsCount"));
         sbClientsCount->setEnabled(false);
         sbClientsCount->setMinimum(3);
@@ -269,12 +232,22 @@ public:
         gridLayout_3->addItem(horizontalSpacer, 1, 1, 1, 1);
 
 
-        gridLayout_2->addLayout(gridLayout_3, 2, 0, 1, 1);
+        gridLayout_2->addLayout(gridLayout_3, 5, 0, 1, 1);
 
-        leServerIP = new QLineEdit(dockWidgetContents_3);
-        leServerIP->setObjectName(QString::fromUtf8("leServerIP"));
+        leServerAddress = new QLineEdit(dockWidgetContents);
+        leServerAddress->setObjectName(QString::fromUtf8("leServerAddress"));
 
-        gridLayout_2->addWidget(leServerIP, 1, 0, 1, 1);
+        gridLayout_2->addWidget(leServerAddress, 3, 0, 1, 1);
+
+        lServersList = new QLabel(dockWidgetContents);
+        lServersList->setObjectName(QString::fromUtf8("lServersList"));
+
+        gridLayout_2->addWidget(lServersList, 0, 0, 1, 1);
+
+        lServerAddress = new QLabel(dockWidgetContents);
+        lServerAddress->setObjectName(QString::fromUtf8("lServerAddress"));
+
+        gridLayout_2->addWidget(lServerAddress, 2, 0, 1, 1);
 
 
         gridLayout_4->addLayout(gridLayout_2, 0, 0, 1, 1);
@@ -284,45 +257,40 @@ public:
 
         gridLayout_6 = new QGridLayout();
         gridLayout_6->setObjectName(QString::fromUtf8("gridLayout_6"));
-        gridLayout_5 = new QGridLayout();
-        gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
-        pbSearch = new QPushButton(dockWidgetContents_3);
-        pbSearch->setObjectName(QString::fromUtf8("pbSearch"));
-
-        gridLayout_5->addWidget(pbSearch, 0, 0, 1, 1);
-
-        pbConnect = new QPushButton(dockWidgetContents_3);
-        pbConnect->setObjectName(QString::fromUtf8("pbConnect"));
-
-        gridLayout_5->addWidget(pbConnect, 1, 0, 1, 1);
-
-
-        gridLayout_6->addLayout(gridLayout_5, 0, 0, 1, 1);
-
         gridLayout_8 = new QGridLayout();
         gridLayout_8->setObjectName(QString::fromUtf8("gridLayout_8"));
-        lPort = new QLabel(dockWidgetContents_3);
+        lPort = new QLabel(dockWidgetContents);
         lPort->setObjectName(QString::fromUtf8("lPort"));
 
-        gridLayout_8->addWidget(lPort, 0, 0, 1, 1);
+        gridLayout_8->addWidget(lPort, 1, 0, 1, 1);
 
-        lNickname = new QLabel(dockWidgetContents_3);
+        lNickname = new QLabel(dockWidgetContents);
         lNickname->setObjectName(QString::fromUtf8("lNickname"));
 
-        gridLayout_8->addWidget(lNickname, 2, 0, 1, 1);
+        gridLayout_8->addWidget(lNickname, 4, 0, 1, 1);
 
-        leNickname = new QLineEdit(dockWidgetContents_3);
+        leNickname = new QLineEdit(dockWidgetContents);
         leNickname->setObjectName(QString::fromUtf8("leNickname"));
 
-        gridLayout_8->addWidget(leNickname, 3, 0, 1, 1);
+        gridLayout_8->addWidget(leNickname, 5, 0, 1, 1);
 
-        sbPort = new QSpinBox(dockWidgetContents_3);
+        sbPort = new QSpinBox(dockWidgetContents);
         sbPort->setObjectName(QString::fromUtf8("sbPort"));
         sbPort->setMinimum(1024);
         sbPort->setMaximum(65535);
         sbPort->setValue(1500);
 
-        gridLayout_8->addWidget(sbPort, 1, 0, 1, 1);
+        gridLayout_8->addWidget(sbPort, 2, 0, 1, 1);
+
+        pbConnect = new QPushButton(dockWidgetContents);
+        pbConnect->setObjectName(QString::fromUtf8("pbConnect"));
+
+        gridLayout_8->addWidget(pbConnect, 8, 0, 1, 1);
+
+        cbColor = new QComboBox(dockWidgetContents);
+        cbColor->setObjectName(QString::fromUtf8("cbColor"));
+
+        gridLayout_8->addWidget(cbColor, 7, 0, 1, 1);
 
 
         gridLayout_6->addLayout(gridLayout_8, 4, 0, 1, 1);
@@ -331,33 +299,52 @@ public:
 
         gridLayout_6->addItem(verticalSpacer, 2, 0, 1, 1);
 
-        comboBox = new QComboBox(dockWidgetContents_3);
-        comboBox->setObjectName(QString::fromUtf8("comboBox"));
+        lwPlayersList = new QListWidget(dockWidgetContents);
+        lwPlayersList->setObjectName(QString::fromUtf8("lwPlayersList"));
 
-        gridLayout_6->addWidget(comboBox, 3, 0, 1, 1);
+        gridLayout_6->addWidget(lwPlayersList, 1, 0, 1, 1);
 
-        textEdit_2 = new QTextEdit(dockWidgetContents_3);
-        textEdit_2->setObjectName(QString::fromUtf8("textEdit_2"));
-        textEdit_2->setReadOnly(true);
+        lPlayersList = new QLabel(dockWidgetContents);
+        lPlayersList->setObjectName(QString::fromUtf8("lPlayersList"));
 
-        gridLayout_6->addWidget(textEdit_2, 1, 0, 1, 1);
+        gridLayout_6->addWidget(lPlayersList, 0, 0, 1, 1);
 
 
         gridLayout_7->addLayout(gridLayout_6, 0, 1, 1, 1);
 
 
-        gridLayout_10->addLayout(gridLayout_7, 0, 0, 1, 1);
+        gridLayout_10->addLayout(gridLayout_7, 2, 0, 1, 1);
 
-        dockWidget_3->setWidget(dockWidgetContents_3);
-        MainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget_3);
+        textEdit = new QTextEdit(dockWidgetContents);
+        textEdit->setObjectName(QString::fromUtf8("textEdit"));
+        textEdit->setReadOnly(true);
+
+        gridLayout_10->addWidget(textEdit, 4, 0, 1, 1);
+
+        lineEdit = new QLineEdit(dockWidgetContents);
+        lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
+
+        gridLayout_10->addWidget(lineEdit, 5, 0, 1, 1);
+
+        dockWidget->setWidget(dockWidgetContents);
+        MainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dockWidget);
 
         menubar->addAction(menu->menuAction());
+        menubar->addAction(menuView->menuAction());
         menu->addAction(actionStartGame);
         menu->addAction(actionDisconnectFromServer);
         menu->addSeparator();
-        menu->addAction(actionExit);
+        menu->addAction(actionQuit);
+        menuView->addAction(actionConnectionWindow);
 
         retranslateUi(MainWindow);
+        QObject::connect(actionConnectionWindow, SIGNAL(toggled(bool)), dockWidget, SLOT(setVisible(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(clicked(bool)), lServersList, SLOT(setDisabled(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(clicked(bool)), lwServersList, SLOT(setDisabled(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(clicked(bool)), lServerAddress, SLOT(setDisabled(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(clicked(bool)), leServerAddress, SLOT(setDisabled(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(clicked(bool)), sbClientsCount, SLOT(setEnabled(bool)));
+        QObject::connect(dockWidget, SIGNAL(visibilityChanged(bool)), actionConnectionWindow, SLOT(setChecked(bool)));
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
@@ -365,25 +352,29 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "QBLOKUS", 0, QApplication::UnicodeUTF8));
-        actionExit->setText(QApplication::translate("MainWindow", "\320\222\321\213\321\205\320\276\320\264", 0, QApplication::UnicodeUTF8));
-        actionDisconnectFromServer->setText(QApplication::translate("MainWindow", "\320\236\321\202\320\272\320\273\321\216\321\207\320\270\321\202\321\201\321\217 \320\276\321\202 \321\201\320\265\321\200\320\262\320\265\321\200\320\260", 0, QApplication::UnicodeUTF8));
+        actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
+        actionDisconnectFromServer->setText(QApplication::translate("MainWindow", "Disconnect from server", 0, QApplication::UnicodeUTF8));
         actionReconnectToServer->setText(QApplication::translate("MainWindow", "\320\237\320\265\321\200\320\265\320\277\320\276\320\264\320\272\320\273\321\216\321\207\320\270\321\202\321\214\321\201\321\217 \320\272 \321\201\320\265\321\200\320\262\320\265\321\200\321\203", 0, QApplication::UnicodeUTF8));
-        actionStartGame->setText(QApplication::translate("MainWindow", "\320\235\320\260\321\207\320\260\321\202\321\214 \320\270\320\263\321\200\321\203", 0, QApplication::UnicodeUTF8));
-        btnSurrender->setText(QApplication::translate("MainWindow", "\320\241\320\264\320\260\321\202\321\214\321\201\321\217!", 0, QApplication::UnicodeUTF8));
-        menu->setTitle(QApplication::translate("MainWindow", "\320\234\320\265\320\275\321\216", 0, QApplication::UnicodeUTF8));
+        actionStartGame->setText(QApplication::translate("MainWindow", "Start game", 0, QApplication::UnicodeUTF8));
+        actionConnectionWindow->setText(QApplication::translate("MainWindow", "Connection window", 0, QApplication::UnicodeUTF8));
+        pbSurrender->setText(QApplication::translate("MainWindow", "\320\241\320\264\320\260\321\202\321\214\321\201\321\217!", 0, QApplication::UnicodeUTF8));
+        menu->setTitle(QApplication::translate("MainWindow", "Menu", 0, QApplication::UnicodeUTF8));
+        menuView->setTitle(QApplication::translate("MainWindow", "View", 0, QApplication::UnicodeUTF8));
         cbCreateServer->setText(QApplication::translate("MainWindow", "Create server", 0, QApplication::UnicodeUTF8));
-        leServerIP->setText(QApplication::translate("MainWindow", "localhost", 0, QApplication::UnicodeUTF8));
-        pbSearch->setText(QApplication::translate("MainWindow", "Start search", 0, QApplication::UnicodeUTF8));
-        pbConnect->setText(QApplication::translate("MainWindow", "Connect to server", 0, QApplication::UnicodeUTF8));
+        leServerAddress->setText(QApplication::translate("MainWindow", "localhost", 0, QApplication::UnicodeUTF8));
+        lServersList->setText(QApplication::translate("MainWindow", "Local servers list", 0, QApplication::UnicodeUTF8));
+        lServerAddress->setText(QApplication::translate("MainWindow", "Server address", 0, QApplication::UnicodeUTF8));
         lPort->setText(QApplication::translate("MainWindow", "Port", 0, QApplication::UnicodeUTF8));
         lNickname->setText(QApplication::translate("MainWindow", "Nickname", 0, QApplication::UnicodeUTF8));
-        comboBox->clear();
-        comboBox->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "\320\232\321\200\320\260\321\201\320\275\321\213\320\271", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "\320\226\320\265\320\273\321\202\321\213\320\271", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "\320\227\320\265\320\273\320\265\320\275\321\213\320\271", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "\320\241\320\270\320\275\320\270\320\271", 0, QApplication::UnicodeUTF8)
+        pbConnect->setText(QApplication::translate("MainWindow", "Connect to server", 0, QApplication::UnicodeUTF8));
+        cbColor->clear();
+        cbColor->insertItems(0, QStringList()
+         << QApplication::translate("MainWindow", "Red", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "Yellow", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "Green", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "Blue", 0, QApplication::UnicodeUTF8)
         );
+        lPlayersList->setText(QApplication::translate("MainWindow", "Players list", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
