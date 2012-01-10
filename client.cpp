@@ -44,7 +44,7 @@ void RemoteClient::remoteError(QAbstractSocket::SocketError) {
     emit rcError(this);
 }
 
-LocalClient::LocalClient():lastpingtime(QTime::currentTime()) {
+LocalClient::LocalClient():lastpingtime(QTime::currentTime()),_isStarted(false) {
     localtimer.setInterval(PING_INTERVAL);
     connect(&localtimer, SIGNAL(timeout()), this, SLOT(localTimerCheck()));
     socket = new QTcpSocket;

@@ -16,16 +16,18 @@ private:
     QTcpSocket* socket;
     MessageReceiver* receiver;
     ClientInfo info;
-    void stop() {socket->close();localtimer.stop();}
+    bool _isStarted;
+    void stop() {socket->close();localtimer.stop();_isStarted=false;}
 public:
+    LocalClient();
     ~LocalClient() { delete receiver; }
     void quit() { stop(); }
-    LocalClient();
-    void start(QString hostname, quint16 port) {socket->connectToHost(hostname, port);localtimer.start();}
+    void start(QString hostname, quint16 port) {socket->connectToHost(hostname, port);localtimer.start();_isStarted=true;}
     void setNickname(QString name) {info.name=name;}
     void setColor(QColor color) {info.color=color;}
     QString getNickname() {return info.name;}
     QColor getColor() {return info.color;}
+    bool isStarted() const {return _isStarted;}
 private slots:
     void localChatMessageReceive(ChatMessage);
     void localPlayersListMessageReceive(PlayersListMessage);
