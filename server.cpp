@@ -98,10 +98,10 @@ void Server::remoteSurrenderMessageReceive(SurrenderMessage msg, RemoteClient*) 
 
 void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteClient* client) {
     int i, error=0;
-    for (i=0; i<clients.size() && (msg.getColor()!=clients[i]->info.color() || clients[i]->state!=2); ++i) {}
+    for (i=0; i<clients.size() && (msg.color()!=clients[i]->info.color() || clients[i]->state!=2); ++i) {}
     if (i!=clients.size())
         error=1;
-    for (i=0; i<clients.size() && (msg.getName()!=clients[i]->info.name() || clients[i]->state!=2); ++i) {}
+    for (i=0; i<clients.size() && (msg.name()!=clients[i]->info.name() || clients[i]->state!=2); ++i) {}
     if (i!=clients.size())
         error=2;
     if (getPlayersCount()==maxClientsCount)
@@ -109,10 +109,10 @@ void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteCli
     ConnectionAcceptedMessage msg1(error);
     msg1.send(client->socket);
     if (!error) {
-        client->info.setName(msg.getName());
-        client->info.setColor(msg.getColor());
+        client->info.setName(msg.name());
+        client->info.setColor(msg.color());
         client->state = 2;
-        ClientConnectMessage msg1(msg.getName(), msg.getColor());
+        ClientConnectMessage msg1(msg.name(), msg.color());
         sendToAll(&msg1);
         sendPlayersList();
     } else

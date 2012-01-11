@@ -216,16 +216,16 @@ void App::localDisconnected()
 
 void App::localChatMessageReceive(ChatMessage msg)
 {
-    textEdit->setTextColor(msg.getColor());
-    textEdit->append("(" + QTime::currentTime().toString("hh:mm:ss") + ") " + msg.getName() + ":");
+    textEdit->setTextColor(msg.color());
+    textEdit->append("(" + QTime::currentTime().toString("hh:mm:ss") + ") " + msg.name() + ":");
     textEdit->setTextColor(Qt::black);
-    textEdit->append(msg.getText());
+    textEdit->append(msg.text());
 }
 
 void App::localPlayersListMessageReceive(PlayersListMessage msg)
 {
     lwPlayersList->clear();
-    QList<ClientInfo> clients = msg.getList();
+    QList<ClientInfo> clients = msg.list();
     QList<bool> isLocal;
     for (int i = 0; i < clients.size(); ++i)
     {
@@ -245,22 +245,22 @@ void App::localPlayersListMessageReceive(PlayersListMessage msg)
 
 void App::localClientConnectMessageReceive(ClientConnectMessage msg)
 {
-    textEdit->setTextColor(msg.getColor());
-    textEdit->append(msg.getName() + " connected");
+    textEdit->setTextColor(msg.color());
+    textEdit->append(msg.name() + " connected");
 }
 
 void App::localClientDisconnectMessageReceive(ClientDisconnectMessage msg)
 {
-    textEdit->setTextColor(msg.getColor());
-    textEdit->append(msg.getName() + " disconnected");
+    textEdit->setTextColor(msg.color());
+    textEdit->append(msg.name() + " disconnected");
 }
 
 void App::localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage msg)
 {
-    int code = msg.getCode();
+    int code = msg.errorCode();
     if (code != 0)
     {
-        switch (msg.getCode())
+        switch (msg.errorCode())
         {
         case 1: perror("This color is already in use"); break;
         case 2: perror("This nickname is already in use"); break;
@@ -273,7 +273,7 @@ void App::localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage msg)
 
 void App::localTurnMessageReceive(TurnMessage msg)
 {
-    game->turnDone(msg.getColor(), msg.getMask(), msg.getId(), msg.getX(), msg.getY());
+    game->turnDone(msg.color(), msg.mask(), msg.id(), msg.x(), msg.y());
 }
 
 void App::localStartGameMessageReceive(StartGameMessage msg)
@@ -290,7 +290,7 @@ void App::localRestartGameMessageReceive(RestartGameMessage msg)
         game = new Game(this);
         connect(game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)), &localClient, SLOT(turnDone(QString,QColor,QString,int,int,int)));
         connect(game, SIGNAL(playerRetired(QString,QColor)), &localClient, SLOT(playerSurrendered(QString,QColor)));
-        QList<ClientInfo> list = msg.getList();
+        QList<ClientInfo> list = msg.list();
         QList<bool> isLocal;
         for (int i = 0; i < list.size(); ++i)
         {
@@ -305,7 +305,7 @@ void App::localRestartGameMessageReceive(RestartGameMessage msg)
 
 void App::localSurrenderMessageReceive(SurrenderMessage msg)
 {
-    game->remotePlayerRetired(msg.getName(), msg.getColor());
+    game->remotePlayerRetired(msg.name(), msg.color());
 }
 
 void App::connectClicked()

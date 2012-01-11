@@ -19,11 +19,11 @@ void ServersSearcher::readFromSocket()
         quint16 port;
         int res = socket.readDatagram(data, datagramSize, &address, &port);
         MessageHeader header;
-        header.len = datagramSize - header.getLength();
-        header.type = mtPlayersList;
+        header.setMsgLength(datagramSize - header.length());
+        header.setType(mtPlayersList);
         PlayersListMessage msg(header);
-        msg.fill(QByteArray::fromRawData(data + header.getLength(), header.len));
-        emit getServer(address.toString(), msg.getList());
+        msg.fill(QByteArray::fromRawData(data + header.length(), header.msgLength()));
+        emit getServer(address.toString(), msg.list());
         free(data);
     }
 }
