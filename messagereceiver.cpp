@@ -1,4 +1,4 @@
-#include "messagerecv.h"
+#include "messagereceiver.h"
 #include <strings.h>
 #include <QHostAddress>
 #include <QUdpSocket>

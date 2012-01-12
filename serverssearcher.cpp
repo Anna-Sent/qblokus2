@@ -1,5 +1,5 @@
 #include "serverssearcher.h"
-#include "messagerecv.h"
+#include "messagereceiver.h"
 #include "constants.h"
 
 ServersSearcher::ServersSearcher()

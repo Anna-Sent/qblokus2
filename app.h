@@ -5,7 +5,7 @@
 #include "game.h"
 #include "client.h"
 #include "server.h"
-#include "messagerecv.h"
+#include "messagereceiver.h"
 #include "serverssearcher.h"
 
 class App : public QMainWindow, public Ui::MainWindow {

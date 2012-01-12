@@ -1,13 +1,13 @@
 CONFIG += console qt thread
 SOURCES = main.cpp \
     app.cpp \
-    messagerecv.cpp \
+    messagereceiver.cpp \
     clientinfo.cpp \
     client.cpp \
     server.cpp \
     serverssearcher.cpp
 HEADERS = app.h \
-    messagerecv.h \
+    messagereceiver.h \
     clientinfo.h \
     client.h \
     server.h \

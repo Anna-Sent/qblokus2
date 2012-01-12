@@ -2,7 +2,7 @@
 #define SERVERSSEARCHER_H
 
 #include "clientinfo.h"
-#include "messagerecv.h"
+#include "messagereceiver.h"
 #include <QObject>
 #include <QtNetwork/QUdpSocket>
 #include <QTimer>

@@ -1,7 +1,7 @@
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
 
-#include "messagerecv.h"
+#include "messagereceiver.h"
 #include <QTime>
 #include <QTimer>
 #include <QThread>
