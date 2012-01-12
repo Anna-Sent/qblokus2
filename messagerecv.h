@@ -2,13 +2,14 @@
 #define MESSAGERECV_H_
 
 #include "clientinfo.h"
-#include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QAbstractSocket>
 
 enum MessageType
 {
     mtHeader,
     mtChat,
     mtPlayersList,
+    mtServerInfo,
     mtClientConnect,
     mtClientDisconnect,
     mtServerReady,
@@ -24,11 +25,10 @@ enum MessageType
 class Message
 {
 protected:
-    MessageType _type;
 public:
     virtual qint64 length() const = 0;
     virtual Message *next() const;
-    void send(QTcpSocket *) const;
+    void send(QAbstractSocket *) const;
     virtual QByteArray serialize() const = 0;
     virtual void fill(const QByteArray &) = 0;
 };
@@ -36,15 +36,16 @@ public:
 class MessageHeader : public Message
 {
 private:
-    qint64 _len;
+    qint64 _msgLen;
+    MessageType _msgType;
 public:
-    MessageHeader() : _len(0) { _type = mtHeader; }
+    MessageHeader() { }
     qint64 length() const { return sizeof(MessageType) + sizeof(qint64); }
-    qint64 msgLength() const { return _len; }
+    qint64 msgLength() const { return _msgLen; }
     Message *next() const;
     QByteArray serialize() const;
-    void setMsgLength(qint64 value) { _len = value; }
-    void setType(MessageType value) { _type = value; }
+    void setMsgLength(qint64 value) { _msgLen = value; }
+    void setMsgType(MessageType value) { _msgType = value; }
     void fill(const QByteArray &);
 };
 
@@ -83,6 +84,19 @@ public:
     PlayersListMessage(const MessageHeader &header) { _header = header; }
     PlayersListMessage(QList<ClientInfo>);
     QList<ClientInfo> list() const { return _list; }
+    QByteArray serialize() const;
+    void fill(const QByteArray &);
+};
+
+class ServerInfoMessage : public PlayersListMessage
+{
+private:
+    QString _address;
+public:
+    ServerInfoMessage() { }
+    ServerInfoMessage(const MessageHeader &header) { _header = header; }
+    ServerInfoMessage(QString, QList<ClientInfo>);
+    QString address() const { return _address; }
     QByteArray serialize() const;
     void fill(const QByteArray &);
 };
@@ -133,15 +147,15 @@ public:
 class ServerReadyMessage : public ComplexMessage
 {
 public:
+    ServerReadyMessage() { _header.setMsgLength(0); _header.setMsgType(mtServerReady); }
     ServerReadyMessage(const MessageHeader &header) { _header = header; }
-    ServerReadyMessage() { _header.setMsgLength(0); _header.setType(mtServerReady); }
 };
 
 class PingMessage : public ComplexMessage
 {
 public:
+    PingMessage() { _header.setMsgLength(0); _header.setMsgType(mtPing); }
     PingMessage(const MessageHeader &header) { _header = header; }
-    PingMessage() { _header.setMsgLength(0); _header.setType(mtPing); }
 };
 
 class ConnectionAcceptedMessage : public ComplexMessage
@@ -160,8 +174,8 @@ public:
 class StartGameMessage : public ComplexMessage
 {
 public:
+    StartGameMessage() { _header.setMsgLength(0); _header.setMsgType(mtStartGame); }
     StartGameMessage(const MessageHeader &header) { _header = header; }
-    StartGameMessage() { _header.setMsgLength(0); _header.setType(mtStartGame);}
 };
 
 class TurnMessage : public ClientMessage
@@ -196,14 +210,16 @@ class MessageReceiver : public QObject
 private:
     QByteArray buffer;
     Message *current;
-    QTcpSocket *socket;
+    QAbstractSocket *socket;
+    void processData();
 
 public:
-    MessageReceiver(QTcpSocket *);
+    MessageReceiver(QAbstractSocket *);
     ~MessageReceiver();
 
-public slots:
+private slots:
     void readyRead();
+    void readyReadUdp();
 
 signals:
     void getMessage(QByteArray);
@@ -215,6 +231,7 @@ signals:
     void pingMessageReceive(PingMessage);
     void playersListMessageReceive(PlayersListMessage);
     void restartGameMessageReceive(RestartGameMessage);
+    void serverInfoMessageReceive(ServerInfoMessage);
     void serverReadyMessageReceive(ServerReadyMessage);
     void startGameMessageReceive(StartGameMessage);
     void surrenderMessageReceive(SurrenderMessage);

@@ -1,5 +1,7 @@
 #include "server.h"
 #include "constants.h"
+#include <QHostInfo>
+
 #define PING_INTERVAL 5000
 #define PING_TIME 1500000
 
@@ -24,7 +26,7 @@ void Server::readyReadUDP() {
                 for (int i=0;i<clients.size();++i)
                     if (clients[i]->state==2/*&&clients[i]->socket->isConnected()*/)
                         list.append(clients[i]->info);
-                PlayersListMessage msg(list);
+                ServerInfoMessage msg(QHostInfo::localHostName(), list);
                 QByteArray data = msg.serialize();
                 int res = listener.writeDatagram(data.data(), data.size(), address, port);
             }

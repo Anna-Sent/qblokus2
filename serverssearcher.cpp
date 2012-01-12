@@ -4,28 +4,20 @@
 
 ServersSearcher::ServersSearcher()
 {
+    messageReceiver = new MessageReceiver(&socket);
+    connect(messageReceiver, SIGNAL(serverInfoMessageReceive(ServerInfoMessage)), this, SLOT(serverInfoMessageReceive(ServerInfoMessage)));
     timer.setInterval(1000);
     connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
-    connect(&socket, SIGNAL(readyRead()), this, SLOT(readFromSocket()));
 }
 
-void ServersSearcher::readFromSocket()
+ServersSearcher::~ServersSearcher()
 {
-    if (socket.hasPendingDatagrams())
-    {
-        qint64 datagramSize = socket.pendingDatagramSize();
-        char *data = (char *)::malloc(datagramSize);
-        QHostAddress address;
-        quint16 port;
-        int res = socket.readDatagram(data, datagramSize, &address, &port);
-        MessageHeader header;
-        header.setMsgLength(datagramSize - header.length());
-        header.setType(mtPlayersList);
-        PlayersListMessage msg(header);
-        msg.fill(QByteArray::fromRawData(data + header.length(), header.msgLength()));
-        emit getServer(address.toString(), msg.list());
-        free(data);
-    }
+    messageReceiver->deleteLater();
+}
+
+void ServersSearcher::serverInfoMessageReceive(ServerInfoMessage msg)
+{
+    emit serverInfoMessageReceive(msg.address(), msg.list());
 }
 
 void ServersSearcher::timeout()

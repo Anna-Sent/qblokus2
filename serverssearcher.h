@@ -2,6 +2,7 @@
 #define SERVERSSEARCHER_H
 
 #include "clientinfo.h"
+#include "messagerecv.h"
 #include <QObject>
 #include <QtNetwork/QUdpSocket>
 #include <QTimer>
@@ -11,17 +12,19 @@ class ServersSearcher : public QObject
     Q_OBJECT
 public:
     explicit ServersSearcher();
+    ~ServersSearcher();
 
 private:
+    MessageReceiver *messageReceiver;
     QUdpSocket socket;
     QTimer timer;
     int port;
 
 signals:
-    void getServer(QString address, QList<ClientInfo> clients);
+    void serverInfoMessageReceive(QString, QList<ClientInfo>);
 
 private slots:
-    void readFromSocket();
+    void serverInfoMessageReceive(ServerInfoMessage);
     void timeout();
 
 public slots:

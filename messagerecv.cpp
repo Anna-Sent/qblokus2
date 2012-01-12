@@ -1,11 +1,20 @@
 #include "messagerecv.h"
 #include <strings.h>
+#include <QHostAddress>
+#include <QUdpSocket>
 
-MessageReceiver::MessageReceiver(QTcpSocket *socket)
+MessageReceiver::MessageReceiver(QAbstractSocket *socket)
 {
     current = new MessageHeader;
     this->socket = socket;
-    QObject::connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    if (QUdpSocket *udpSocket = dynamic_cast<QUdpSocket *>(socket))
+    {
+        connect(socket, SIGNAL(readyRead()), this, SLOT(readyReadUdp()));
+    }
+    else
+    {
+        connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    }
 }
 
 MessageReceiver::~MessageReceiver()
@@ -18,7 +27,41 @@ void MessageReceiver::readyRead()
     int avail = socket->bytesAvailable();
     char *tmp = (char *)malloc(avail);
     int len = socket->read(tmp, avail);
+    if (len < 0)
+    {
+        qDebug() << "TCP socket error occurs: " << socket->errorString();
+        return;
+    }
+
     buffer.append(QByteArray(tmp, len));
+    processData();
+}
+
+void MessageReceiver::readyReadUdp()
+{
+    if (QUdpSocket *udpSocket = dynamic_cast<QUdpSocket *>(socket))
+    {
+        while (udpSocket->hasPendingDatagrams())
+        {
+            QByteArray datagram;
+            datagram.resize(udpSocket->pendingDatagramSize());
+            QHostAddress sender;
+            quint16 senderPort;
+            int len = udpSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+            if (len < 0)
+            {
+                qDebug() << "UDP socket error occurs: " << udpSocket->errorString();
+                return;
+            }
+
+            buffer.append(datagram);
+            processData();
+        }
+    }
+}
+
+void MessageReceiver::processData()
+{
     while (current->length() <= buffer.size())
     {
         current->fill(buffer);
@@ -28,34 +71,14 @@ void MessageReceiver::readyRead()
                 emit chatMessageReceive(*msg);
         }
         {
-            PlayersListMessage *msg;
-            if ((msg = dynamic_cast<PlayersListMessage *>(current)))
-                emit playersListMessageReceive(*msg);
-        }
-        {
-            RestartGameMessage *msg;
-            if ((msg = dynamic_cast<RestartGameMessage *>(current)))
-                emit restartGameMessageReceive(*msg);
-        }
-        {
             ClientConnectMessage *msg;
             if ((msg = dynamic_cast<ClientConnectMessage *>(current)))
                 emit clientConnectMessageReceive(*msg);
         }
         {
-            TryToConnectMessage *msg;
-            if ((msg = dynamic_cast<TryToConnectMessage *>(current)))
-                emit tryToConnectMessageReceive(*msg);
-        }
-        {
             ClientDisconnectMessage *msg;
             if ((msg = dynamic_cast<ClientDisconnectMessage *>(current)))
                 emit clientDisconnectMessageReceive(*msg);
-        }
-        {
-            ServerReadyMessage *msg;
-            if ((msg = dynamic_cast<ServerReadyMessage *>(current)))
-                emit serverReadyMessageReceive(*msg);
         }
         {
             ConnectionAcceptedMessage *msg;
@@ -68,9 +91,34 @@ void MessageReceiver::readyRead()
                 emit pingMessageReceive(*msg);
         }
         {
+            PlayersListMessage *msg;
+            if ((msg = dynamic_cast<PlayersListMessage *>(current)))
+                emit playersListMessageReceive(*msg);
+        }
+        {
+            RestartGameMessage *msg;
+            if ((msg = dynamic_cast<RestartGameMessage *>(current)))
+                emit restartGameMessageReceive(*msg);
+        }
+        {
+            ServerInfoMessage *msg;
+            if ((msg = dynamic_cast<ServerInfoMessage *>(current)))
+                emit serverInfoMessageReceive(*msg);
+        }
+        {
+            ServerReadyMessage *msg;
+            if ((msg = dynamic_cast<ServerReadyMessage *>(current)))
+                emit serverReadyMessageReceive(*msg);
+        }
+        {
             StartGameMessage *msg;
             if ((msg = dynamic_cast<StartGameMessage *>(current)))
                 emit startGameMessageReceive(*msg);
+        }
+        {
+            SurrenderMessage *msg;
+            if ((msg = dynamic_cast<SurrenderMessage *>(current)))
+                emit surrenderMessageReceive(*msg);
         }
         {
             TurnMessage *msg;
@@ -78,9 +126,9 @@ void MessageReceiver::readyRead()
                 emit turnMessageReceive(*msg);
         }
         {
-            SurrenderMessage *msg;
-            if ((msg = dynamic_cast<SurrenderMessage *>(current)))
-                emit surrenderMessageReceive(*msg);
+            TryToConnectMessage *msg;
+            if ((msg = dynamic_cast<TryToConnectMessage *>(current)))
+                emit tryToConnectMessageReceive(*msg);
         }
 
         buffer.remove(0, current->length());
@@ -95,14 +143,15 @@ Message *Message::next() const
     return new MessageHeader;
 }
 
-void Message::send(QTcpSocket *socket) const
+void Message::send(QAbstractSocket *socket) const
 {
     QByteArray data = serialize();
     socket->write(data.data(), data.size());
 }
+
 Message *MessageHeader::next() const
 {
-    switch(_type)
+    switch(_msgType)
     {
     case mtHeader :                 return new MessageHeader;
     case mtChat :                   return new ChatMessage(*this);
@@ -110,6 +159,7 @@ Message *MessageHeader::next() const
     case mtClientConnect :          return new ClientConnectMessage(*this);
     case mtClientDisconnect :       return new ClientDisconnectMessage(*this);
     case mtServerReady :            return new ServerReadyMessage(*this);
+    case mtServerInfo :             return new ServerInfoMessage(*this);
     case mtConnectionAccepted :     return new ConnectionAcceptedMessage(*this);
     case mtPing :                   return new PingMessage(*this);
     case mtTryToConnect :           return new TryToConnectMessage(*this);
@@ -117,31 +167,31 @@ Message *MessageHeader::next() const
     case mtRestartGame :            return new RestartGameMessage(*this);
     case mtTurn :                   return new TurnMessage(*this);
     case mtSurrender :              return new SurrenderMessage(*this);
-    default :                   return NULL;
+    default :                       return NULL;
     }
 }
 
 QByteArray MessageHeader::serialize() const
 {
     QByteArray result;
-    result.append(QByteArray::fromRawData((const char *)&_type, sizeof(MessageType)));
-    result.append(QByteArray::fromRawData((const char *)&_len, sizeof(qint64)));
+    result.append(QByteArray::fromRawData((const char *)&_msgType, sizeof(MessageType)));
+    result.append(QByteArray::fromRawData((const char *)&_msgLen, sizeof(qint64)));
     return result;
 }
 
 void MessageHeader::fill(const QByteArray &buffer)
 {
     const char *data = buffer.data();
-    ::memmove(&_type, data, sizeof(MessageType));
+    ::memmove(&_msgType, data, sizeof(MessageType));
     data += sizeof(MessageType);
-    ::memmove(&_len, data, sizeof(qint64));
+    ::memmove(&_msgLen, data, sizeof(qint64));
 }
 
 ChatMessage::ChatMessage(QString name, QString text, QColor color) {
     _info.setName(name);
     _info.setColor(color);
     _header.setMsgLength(_info.size() + _text.toUtf8().size() + sizeof(int));
-    _header.setType(mtChat);
+    _header.setMsgType(mtChat);
     _text = text;
 }
 
@@ -172,7 +222,7 @@ RestartGameMessage::RestartGameMessage(QList<ClientInfo> list)
     qint64 len = sizeof(int);
     for (int i = 0; i < list.size(); len += list[i++].size()) { }
     _header.setMsgLength(len);
-    _header.setType(mtRestartGame);
+    _header.setMsgType(mtRestartGame);
 }
 
 PlayersListMessage::PlayersListMessage(QList<ClientInfo> list)
@@ -181,7 +231,7 @@ PlayersListMessage::PlayersListMessage(QList<ClientInfo> list)
     qint64 len = sizeof(int);
     for (int i = 0; i < list.size(); len += list[i++].size()) { }
     _header.setMsgLength(len);
-    _header.setType(mtPlayersList);
+    _header.setMsgType(mtPlayersList);
 }
 
 QByteArray PlayersListMessage::serialize() const
@@ -199,6 +249,47 @@ void PlayersListMessage::fill(const QByteArray &buffer)
     int count = *((int *)data);
     data += sizeof(int);
     for (int i = 0; i < count; ++i)
+    {
+        ClientInfo item;
+        item.fill(data);
+        data += item.size();
+        _list.append(item);
+    }
+}
+
+ServerInfoMessage::ServerInfoMessage(QString address, QList<ClientInfo> list)
+{
+    _address = address;
+    _list = list;
+    qint64 len = sizeof(int) * 2 + address.toUtf8().size();
+    for (int i = 0; i < list.size(); len += list[i++].size()) { }
+    _header.setMsgLength(len);
+    _header.setMsgType(mtServerInfo);
+}
+
+QByteArray ServerInfoMessage::serialize() const
+{
+    QByteArray result;
+    QByteArray tmp = _address.toUtf8();
+    int size = tmp.size();
+    result.append(QByteArray::fromRawData((const char *)&size, sizeof(int)));
+    result.append(tmp);
+    size = _list.size();
+    result.append(QByteArray::fromRawData((const char *)&size, sizeof(int)));
+    for (int i = 0; i < _list.size(); result.append(_list[i++].serialize())) { }
+    return _header.serialize().append(result);
+}
+
+void ServerInfoMessage::fill(const QByteArray &buffer)
+{
+    const char *data = buffer.data();
+    int len = *((int *)data);
+    data += sizeof(int);
+    _address = QString::fromUtf8(data, len);
+    data += len;
+    len = *((int *)data);
+    data += sizeof(int);
+    for (int i = 0; i < len; ++i)
     {
         ClientInfo item;
         item.fill(data);
@@ -225,7 +316,7 @@ ClientConnectMessage::ClientConnectMessage(QString name, QColor color)
     _info.setName(name);
     _info.setColor(color);
     _header.setMsgLength(_info.size());
-    _header.setType(mtClientConnect);
+    _header.setMsgType(mtClientConnect);
 }
 
 ClientDisconnectMessage::ClientDisconnectMessage(QString name, QColor color)
@@ -233,7 +324,7 @@ ClientDisconnectMessage::ClientDisconnectMessage(QString name, QColor color)
     _info.setName(name);
     _info.setColor(color);
     _header.setMsgLength(_info.size());
-    _header.setType(mtClientDisconnect);
+    _header.setMsgType(mtClientDisconnect);
 }
 
 TurnMessage::TurnMessage(QString name, QColor color, QString tile, int id, int x, int y)
@@ -245,7 +336,7 @@ TurnMessage::TurnMessage(QString name, QColor color, QString tile, int id, int x
     _y = y;
     _mask = tile;
     _header.setMsgLength(_info.size() + 4 * sizeof(int) + _mask.toUtf8().size());
-    _header.setType(mtTurn);
+    _header.setMsgType(mtTurn);
 }
 
 QByteArray TurnMessage::serialize() const
@@ -281,14 +372,14 @@ TryToConnectMessage::TryToConnectMessage(ClientInfo info)
 {
     _info = info;
     _header.setMsgLength(_info.size());
-    _header.setType(mtTryToConnect);
+    _header.setMsgType(mtTryToConnect);
 }
 
 ConnectionAcceptedMessage::ConnectionAcceptedMessage(int errorCode)
 {
     _errorCode = errorCode;
     _header.setMsgLength(sizeof(int));
-    _header.setType(mtConnectionAccepted);
+    _header.setMsgType(mtConnectionAccepted);
 }
 
 QByteArray ConnectionAcceptedMessage::serialize() const
@@ -308,5 +399,5 @@ SurrenderMessage::SurrenderMessage(QString name, QColor color)
     _info.setName(name);
     _info.setColor(color);
     _header.setMsgLength(_info.size());
-    _header.setType(mtSurrender);
+    _header.setMsgType(mtSurrender);
 }
