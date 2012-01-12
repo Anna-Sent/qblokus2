@@ -78,11 +78,11 @@ LocalClient::LocalClient():lastpingtime(QTime::currentTime()),_isStarted(false) 
 }
 
 void LocalClient::localChatMessageReceive(ChatMessage msg) {
-    emit lcChatMessageReceive(msg);
+    emit lcChatMessageReceive(msg.name(), msg.color(), msg.text());
 }
 
 void LocalClient::localPlayersListMessageReceive(PlayersListMessage msg) {
-    emit lcPlayersListMessageReceive(msg);
+    emit lcPlayersListMessageReceive(msg.list());
 }
 
 void LocalClient::localServerReadyMessageReceive(ServerReadyMessage msg) {
@@ -91,31 +91,31 @@ void LocalClient::localServerReadyMessageReceive(ServerReadyMessage msg) {
 }
 
 void LocalClient::localClientConnectMessageReceive(ClientConnectMessage msg) {
-    emit lcClientConnectMessageReceive(msg);
+    emit lcClientConnectMessageReceive(msg.name(), msg.color());
 }
 
 void LocalClient::localClientDisconnectMessageReceive(ClientDisconnectMessage msg) {
-    emit lcClientDisconnectMessageReceive(msg);
+    emit lcClientDisconnectMessageReceive(msg.name(), msg.color());
 }
 
 void LocalClient::localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage msg) {
-    emit lcConnectionAcceptedMessageReceive(msg);
+    emit lcConnectionAcceptedMessageReceive(msg.errorCode());
 }
 
 void LocalClient::localStartGameMessageReceive(StartGameMessage msg) {
-    emit lcStartGameMessageReceive(msg);
+    emit lcStartGameMessageReceive();
 }
 
 void LocalClient::localRestartGameMessageReceive(RestartGameMessage msg) {
-    emit lcRestartGameMessageReceive(msg);
+    emit lcRestartGameMessageReceive(msg.list());
 }
 
 void LocalClient::localTurnMessageReceive(TurnMessage msg) {
-    emit lcTurnMessageReceive(msg);
+    emit lcTurnMessageReceive(msg.color(), msg.x(), msg.y(), msg.id(), msg.mask());
 }
 
 void LocalClient::localSurrenderMessageReceive(SurrenderMessage msg) {
-    emit lcSurrenderMessageReceive(msg);
+    emit lcSurrenderMessageReceive(msg.name(), msg.color());
 }
 
 void LocalClient::localConnected() {

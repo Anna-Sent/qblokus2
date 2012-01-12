@@ -50,15 +50,15 @@ private slots:
     void turnDone(QString name,QColor color,QString tile,int id,int x,int y);
     void playerSurrendered(QString name,QColor color);
 signals:
-    void lcChatMessageReceive(ChatMessage);
-    void lcPlayersListMessageReceive(PlayersListMessage);
-    void lcClientConnectMessageReceive(ClientConnectMessage);
-    void lcClientDisconnectMessageReceive(ClientDisconnectMessage);
-    void lcConnectionAcceptedMessageReceive(ConnectionAcceptedMessage);
-    void lcStartGameMessageReceive(StartGameMessage);
-    void lcRestartGameMessageReceive(RestartGameMessage);
-    void lcTurnMessageReceive(TurnMessage);
-    void lcSurrenderMessageReceive(SurrenderMessage);
+    void lcChatMessageReceive(QString, QColor, QString);
+    void lcPlayersListMessageReceive(QList<ClientInfo>);
+    void lcClientConnectMessageReceive(QString, QColor);
+    void lcClientDisconnectMessageReceive(QString, QColor);
+    void lcConnectionAcceptedMessageReceive(int);
+    void lcStartGameMessageReceive();
+    void lcRestartGameMessageReceive(QList<ClientInfo>);
+    void lcTurnMessageReceive(QColor, int, int, int, QString);
+    void lcSurrenderMessageReceive(QString, QColor);
     void lcConnected();
     void lcDisconnected();
     void lcError(QString);

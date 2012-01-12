@@ -5,7 +5,6 @@
 #include "game.h"
 #include "client.h"
 #include "server.h"
-#include "messagereceiver.h"
 #include "serverssearcher.h"
 
 class App : public QMainWindow, public Ui::MainWindow {
@@ -34,17 +33,17 @@ public slots:
     void localError(QString);
     void localConnected();
     void localDisconnected();
-    void localChatMessageReceive(ChatMessage);
-    void localPlayersListMessageReceive(PlayersListMessage);
-    void localClientConnectMessageReceive(ClientConnectMessage);
-    void localClientDisconnectMessageReceive(ClientDisconnectMessage);
-    void localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage);
+    void localChatMessageReceive(QString, QColor, QString);
+    void localPlayersListMessageReceive(QList<ClientInfo>);
+    void localClientConnectMessageReceive(QString, QColor);
+    void localClientDisconnectMessageReceive(QString, QColor);
+    void localConnectionAcceptedMessageReceive(int);
 
     // game signals
-    void localTurnMessageReceive(TurnMessage);
-    void localStartGameMessageReceive(StartGameMessage);
-    void localRestartGameMessageReceive(RestartGameMessage);
-    void localSurrenderMessageReceive(SurrenderMessage);
+    void localTurnMessageReceive(QColor, int, int, int, QString);
+    void localStartGameMessageReceive();
+    void localRestartGameMessageReceive(QList<ClientInfo>);
+    void localSurrenderMessageReceive(QString, QColor);
 
     void connectClicked();
     void serversListItemClicked(QListWidgetItem *item);

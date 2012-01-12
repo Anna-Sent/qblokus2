@@ -18,17 +18,17 @@ App::App(QWidget *parent)
     connect(&localClient, SIGNAL(lcDisconnected()), lwPlayersList, SLOT(clear()));
     connect(&localClient, SIGNAL(lcDisconnected()), lwServersList, SLOT(clear()));
     connect(&localClient, SIGNAL(lcDisconnected()), &serversSearcher, SLOT(start()));
-    connect(&localClient, SIGNAL(lcChatMessageReceive(ChatMessage)), this, SLOT(localChatMessageReceive(ChatMessage)));
-    connect(&localClient, SIGNAL(lcPlayersListMessageReceive(PlayersListMessage)), this, SLOT(localPlayersListMessageReceive(PlayersListMessage)));
-    connect(&localClient, SIGNAL(lcClientConnectMessageReceive(ClientConnectMessage)), this, SLOT(localClientConnectMessageReceive(ClientConnectMessage)));
-    connect(&localClient, SIGNAL(lcClientDisconnectMessageReceive(ClientDisconnectMessage)), this, SLOT(localClientDisconnectMessageReceive(ClientDisconnectMessage)));
-    connect(&localClient, SIGNAL(lcConnectionAcceptedMessageReceive(ConnectionAcceptedMessage)), this, SLOT(localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage)));
+    connect(&localClient, SIGNAL(lcChatMessageReceive(QString, QColor, QString)), this, SLOT(localChatMessageReceive(QString, QColor, QString)));
+    connect(&localClient, SIGNAL(lcPlayersListMessageReceive(QList<ClientInfo>)), this, SLOT(localPlayersListMessageReceive(QList<ClientInfo>)));
+    connect(&localClient, SIGNAL(lcClientConnectMessageReceive(QString, QColor)), this, SLOT(localClientConnectMessageReceive(QString, QColor)));
+    connect(&localClient, SIGNAL(lcClientDisconnectMessageReceive(QString, QColor)), this, SLOT(localClientDisconnectMessageReceive(QString, QColor)));
+    connect(&localClient, SIGNAL(lcConnectionAcceptedMessageReceive(int)), this, SLOT(localConnectionAcceptedMessageReceive(int)));
 
     // game signals
-    connect(&localClient, SIGNAL(lcTurnMessageReceive(TurnMessage)), this, SLOT(localTurnMessageReceive(TurnMessage)));
-    connect(&localClient, SIGNAL(lcStartGameMessageReceive(StartGameMessage)), this, SLOT(localStartGameMessageReceive(StartGameMessage)));
-    connect(&localClient, SIGNAL(lcRestartGameMessageReceive(RestartGameMessage)), this, SLOT(localRestartGameMessageReceive(RestartGameMessage)));
-    connect(&localClient, SIGNAL(lcSurrenderMessageReceive(SurrenderMessage)), this, SLOT(localSurrenderMessageReceive(SurrenderMessage)));
+    connect(&localClient, SIGNAL(lcTurnMessageReceive(QColor, int, int, int, QString)), this, SLOT(localTurnMessageReceive(QColor, int, int, int, QString)));
+    connect(&localClient, SIGNAL(lcStartGameMessageReceive()), this, SLOT(localStartGameMessageReceive()));
+    connect(&localClient, SIGNAL(lcRestartGameMessageReceive(QList<ClientInfo>)), this, SLOT(localRestartGameMessageReceive(QList<ClientInfo>)));
+    connect(&localClient, SIGNAL(lcSurrenderMessageReceive(QString, QColor)), this, SLOT(localSurrenderMessageReceive(QString, QColor)));
 
     // from graphics
     connect(actionStartGame, SIGNAL(activated()), this, SLOT(userStartGame()));
@@ -214,53 +214,51 @@ void App::localDisconnected()
     }
 }
 
-void App::localChatMessageReceive(ChatMessage msg)
+void App::localChatMessageReceive(QString name, QColor color, QString text)
 {
-    textEdit->setTextColor(msg.color());
-    textEdit->append("(" + QTime::currentTime().toString("hh:mm:ss") + ") " + msg.name() + ":");
+    textEdit->setTextColor(color);
+    textEdit->append("(" + QTime::currentTime().toString("hh:mm:ss") + ") " + name + ":");
     textEdit->setTextColor(Qt::black);
-    textEdit->append(msg.text());
+    textEdit->append(text);
 }
 
-void App::localPlayersListMessageReceive(PlayersListMessage msg)
+void App::localPlayersListMessageReceive(QList<ClientInfo> list)
 {
     lwPlayersList->clear();
-    QList<ClientInfo> clients = msg.list();
     QList<bool> isLocal;
-    for (int i = 0; i < clients.size(); ++i)
+    for (int i = 0; i < list.size(); ++i)
     {
         QListWidgetItem *item = new QListWidgetItem();
         QBrush brush = item->foreground();
-        brush.setColor(clients[i].color());
+        brush.setColor(list[i].color());
         item->setForeground(brush);
-        item->setText(clients[i].name());
+        item->setText(list[i].name());
         lwPlayersList->addItem(item);
-        isLocal.append(clients[i].name() == localClient.getNickname()
-                       && clients[i].color() == localClient.getColor());
+        isLocal.append(list[i].name() == localClient.getNickname()
+                       && list[i].color() == localClient.getColor());
     }
 
     lwPlayersList->sortItems();
-    game->updatePlayers(clients, isLocal);
+    game->updatePlayers(list, isLocal);
 }
 
-void App::localClientConnectMessageReceive(ClientConnectMessage msg)
+void App::localClientConnectMessageReceive(QString name, QColor color)
 {
-    textEdit->setTextColor(msg.color());
-    textEdit->append(msg.name() + " connected");
+    textEdit->setTextColor(color);
+    textEdit->append(name + " connected");
 }
 
-void App::localClientDisconnectMessageReceive(ClientDisconnectMessage msg)
+void App::localClientDisconnectMessageReceive(QString name, QColor color)
 {
-    textEdit->setTextColor(msg.color());
-    textEdit->append(msg.name() + " disconnected");
+    textEdit->setTextColor(color);
+    textEdit->append(name + " disconnected");
 }
 
-void App::localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage msg)
+void App::localConnectionAcceptedMessageReceive(int errorCode)
 {
-    int code = msg.errorCode();
-    if (code != 0)
+    if (errorCode != 0)
     {
-        switch (msg.errorCode())
+        switch (errorCode)
         {
         case 1: perror("This color is already in use"); break;
         case 2: perror("This nickname is already in use"); break;
@@ -271,18 +269,17 @@ void App::localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage msg)
     }
 }
 
-void App::localTurnMessageReceive(TurnMessage msg)
+void App::localTurnMessageReceive(QColor color, int x, int y, int id, QString mask)
 {
-    game->turnDone(msg.color(), msg.mask(), msg.id(), msg.x(), msg.y());
+    game->turnDone(color, mask, id, x, y);
 }
 
-void App::localStartGameMessageReceive(StartGameMessage msg)
+void App::localStartGameMessageReceive()
 {
-    Q_UNUSED(msg);
     game->start();
 }
 
-void App::localRestartGameMessageReceive(RestartGameMessage msg)
+void App::localRestartGameMessageReceive(QList<ClientInfo> list)
 {
     if (game)
     {
@@ -290,7 +287,6 @@ void App::localRestartGameMessageReceive(RestartGameMessage msg)
         game = new Game(this);
         connect(game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)), &localClient, SLOT(turnDone(QString,QColor,QString,int,int,int)));
         connect(game, SIGNAL(playerRetired(QString,QColor)), &localClient, SLOT(playerSurrendered(QString,QColor)));
-        QList<ClientInfo> list = msg.list();
         QList<bool> isLocal;
         for (int i = 0; i < list.size(); ++i)
         {
@@ -303,9 +299,9 @@ void App::localRestartGameMessageReceive(RestartGameMessage msg)
     }
 }
 
-void App::localSurrenderMessageReceive(SurrenderMessage msg)
+void App::localSurrenderMessageReceive(QString name, QColor color)
 {
-    game->remotePlayerRetired(msg.name(), msg.color());
+    game->remotePlayerRetired(name, color);
 }
 
 void App::connectClicked()
