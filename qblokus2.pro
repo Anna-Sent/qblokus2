@@ -5,14 +5,16 @@ SOURCES = main.cpp \
     clientinfo.cpp \
     client.cpp \
     server.cpp \
-    serverssearcher.cpp
+    serverssearcher.cpp \
+    message.cpp
 HEADERS = app.h \
     messagereceiver.h \
     clientinfo.h \
     client.h \
     server.h \
     serverssearcher.h \
-    constants.h
+    constants.h \
+    message.h
 SOURCES += coloritem.cpp \
     tile.cpp \
     table.cpp \
