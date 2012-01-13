@@ -17,18 +17,18 @@ Message *MessageHeader::next() const
     {
     case mtHeader :                 return new MessageHeader;
     case mtChat :                   return new ChatMessage(*this);
-    case mtPlayersList :            return new PlayersListMessage(*this);
     case mtClientConnect :          return new ClientConnectMessage(*this);
     case mtClientDisconnect :       return new ClientDisconnectMessage(*this);
-    case mtServerReady :            return new ServerReadyMessage(*this);
-    case mtServerInfo :             return new ServerInfoMessage(*this);
     case mtConnectionAccepted :     return new ConnectionAcceptedMessage(*this);
-    case mtPing :                   return new PingMessage(*this);
-    case mtTryToConnect :           return new TryToConnectMessage(*this);
-    case mtStartGame :              return new StartGameMessage(*this);
-    case mtRestartGame :            return new RestartGameMessage(*this);
-    case mtTurn :                   return new TurnMessage(*this);
+    case mtServerInfo :             return new ServerInfoMessage(*this);
+    case mtServerReady :            return new ServerReadyMessage(*this);
     case mtSurrender :              return new SurrenderMessage(*this);
+    case mtPing :                   return new PingMessage(*this);
+    case mtPlayersList :            return new PlayersListMessage(*this);
+    case mtRestartGame :            return new RestartGameMessage(*this);
+    case mtStartGame :              return new StartGameMessage(*this);
+    case mtTryToConnect :           return new TryToConnectMessage(*this);
+    case mtTurn :                   return new TurnMessage(*this);
     default :                       return NULL;
     }
 }
