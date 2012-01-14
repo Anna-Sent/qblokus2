@@ -108,7 +108,3 @@ void ColorItem::deactivate()
 {
     active=false;
 }
-
-ColorItem::~ColorItem()
-{
-}
