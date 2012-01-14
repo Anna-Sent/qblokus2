@@ -43,7 +43,7 @@ private:
     qint64 _msgLen;
     MessageType _msgType;
 public:
-    MessageHeader() { }
+    MessageHeader() { _msgLen = 0; }
     qint64 length() const { return sizeof(MessageType) + sizeof(qint64); }
     qint64 msgLength() const { return _msgLen; }
     Message *next() const;
@@ -69,7 +69,7 @@ private:
     QString _text;
     ClientInfo _info;
 public:
-    ChatMessage() { }
+    ChatMessage() { _header.setMsgLength(sizeof(int) + _text.toUtf8().size() + _info.size()); _header.setMsgType(mtChat); }
     ChatMessage(const MessageHeader &header) { _header = header; }
     ChatMessage(QString name, QString text, QColor color);
     QColor color() const { return _info.color(); }
@@ -84,7 +84,7 @@ class PlayersListMessage : public ComplexMessage
 protected:
     QList<ClientInfo> _list;
 public:
-    PlayersListMessage() { }
+    PlayersListMessage() { _header.setMsgLength(sizeof(int)); _header.setMsgType(mtPlayersList); }
     PlayersListMessage(const MessageHeader &header) { _header = header; }
     PlayersListMessage(QList<ClientInfo>);
     QList<ClientInfo> list() const { return _list; }
@@ -95,7 +95,7 @@ public:
 class ServerInfoMessage : public PlayersListMessage
 {
 public:
-    ServerInfoMessage() { }
+    ServerInfoMessage() { _header.setMsgType(mtServerInfo); }
     ServerInfoMessage(const MessageHeader &header) { _header = header; }
     ServerInfoMessage(QList<ClientInfo>);
 };
@@ -103,7 +103,7 @@ public:
 class RestartGameMessage : public PlayersListMessage
 {
 public:
-    RestartGameMessage() { }
+    RestartGameMessage() { _header.setMsgType(mtRestartGame); }
     RestartGameMessage(const MessageHeader &header) { _header = header; }
     RestartGameMessage(QList<ClientInfo>);
 };
@@ -113,6 +113,7 @@ class ClientMessage : public ComplexMessage
 protected:
     ClientInfo _info;
 public:
+    ClientMessage() { _header.setMsgLength(_info.size()); }
     QColor color() const { return _info.color(); }
     QString name() const { return _info.name(); }
     virtual QByteArray serialize() const;
@@ -122,7 +123,7 @@ public:
 class TryToConnectMessage : public ClientMessage
 {
 public:
-    TryToConnectMessage() { }
+    TryToConnectMessage() { _header.setMsgType(mtTryToConnect); }
     TryToConnectMessage(const MessageHeader &header) { _header = header; }
     TryToConnectMessage(ClientInfo);
 };
@@ -130,7 +131,7 @@ public:
 class ClientConnectMessage : public ClientMessage
 {
 public:
-    ClientConnectMessage() { }
+    ClientConnectMessage() { _header.setMsgType(mtClientConnect); }
     ClientConnectMessage(const MessageHeader &header) { _header = header; }
     ClientConnectMessage(QString, QColor);
 };
@@ -138,7 +139,7 @@ public:
 class ClientDisconnectMessage : public ClientMessage
 {
 public:
-    ClientDisconnectMessage() { }
+    ClientDisconnectMessage() { _header.setMsgType(mtClientDisconnect); }
     ClientDisconnectMessage(const MessageHeader &header) { _header = header; }
     ClientDisconnectMessage(QString, QColor);
 };
@@ -146,14 +147,14 @@ public:
 class ServerReadyMessage : public ComplexMessage
 {
 public:
-    ServerReadyMessage() { }
+    ServerReadyMessage() { _header.setMsgLength(0); _header.setMsgType(mtServerReady); }
     ServerReadyMessage(const MessageHeader &header) { _header = header; }
 };
 
 class PingMessage : public ComplexMessage
 {
 public:
-    PingMessage() { }
+    PingMessage() { _header.setMsgLength(0); _header.setMsgType(mtPing); }
     PingMessage(const MessageHeader &header) { _header = header; }
 };
 
@@ -162,7 +163,7 @@ class ConnectionAcceptedMessage : public ComplexMessage
 private:
     int _errorCode;
 public:
-    ConnectionAcceptedMessage() { }
+    ConnectionAcceptedMessage() { _header.setMsgLength(sizeof(int)); _header.setMsgType(mtConnectionAccepted); }
     ConnectionAcceptedMessage(const MessageHeader &header) { _header = header; }
     ConnectionAcceptedMessage(int errorCode);
     int errorCode() const { return _errorCode; }
@@ -173,14 +174,14 @@ public:
 class ServerRequestMessage : public ComplexMessage
 {
 public:
-    ServerRequestMessage() { }
+    ServerRequestMessage() { _header.setMsgLength(0); _header.setMsgType(mtServerRequest); }
     ServerRequestMessage(const MessageHeader &header) { _header = header; }
 };
 
 class StartGameMessage : public ComplexMessage
 {
 public:
-    StartGameMessage() { }
+    StartGameMessage() { _header.setMsgLength(0); _header.setMsgType(mtStartGame); }
     StartGameMessage(const MessageHeader &header) { _header = header; }
 };
 
@@ -190,7 +191,7 @@ private:
     int _id, _x, _y;
     QString _mask;
 public:
-    TurnMessage() { }
+    TurnMessage() { _header.setMsgType(mtTurn); }
     TurnMessage(const MessageHeader &header) { _header = header; }
     TurnMessage(QString, QColor, QString, int id, int x, int y);
     int id() const { return _id; }
@@ -204,7 +205,7 @@ public:
 class SurrenderMessage : public ClientMessage
 {
 public:
-    SurrenderMessage() { }
+    SurrenderMessage() { _header.setMsgType(mtSurrender); }
     SurrenderMessage(const MessageHeader &header) { _header = header; }
     SurrenderMessage(QString name, QColor color);
 };
