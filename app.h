@@ -49,6 +49,7 @@ public slots:
     void serversListItemClicked(QListWidgetItem *item);
     void serversListCurrentTextChanged(QString);
     void createServerToggled(bool);
+    void portValueChanged(int);
 
     // from servers searcher
     void serverInfoMessageReceive(const QHostAddress &, QList<ClientInfo>);

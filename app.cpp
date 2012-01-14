@@ -45,10 +45,10 @@ App::App(QWidget *parent)
     connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(serversListItemClicked(QListWidgetItem*)));
     connect(lwServersList, SIGNAL(currentTextChanged(QString)), this, SLOT(serversListCurrentTextChanged(QString)));
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(createServerToggled(bool)));
+    connect(sbPort, SIGNAL(valueChanged(int)), this, SLOT(portValueChanged(int)));
 
     // from servers searcher
     connect(&serversSearcher, SIGNAL(serverInfoMessageReceive(const QHostAddress &,QList<ClientInfo>)), this, SLOT(serverInfoMessageReceive(const QHostAddress &,QList<ClientInfo>)));
-    connect(sbPort, SIGNAL(valueChanged(int)), &serversSearcher, SLOT(setPort(int)));
 
     serversSearcher.setPort(sbPort->value());
     serversSearcher.start();
@@ -400,6 +400,13 @@ void App::createServerToggled(bool value)
     {
         serversSearcher.start();
     }
+}
+
+void App::portValueChanged(int value)
+{
+    serversSearcher.setPort(value);
+    lwServersList->clear();
+    lwPlayersList->clear();
 }
 
 void App::serverInfoMessageReceive(const QHostAddress &host, QList<ClientInfo> clients)
