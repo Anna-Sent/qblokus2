@@ -324,11 +324,13 @@ void App::connectClicked()
         if (leNickname->text() == "")
         {
             QMessageBox::warning(this, "Error", "Enter nickname");
+            leNickname->setFocus();
             return;
         }
         else if (leNickname->text().toUtf8().size() > 100)
         {
             QMessageBox::warning(this, "Error", "Your nickname is too long");
+            leNickname->setFocus();
             return;
         }
 
@@ -337,6 +339,7 @@ void App::connectClicked()
         if (hostname == "")
         {
             QMessageBox::warning(this, "Error", "Enter server address");
+            leServerAddress->setFocus();
             return;
         }
 
