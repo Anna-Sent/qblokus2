@@ -174,45 +174,13 @@ RestartGameMessage::RestartGameMessage(QList<ClientInfo> list)
     _header.setMsgType(mtRestartGame);
 }
 
-ServerInfoMessage::ServerInfoMessage(QString address, QList<ClientInfo> list)
+ServerInfoMessage::ServerInfoMessage(QList<ClientInfo> list)
 {
-    _address = address;
     _list = list;
-    qint64 len = sizeof(int) * 2 + address.toUtf8().size();
+    qint64 len = sizeof(int);
     for (int i = 0; i < list.size(); len += list[i++].size()) { }
     _header.setMsgLength(len);
     _header.setMsgType(mtServerInfo);
-}
-
-QByteArray ServerInfoMessage::serialize() const
-{
-    QByteArray result;
-    QByteArray tmp = _address.toUtf8();
-    int size = tmp.size();
-    result.append(QByteArray::fromRawData((const char *)&size, sizeof(int)));
-    result.append(tmp);
-    size = _list.size();
-    result.append(QByteArray::fromRawData((const char *)&size, sizeof(int)));
-    for (int i = 0; i < _list.size(); result.append(_list[i++].serialize())) { }
-    return _header.serialize().append(result);
-}
-
-void ServerInfoMessage::fill(const QByteArray &buffer)
-{
-    const char *data = buffer.data();
-    int len = *((int *)data);
-    data += sizeof(int);
-    _address = QString::fromUtf8(data, len);
-    data += len;
-    len = *((int *)data);
-    data += sizeof(int);
-    for (int i = 0; i < len; ++i)
-    {
-        ClientInfo item;
-        item.fill(data);
-        data += item.size();
-        _list.append(item);
-    }
 }
 
 SurrenderMessage::SurrenderMessage(QString name, QColor color)

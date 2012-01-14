@@ -17,7 +17,7 @@ ServersSearcher::~ServersSearcher()
 
 void ServersSearcher::serverInfoMessageReceive(ServerInfoMessage msg, const QHostAddress &host, quint16 port)
 {
-    emit serverInfoMessageReceive(host.toString(), msg.list());
+    emit serverInfoMessageReceive(host, msg.list());
 }
 
 void ServersSearcher::timeout()

@@ -1,6 +1,5 @@
 #include "server.h"
 #include "constants.h"
-#include <QHostInfo>
 
 #define PING_INTERVAL 5000
 #define PING_TIME 1500000
@@ -24,7 +23,7 @@ void Server::serverRequestMessageReceive(ServerRequestMessage, const QHostAddres
         }
     }
 
-    ServerInfoMessage msg(QHostInfo::localHostName(), list);
+    ServerInfoMessage msg(list);
     msg.send(&listener, host, port);
 }
 

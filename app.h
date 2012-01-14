@@ -51,7 +51,7 @@ public slots:
     void createServerToggled(bool);
 
     // from servers searcher
-    void serverInfoMessageReceive(QString, QList<ClientInfo>);
+    void serverInfoMessageReceive(const QHostAddress &, QList<ClientInfo>);
 
 signals:
     // to server

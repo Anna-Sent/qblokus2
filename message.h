@@ -28,7 +28,6 @@ enum MessageType
 
 class Message
 {
-protected:
 public:
     virtual qint64 length() const = 0;
     virtual Message *next() const;
@@ -95,15 +94,10 @@ public:
 
 class ServerInfoMessage : public PlayersListMessage
 {
-private:
-    QString _address;
 public:
     ServerInfoMessage() { }
     ServerInfoMessage(const MessageHeader &header) { _header = header; }
-    ServerInfoMessage(QString, QList<ClientInfo>);
-    QString address() const { return _address; }
-    QByteArray serialize() const;
-    void fill(const QByteArray &);
+    ServerInfoMessage(QList<ClientInfo>);
 };
 
 class RestartGameMessage : public PlayersListMessage
@@ -128,6 +122,7 @@ public:
 class TryToConnectMessage : public ClientMessage
 {
 public:
+    TryToConnectMessage() { }
     TryToConnectMessage(const MessageHeader &header) { _header = header; }
     TryToConnectMessage(ClientInfo);
 };
@@ -151,14 +146,14 @@ public:
 class ServerReadyMessage : public ComplexMessage
 {
 public:
-    ServerReadyMessage() { _header.setMsgLength(0); _header.setMsgType(mtServerReady); }
+    ServerReadyMessage() { }
     ServerReadyMessage(const MessageHeader &header) { _header = header; }
 };
 
 class PingMessage : public ComplexMessage
 {
 public:
-    PingMessage() { _header.setMsgLength(0); _header.setMsgType(mtPing); }
+    PingMessage() { }
     PingMessage(const MessageHeader &header) { _header = header; }
 };
 
@@ -178,14 +173,14 @@ public:
 class ServerRequestMessage : public ComplexMessage
 {
 public:
-    ServerRequestMessage() { _header.setMsgLength(0); _header.setMsgType(mtServerRequest); }
+    ServerRequestMessage() { }
     ServerRequestMessage(const MessageHeader &header) { _header = header; }
 };
 
 class StartGameMessage : public ComplexMessage
 {
 public:
-    StartGameMessage() { _header.setMsgLength(0); _header.setMsgType(mtStartGame); }
+    StartGameMessage() { }
     StartGameMessage(const MessageHeader &header) { _header = header; }
 };
 

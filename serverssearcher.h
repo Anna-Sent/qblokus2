@@ -21,7 +21,7 @@ private:
     QTimer timer;
 
 signals:
-    void serverInfoMessageReceive(QString, QList<ClientInfo>);
+    void serverInfoMessageReceive(const QHostAddress &, QList<ClientInfo>);
 
 private slots:
     void serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16);
