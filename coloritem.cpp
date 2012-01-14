@@ -57,8 +57,8 @@ void ColorItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 }
 void ColorItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event )
 {
-    if (!active) return;
     Q_UNUSED(event);
+    if (!active) return;
     reflectTile();
     update();
 }

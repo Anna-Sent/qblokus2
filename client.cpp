@@ -73,7 +73,7 @@ void LocalClient::localPlayersListMessageReceive(PlayersListMessage msg) {
     emit lcPlayersListMessageReceive(msg.list());
 }
 
-void LocalClient::localServerReadyMessageReceive(ServerReadyMessage msg) {
+void LocalClient::localServerReadyMessageReceive(ServerReadyMessage) {
     TryToConnectMessage msg1(info);
     msg1.send(socket);
 }
@@ -90,7 +90,7 @@ void LocalClient::localConnectionAcceptedMessageReceive(ConnectionAcceptedMessag
     emit lcConnectionAcceptedMessageReceive(msg.errorCode());
 }
 
-void LocalClient::localStartGameMessageReceive(StartGameMessage msg) {
+void LocalClient::localStartGameMessageReceive(StartGameMessage) {
     emit lcStartGameMessageReceive();
 }
 

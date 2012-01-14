@@ -88,6 +88,8 @@ void Player::activateAll()
 
 void Player::paint(QPainter* painter, const QStyleOptionGraphicsItem* style, QWidget* widget)
 {
+    Q_UNUSED(style);
+    Q_UNUSED(widget);
     if (active!=lastactive)
     {
         if (active)
@@ -101,8 +103,6 @@ void Player::paint(QPainter* painter, const QStyleOptionGraphicsItem* style, QWi
         painter->drawText(boundingRect(),Qt::AlignCenter,QString::fromUtf8("Игрок сдался"));
     if (tilesleft==0)
         painter->drawText(boundingRect(),Qt::AlignCenter,QString::fromUtf8("Игрок выиграл!!"));
-    Q_UNUSED(style);
-    Q_UNUSED(widget);
 }
 
 const QString& Player::getName() const

@@ -5,7 +5,7 @@ MessageReceiver::MessageReceiver(QAbstractSocket *socket)
 {
     current = new MessageHeader;
     this->socket = socket;
-    if (QUdpSocket *udpSocket = dynamic_cast<QUdpSocket *>(socket))
+    if (dynamic_cast<QUdpSocket *>(socket))
     {
         connect(socket, SIGNAL(readyRead()), this, SLOT(readyReadUdp()));
     }
