@@ -49,18 +49,6 @@ LocalClient::LocalClient():lastpingtime(QTime::currentTime()),_isStarted(false) 
     connect(&localtimer, SIGNAL(timeout()), this, SLOT(localTimerCheck()));
     socket = new QTcpSocket;
     receiver = new MessageReceiver(socket);
-    qRegisterMetaType<QAbstractSocket::SocketError>("QAbstractSocket::SocketError");
-    qRegisterMetaType<PlayersListMessage>("PlayersListMessage");
-    qRegisterMetaType<ClientConnectMessage>("ClientConnectMessage");
-    qRegisterMetaType<ServerReadyMessage>("ServerReadyMessage");
-    qRegisterMetaType<ConnectionAcceptedMessage>("ConnectionAcceptedMessage");
-    qRegisterMetaType<PingMessage>("PingMessage");
-    qRegisterMetaType<StartGameMessage>("StartGameMessage");
-    qRegisterMetaType<RestartGameMessage>("RestartGameMessage");
-    qRegisterMetaType<TurnMessage>("TurnMessage");
-    qRegisterMetaType<ClientDisconnectMessage>("ClientDisconnectMessage");
-    qRegisterMetaType<SurrenderMessage>("SurrenderMessage");
-    qRegisterMetaType<ChatMessage>("ChatMessage");
     connect(receiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(localChatMessageReceive(ChatMessage)));
     connect(receiver, SIGNAL(playersListMessageReceive(PlayersListMessage)), this, SLOT(localPlayersListMessageReceive(PlayersListMessage)));
     connect(receiver, SIGNAL(serverReadyMessageReceive(ServerReadyMessage)), this, SLOT(localServerReadyMessageReceive(ServerReadyMessage)));
