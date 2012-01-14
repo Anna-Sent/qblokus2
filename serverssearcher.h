@@ -16,15 +16,15 @@ public:
 
 private:
     MessageReceiver *messageReceiver;
+    int port;
     QUdpSocket socket;
     QTimer timer;
-    int port;
 
 signals:
     void serverInfoMessageReceive(QString, QList<ClientInfo>);
 
 private slots:
-    void serverInfoMessageReceive(ServerInfoMessage);
+    void serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16);
     void timeout();
 
 public slots:

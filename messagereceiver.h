@@ -12,7 +12,7 @@ private:
     QByteArray buffer;
     Message *current;
     QAbstractSocket *socket;
-    void processData();
+    void processData(const QHostAddress &, quint16);
 
 public:
     MessageReceiver(QAbstractSocket *);
@@ -32,8 +32,9 @@ signals:
     void pingMessageReceive(PingMessage);
     void playersListMessageReceive(PlayersListMessage);
     void restartGameMessageReceive(RestartGameMessage);
-    void serverInfoMessageReceive(ServerInfoMessage);
+    void serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16);
     void serverReadyMessageReceive(ServerReadyMessage);
+    void serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16);
     void startGameMessageReceive(StartGameMessage);
     void surrenderMessageReceive(SurrenderMessage);
     void tryToConnectMessageReceive(TryToConnectMessage);

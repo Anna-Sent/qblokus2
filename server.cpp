@@ -13,25 +13,19 @@ QList<ClientInfo> Server::getClients() const {
     return list;
 }
 
-void Server::readyReadUDP() {
-    if (listener.hasPendingDatagrams()) {
-        qint64 datagramSize = listener.pendingDatagramSize();
-        if (datagramSize == sizeof(int)) {
-            int data;
-            QHostAddress address;
-            quint16 port;
-            listener.readDatagram((char*)&data, datagramSize, &address, &port);
-            if (data == MAGIC_NUMBER) {
-                QList<ClientInfo> list;
-                for (int i=0;i<clients.size();++i)
-                    if (clients[i]->state==2/*&&clients[i]->socket->isConnected()*/)
-                        list.append(clients[i]->info);
-                ServerInfoMessage msg(QHostInfo::localHostName(), list);
-                QByteArray data = msg.serialize();
-                int res = listener.writeDatagram(data.data(), data.size(), address, port);
-            }
+void Server::serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &host, quint16 port)
+{
+    QList<ClientInfo> list;
+    for (int i = 0; i < clients.size(); ++i)
+    {
+        if (clients[i]->state == 2)
+        {
+            list.append(clients[i]->info);
         }
     }
+
+    ServerInfoMessage msg(QHostInfo::localHostName(), list);
+    msg.send(&listener, host, port);
 }
 
 void Server::remotePingMessageReceive(PingMessage, RemoteClient* client) {
@@ -46,9 +40,17 @@ void Server::removeClient(RemoteClient* client) {
 
 Server::Server() {
     connect(&serverConnection, SIGNAL(newConnection()), this, SLOT(newConnection()));
-    connect(&listener, SIGNAL(readyRead()), this, SLOT(readyReadUDP()));
+
+    messageReceiver = new MessageReceiver(&listener);
+    connect(messageReceiver, SIGNAL(serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16)), this, SLOT(serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16)));
+
     timer.setInterval(PING_INTERVAL);
     connect(&timer, SIGNAL(timeout()), this, SLOT(ping()));
+}
+
+Server::~Server()
+{
+    delete messageReceiver;
 }
 
 bool Server::start(int maxClientsCount, quint16 port) {

@@ -3,6 +3,8 @@
 
 #include "clientinfo.h"
 #include <QAbstractSocket>
+#include <QTcpSocket>
+#include <QUdpSocket>
 #include <QColor>
 
 enum MessageType
@@ -14,6 +16,7 @@ enum MessageType
     mtClientConnect,
     mtClientDisconnect,
     mtServerReady,
+    mtServerRequest,
     mtConnectionAccepted,
     mtPing,
     mtTryToConnect,
@@ -29,7 +32,8 @@ protected:
 public:
     virtual qint64 length() const = 0;
     virtual Message *next() const;
-    void send(QAbstractSocket *) const;
+    void send(QTcpSocket *) const;
+    void send(QUdpSocket *, const QHostAddress &, quint16) const;
     virtual QByteArray serialize() const = 0;
     virtual void fill(const QByteArray &) = 0;
 };
@@ -169,6 +173,13 @@ public:
     int errorCode() const { return _errorCode; }
     QByteArray serialize() const;
     void fill(const QByteArray &);
+};
+
+class ServerRequestMessage : public ComplexMessage
+{
+public:
+    ServerRequestMessage() { _header.setMsgLength(0); _header.setMsgType(mtServerRequest); }
+    ServerRequestMessage(const MessageHeader &header) { _header = header; }
 };
 
 class StartGameMessage : public ComplexMessage

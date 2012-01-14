@@ -32,7 +32,7 @@ void MessageReceiver::readyRead()
     }
 
     buffer.append(QByteArray(tmp, len));
-    processData();
+    processData(QHostAddress::Any, 0);
 }
 
 void MessageReceiver::readyReadUdp()
@@ -53,12 +53,12 @@ void MessageReceiver::readyReadUdp()
             }
 
             buffer.append(datagram);
-            processData();
+            processData(sender, senderPort);
         }
     }
 }
 
-void MessageReceiver::processData()
+void MessageReceiver::processData(const QHostAddress &host, quint16 port)
 {
     while (current->length() <= buffer.size())
     {
@@ -101,12 +101,17 @@ void MessageReceiver::processData()
         {
             ServerInfoMessage *msg;
             if ((msg = dynamic_cast<ServerInfoMessage *>(current)))
-                emit serverInfoMessageReceive(*msg);
+                emit serverInfoMessageReceive(*msg, host, port);
         }
         {
             ServerReadyMessage *msg;
             if ((msg = dynamic_cast<ServerReadyMessage *>(current)))
                 emit serverReadyMessageReceive(*msg);
+        }
+        {
+            ServerRequestMessage *msg;
+            if ((msg = dynamic_cast<ServerRequestMessage *>(current)))
+                emit serverRequestMessageReceive(*msg, host, port);
         }
         {
             StartGameMessage *msg;

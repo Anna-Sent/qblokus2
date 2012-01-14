@@ -5,10 +5,16 @@ Message *Message::next() const
     return new MessageHeader;
 }
 
-void Message::send(QAbstractSocket *socket) const
+void Message::send(QTcpSocket *socket) const
 {
     QByteArray data = serialize();
     socket->write(data.data(), data.size());
+}
+
+void Message::send(QUdpSocket *socket, const QHostAddress &host, quint16 port) const
+{
+    QByteArray data = serialize();
+    socket->writeDatagram(data, host, port);
 }
 
 Message *MessageHeader::next() const
@@ -22,6 +28,7 @@ Message *MessageHeader::next() const
     case mtConnectionAccepted :     return new ConnectionAcceptedMessage(*this);
     case mtServerInfo :             return new ServerInfoMessage(*this);
     case mtServerReady :            return new ServerReadyMessage(*this);
+    case mtServerRequest :          return new ServerRequestMessage(*this);
     case mtSurrender :              return new SurrenderMessage(*this);
     case mtPing :                   return new PingMessage(*this);
     case mtPlayersList :            return new PlayersListMessage(*this);
