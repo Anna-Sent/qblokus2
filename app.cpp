@@ -314,22 +314,24 @@ void App::connectClicked()
     {
         switch (cbColor->currentIndex())
         {
-        case 0: localClient.setColor(Qt::red); break;
-        case 1: localClient.setColor(Qt::darkYellow); break;
-        case 2: localClient.setColor(Qt::green); break;
-        case 3: localClient.setColor(Qt::blue); break;
-        default: QMessageBox::warning(this, "Error", "Incorrect color"); return;
+        case 0:     localClient.setColor(Qt::red); break;
+        case 1:     localClient.setColor(Qt::darkYellow); break;
+        case 2:     localClient.setColor(Qt::green); break;
+        case 3:     localClient.setColor(Qt::blue); break;
+        default:    QMessageBox::warning(this, "Error", "Incorrect color"); return;
         }
 
         if (leNickname->text() == "")
         {
             QMessageBox::warning(this, "Error", "Enter nickname");
+            dockWidget->activateWindow();
             leNickname->setFocus();
             return;
         }
         else if (leNickname->text().toUtf8().size() > 100)
         {
             QMessageBox::warning(this, "Error", "Your nickname is too long");
+            dockWidget->activateWindow();
             leNickname->setFocus();
             return;
         }
@@ -339,6 +341,7 @@ void App::connectClicked()
         if (hostname == "")
         {
             QMessageBox::warning(this, "Error", "Enter server address");
+            dockWidget->activateWindow();
             leServerAddress->setFocus();
             return;
         }
