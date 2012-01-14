@@ -3,7 +3,7 @@
 #define PING_TIME 1500000
 
 RemoteClient::RemoteClient(QTcpSocket *s) : state(1), lastpingtime(QTime::currentTime()) {
-    MessageReceiver *messageReceiver = new MessageReceiver(s);
+    messageReceiver = new TcpMessageReceiver(s);
     connect(messageReceiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(remoteChatMessageReceive(ChatMessage)));
     connect(messageReceiver, SIGNAL(tryToConnectMessageReceive(TryToConnectMessage)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage)));
     connect(messageReceiver, SIGNAL(pingMessageReceive(PingMessage)), this, SLOT(remotePingMessageReceive(PingMessage)));
@@ -12,7 +12,6 @@ RemoteClient::RemoteClient(QTcpSocket *s) : state(1), lastpingtime(QTime::curren
     connect(s, SIGNAL(disconnected()), this, SLOT(remoteDisconnected()));
     connect(s, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(remoteError(QAbstractSocket::SocketError)));
     this->socket = s;
-    this->receiver = messageReceiver;
     this->state = 1;
 }
 
@@ -48,18 +47,18 @@ LocalClient::LocalClient():lastpingtime(QTime::currentTime()),_isStarted(false) 
     localtimer.setInterval(PING_INTERVAL);
     connect(&localtimer, SIGNAL(timeout()), this, SLOT(localTimerCheck()));
     socket = new QTcpSocket;
-    receiver = new MessageReceiver(socket);
-    connect(receiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(localChatMessageReceive(ChatMessage)));
-    connect(receiver, SIGNAL(playersListMessageReceive(PlayersListMessage)), this, SLOT(localPlayersListMessageReceive(PlayersListMessage)));
-    connect(receiver, SIGNAL(serverReadyMessageReceive(ServerReadyMessage)), this, SLOT(localServerReadyMessageReceive(ServerReadyMessage)));
-    connect(receiver, SIGNAL(clientConnectMessageReceive(ClientConnectMessage)), this, SLOT(localClientConnectMessageReceive(ClientConnectMessage)));
-    connect(receiver, SIGNAL(clientDisconnectMessageReceive(ClientDisconnectMessage)), this, SLOT(localClientDisconnectMessageReceive(ClientDisconnectMessage)));
-    connect(receiver, SIGNAL(connectionAcceptedMessageReceive(ConnectionAcceptedMessage)), this, SLOT(localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage)));
-    connect(receiver, SIGNAL(pingMessageReceive(PingMessage)), this, SLOT(localPingMessageReceive(PingMessage)));
-    connect(receiver, SIGNAL(startGameMessageReceive(StartGameMessage)), this, SLOT(localStartGameMessageReceive(StartGameMessage)));
-    connect(receiver, SIGNAL(restartGameMessageReceive(RestartGameMessage)), this, SLOT(localRestartGameMessageReceive(RestartGameMessage)));
-    connect(receiver, SIGNAL(turnMessageReceive(TurnMessage)), this, SLOT(localTurnMessageReceive(TurnMessage)));
-    connect(receiver, SIGNAL(surrenderMessageReceive(SurrenderMessage)), this, SLOT(localSurrenderMessageReceive(SurrenderMessage)));
+    messageReceiver = new TcpMessageReceiver(socket);
+    connect(messageReceiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(localChatMessageReceive(ChatMessage)));
+    connect(messageReceiver, SIGNAL(playersListMessageReceive(PlayersListMessage)), this, SLOT(localPlayersListMessageReceive(PlayersListMessage)));
+    connect(messageReceiver, SIGNAL(serverReadyMessageReceive(ServerReadyMessage)), this, SLOT(localServerReadyMessageReceive(ServerReadyMessage)));
+    connect(messageReceiver, SIGNAL(clientConnectMessageReceive(ClientConnectMessage)), this, SLOT(localClientConnectMessageReceive(ClientConnectMessage)));
+    connect(messageReceiver, SIGNAL(clientDisconnectMessageReceive(ClientDisconnectMessage)), this, SLOT(localClientDisconnectMessageReceive(ClientDisconnectMessage)));
+    connect(messageReceiver, SIGNAL(connectionAcceptedMessageReceive(ConnectionAcceptedMessage)), this, SLOT(localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage)));
+    connect(messageReceiver, SIGNAL(pingMessageReceive(PingMessage)), this, SLOT(localPingMessageReceive(PingMessage)));
+    connect(messageReceiver, SIGNAL(startGameMessageReceive(StartGameMessage)), this, SLOT(localStartGameMessageReceive(StartGameMessage)));
+    connect(messageReceiver, SIGNAL(restartGameMessageReceive(RestartGameMessage)), this, SLOT(localRestartGameMessageReceive(RestartGameMessage)));
+    connect(messageReceiver, SIGNAL(turnMessageReceive(TurnMessage)), this, SLOT(localTurnMessageReceive(TurnMessage)));
+    connect(messageReceiver, SIGNAL(surrenderMessageReceive(SurrenderMessage)), this, SLOT(localSurrenderMessageReceive(SurrenderMessage)));
     connect(socket, SIGNAL(connected()), this, SLOT(localConnected()));
     connect(socket, SIGNAL(disconnected()), this, SLOT(localDisconnected()));
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(localError(QAbstractSocket::SocketError)));

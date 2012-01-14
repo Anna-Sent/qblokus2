@@ -2,29 +2,27 @@
 #define MESSAGERECV_H_
 
 #include "message.h"
-#include <QAbstractSocket>
+#include <QTcpSocket>
+#include <QUdpSocket>
 
-class MessageReceiver : public QObject
+class TcpMessageReceiver : public QObject
 {
     Q_OBJECT
 
 private:
     QByteArray buffer;
     Message *current;
-    QAbstractSocket *socket;
-    void processData(const QHostAddress &, quint16);
+    QTcpSocket *socket;
+    void processData();
 
 public:
-    MessageReceiver(QAbstractSocket *);
-    ~MessageReceiver();
+    TcpMessageReceiver(QTcpSocket *);
+    ~TcpMessageReceiver();
 
 private slots:
     void readyRead();
-    void readyReadUdp();
 
 signals:
-    void getMessage(QByteArray);
-
     void chatMessageReceive(ChatMessage);
     void clientConnectMessageReceive(ClientConnectMessage);
     void clientDisconnectMessageReceive(ClientDisconnectMessage);
@@ -32,13 +30,31 @@ signals:
     void pingMessageReceive(PingMessage);
     void playersListMessageReceive(PlayersListMessage);
     void restartGameMessageReceive(RestartGameMessage);
-    void serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16);
     void serverReadyMessageReceive(ServerReadyMessage);
-    void serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16);
     void startGameMessageReceive(StartGameMessage);
     void surrenderMessageReceive(SurrenderMessage);
     void tryToConnectMessageReceive(TryToConnectMessage);
     void turnMessageReceive(TurnMessage);
+};
+
+class UdpMessageReceiver : public QObject
+{
+    Q_OBJECT
+
+private:
+    QUdpSocket *socket;
+    void processData(QByteArray &, const QHostAddress &, quint16);
+
+public:
+    UdpMessageReceiver(QUdpSocket *);
+    ~UdpMessageReceiver();
+
+private slots:
+    void readyRead();
+
+signals:
+    void serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16);
+    void serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16);
 };
 
 #endif

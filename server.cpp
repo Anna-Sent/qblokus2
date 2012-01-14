@@ -40,7 +40,7 @@ void Server::removeClient(RemoteClient* client) {
 Server::Server() {
     connect(&serverConnection, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
-    messageReceiver = new MessageReceiver(&listener);
+    messageReceiver = new UdpMessageReceiver(&listener);
     connect(messageReceiver, SIGNAL(serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16)), this, SLOT(serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16)));
 
     timer.setInterval(PING_INTERVAL);

@@ -14,13 +14,13 @@ private:
 private:
     QTime lastpingtime;
     QTcpSocket* socket;
-    MessageReceiver* receiver;
+    TcpMessageReceiver* messageReceiver;
     ClientInfo info;
     bool _isStarted;
     void stop() {socket->close();localtimer.stop();_isStarted=false;}
 public:
     LocalClient();
-    ~LocalClient() { delete receiver; }
+    ~LocalClient() { delete messageReceiver; }
     void quit() { stop(); }
     void start(QString hostname, quint16 port) {socket->connectToHost(hostname, port);localtimer.start();_isStarted=true;}
     void setNickname(QString name) {info.setName(name);}
@@ -70,10 +70,10 @@ public:
     int state;
     QTime lastpingtime;
     QTcpSocket* socket;
-    MessageReceiver* receiver;
+    TcpMessageReceiver* messageReceiver;
     ClientInfo info;
 public:
-    ~RemoteClient() { delete receiver; }
+    ~RemoteClient() { delete messageReceiver; }
     RemoteClient(QTcpSocket*);
 private slots:
     void remoteChatMessageReceive(ChatMessage);

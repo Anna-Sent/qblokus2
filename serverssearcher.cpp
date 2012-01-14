@@ -4,7 +4,7 @@
 
 ServersSearcher::ServersSearcher()
 {
-    messageReceiver = new MessageReceiver(&socket);
+    messageReceiver = new UdpMessageReceiver(&socket);
     connect(messageReceiver, SIGNAL(serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16)), this, SLOT(serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16)));
     timer.setInterval(1000);
     connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));

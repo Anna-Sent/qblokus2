@@ -1,26 +1,19 @@
 #include "messagereceiver.h"
-#include <QUdpSocket>
 
-MessageReceiver::MessageReceiver(QAbstractSocket *socket)
+TcpMessageReceiver::TcpMessageReceiver(QTcpSocket *socket)
 {
     current = new MessageHeader;
     this->socket = socket;
-    if (dynamic_cast<QUdpSocket *>(socket))
-    {
-        connect(socket, SIGNAL(readyRead()), this, SLOT(readyReadUdp()));
-    }
-    else
-    {
-        connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
-    }
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 }
 
-MessageReceiver::~MessageReceiver()
+TcpMessageReceiver::~TcpMessageReceiver()
 {
+    // important. do not use delete socket;
     socket->deleteLater();
 }
 
-void MessageReceiver::readyRead()
+void TcpMessageReceiver::readyRead()
 {
     int avail = socket->bytesAvailable();
     char *tmp = (char *)malloc(avail);
@@ -32,33 +25,10 @@ void MessageReceiver::readyRead()
     }
 
     buffer.append(QByteArray(tmp, len));
-    processData(QHostAddress::Any, 0);
+    processData();
 }
 
-void MessageReceiver::readyReadUdp()
-{
-    if (QUdpSocket *udpSocket = dynamic_cast<QUdpSocket *>(socket))
-    {
-        while (udpSocket->hasPendingDatagrams())
-        {
-            QByteArray datagram;
-            datagram.resize(udpSocket->pendingDatagramSize());
-            QHostAddress sender;
-            quint16 senderPort;
-            int len = udpSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
-            if (len < 0)
-            {
-                qDebug() << "UDP socket error occurs: " << udpSocket->errorString();
-                return;
-            }
-
-            buffer.append(datagram);
-            processData(sender, senderPort);
-        }
-    }
-}
-
-void MessageReceiver::processData(const QHostAddress &host, quint16 port)
+void TcpMessageReceiver::processData()
 {
     while (current->length() <= buffer.size())
     {
@@ -99,19 +69,9 @@ void MessageReceiver::processData(const QHostAddress &host, quint16 port)
                 emit restartGameMessageReceive(*msg);
         }
         {
-            ServerInfoMessage *msg;
-            if ((msg = dynamic_cast<ServerInfoMessage *>(current)))
-                emit serverInfoMessageReceive(*msg, host, port);
-        }
-        {
             ServerReadyMessage *msg;
             if ((msg = dynamic_cast<ServerReadyMessage *>(current)))
                 emit serverReadyMessageReceive(*msg);
-        }
-        {
-            ServerRequestMessage *msg;
-            if ((msg = dynamic_cast<ServerRequestMessage *>(current)))
-                emit serverRequestMessageReceive(*msg, host, port);
         }
         {
             StartGameMessage *msg;
@@ -141,3 +101,57 @@ void MessageReceiver::processData(const QHostAddress &host, quint16 port)
     }
 }
 
+UdpMessageReceiver::UdpMessageReceiver(QUdpSocket *socket)
+{
+    this->socket = socket;
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+}
+
+UdpMessageReceiver::~UdpMessageReceiver()
+{
+    // important. do not use delete socket;
+    socket->deleteLater();
+}
+
+void UdpMessageReceiver::readyRead()
+{
+    while (socket->hasPendingDatagrams())
+    {
+        QByteArray datagram;
+        datagram.resize(socket->pendingDatagramSize());
+        QHostAddress sender;
+        quint16 senderPort;
+        int len = socket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+        if (len < 0)
+        {
+            qDebug() << "UDP socket error occurs: " << socket->errorString();
+            return;
+        }
+
+        processData(datagram, sender, senderPort);
+    }
+}
+
+void UdpMessageReceiver::processData(QByteArray &buffer, const QHostAddress &host, quint16 port)
+{
+    Message *current = new MessageHeader;
+    while (current->length() <= buffer.size())
+    {
+        current->fill(buffer);
+        {
+            ServerInfoMessage *msg;
+            if ((msg = dynamic_cast<ServerInfoMessage *>(current)))
+                emit serverInfoMessageReceive(*msg, host, port);
+        }
+        {
+            ServerRequestMessage *msg;
+            if ((msg = dynamic_cast<ServerRequestMessage *>(current)))
+                emit serverRequestMessageReceive(*msg, host, port);
+        }
+
+        buffer.remove(0, current->length());
+        Message* old = current;
+        current = current->next();
+        delete old;
+    }
+}

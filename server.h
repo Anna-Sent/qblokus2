@@ -12,7 +12,7 @@ class Server : public QThread {
 private:
     QTcpServer serverConnection;
     QUdpSocket listener;
-    MessageReceiver *messageReceiver;
+    UdpMessageReceiver *messageReceiver;
     QList<RemoteClient*> clients;
     QTimer timer;
     int maxClientsCount;

@@ -15,7 +15,7 @@ public:
     ~ServersSearcher();
 
 private:
-    MessageReceiver *messageReceiver;
+    UdpMessageReceiver *messageReceiver;
     int port;
     QUdpSocket socket;
     QTimer timer;
