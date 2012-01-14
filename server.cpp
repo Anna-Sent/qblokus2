@@ -49,7 +49,7 @@ Server::Server() {
 
 Server::~Server()
 {
-    delete messageReceiver;
+    messageReceiver->deleteLater();
 }
 
 bool Server::start(int maxClientsCount, quint16 port) {

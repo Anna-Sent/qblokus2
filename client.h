@@ -20,7 +20,7 @@ private:
     void stop() {socket->close();localtimer.stop();_isStarted=false;}
 public:
     LocalClient();
-    ~LocalClient() { delete messageReceiver; }
+    ~LocalClient() { messageReceiver->deleteLater(); }
     void quit() { stop(); }
     void start(QString hostname, quint16 port) {socket->connectToHost(hostname, port);localtimer.start();_isStarted=true;}
     void setNickname(QString name) {info.setName(name);}
@@ -73,7 +73,7 @@ public:
     TcpMessageReceiver* messageReceiver;
     ClientInfo info;
 public:
-    ~RemoteClient() { delete messageReceiver; }
+    ~RemoteClient() { messageReceiver->deleteLater(); }
     RemoteClient(QTcpSocket*);
 private slots:
     void remoteChatMessageReceive(ChatMessage);
