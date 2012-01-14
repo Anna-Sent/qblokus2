@@ -7,7 +7,7 @@
 QList<ClientInfo> Server::getClients() const {
     QList<ClientInfo> list;
     for (int i=0;i<clients.size();++i)
-        if (/*clients[i]->socket->isConnected()&&*/clients[i]->state==2)
+        if (clients[i]->state==2)
             list.append(clients[i]->info);
     return list;
 }
@@ -159,7 +159,7 @@ void Server::remoteChatMessageReceive(ChatMessage msg, RemoteClient*) {
 void Server::sendToAll(Message *msg) {
     QList<RemoteClient*>::iterator i;
     for (i = clients.begin(); i != clients.end(); ++i)
-        if (/*(*i)->socket->isConnected()&&*/(*i)->state==2) {
+        if ((*i)->state==2) {
         msg->send((*i)->socket);
     }
 }
@@ -167,7 +167,7 @@ void Server::sendToAll(Message *msg) {
 void Server::sendPlayersList() {
     QList<ClientInfo> list;
     for (int i=0;i<clients.size();++i)
-        if (clients[i]->state==2/*&&clients[i]->socket->isConnected()*/)
+        if (clients[i]->state==2)
             list.append(clients[i]->info);
     PlayersListMessage msg(list);
     sendToAll(&msg);

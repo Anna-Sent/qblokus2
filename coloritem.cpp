@@ -13,8 +13,6 @@ ColorItem::ColorItem(string mask, QColor clr,int id)
 
 QRectF ColorItem::boundingRect() const
 {
-    //return QRectF(-15.5, -15.5, 34, 34);
-    //cout << "getbrect" << getHeight()<< " " << getWidth() <<"\n";
     return QRectF(0,0,getWidth()*20,getHeight()*20);
 }
 
@@ -61,7 +59,6 @@ void ColorItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event )
 {
     if (!active) return;
     Q_UNUSED(event);
-    //    if (event->button()!=Qt::RightButton) return;
     reflectTile();
     update();
 }
@@ -85,7 +82,6 @@ void ColorItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     pixmap.fill(Qt::white);
 
     QPainter painter(&pixmap);
-    //painter.translate(15, 15);
     painter.setRenderHint(QPainter::Antialiasing);
     paint(&painter, 0, 0);
     painter.end();
@@ -113,9 +109,6 @@ void ColorItem::deactivate()
     active=false;
 }
 
-#ifdef DEBUG_DESTRUCTORS
 ColorItem::~ColorItem()
 {
-    cerr << "colorItem " << Id << color.name().toStdString() << " destroyed" << endl;
 }
-#endif

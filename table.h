@@ -32,7 +32,6 @@ class Table : public QObject, public QGraphicsItem
 public:
     Table(int w,int h);
     bool Accept(int x,int y,const Tile& what,int id,bool really,bool local,QColor color);
-    //    bool Accept(int x,int y,Tile what,bool really,QColor color);
     void clearDrags();
     QRectF boundingRect() const;
 protected:

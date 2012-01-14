@@ -44,10 +44,6 @@ Player::Player(QColor clr,int wid,int hei , QGraphicsItem * parent, QGraphicsSce
 
 Player::~Player()
 {
-    /*    for(int i=0;i<items.size();++i)
-    {
-        delete items[i];
-    }*/
 }
 
 QRectF Player::boundingRect() const 

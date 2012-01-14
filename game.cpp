@@ -7,13 +7,9 @@ using namespace std;
 
 Game::Game(QWidget* widget):currplayer(0),running(false)
 {
-    //ui = new Ui::BlokusUi;
-    //ui->setupUi(widget);
     ui = dynamic_cast<Ui::MainWindow*>(widget);
-    if (ui==0) cerr<<"bug!!!!!!" << endl;
     table = new Table(20,20);
     tablescene = new QGraphicsScene;
-    //scenes.append(tablescene);
     tablescene->addItem(table);
     ui->gvTable->setScene(tablescene);
     connect(table,SIGNAL(turnComplete(QColor,QString,int,int,int)),this,SLOT(turnDone(QColor,QString,int,int,int)));
@@ -59,8 +55,6 @@ void Game::addPlayer(QString name,QColor color, PlayerType type)
 
 
     lcd->setPalette(QPalette(color));
-    //ui->horizontalLayout->invalidate();
-    //ui->gridLayout->invalidate();
     connect(player,SIGNAL(scoreChanged(int)),lcd,SLOT(display(int)));
     connect(player,SIGNAL(iWin(Player* )),this,SLOT(winner(Player *)));
     lcd->display(0);
@@ -72,7 +66,6 @@ void Game::turnDone(QColor color, QString tile,int id,int x,int y)
 {
     if (color!=players[currplayer]->getColor()) return;
     if (dynamic_cast<Table*>(sender())) {
-        cerr << "111\n";
         emit turnDone(players[currplayer]->getName(),color,tile,id,x,y);
     }
     players[currplayer]->turnComplete(color,tile,id,x,y);
@@ -87,7 +80,6 @@ void Game::turnDone(QColor color, QString tile,int id,int x,int y)
         surrender->setEnabled(false);
     }
     players[currplayer]->startTurn();
-    cerr << "===== " << currplayer << " ====\n";
 }
 
 void Game::remotePlayerRetired(QString name,QColor color)
@@ -102,9 +94,7 @@ void Game::playerRetired()
     if (sender()&&dynamic_cast<QPushButton*>(sender())) {
         LocalPlayer* player = dynamic_cast<LocalPlayer*>(players[currplayer]);
         if (!player) return;
-        //confirm
         QMessageBox msgBox;
-        //msgBox.setText(QString::fromUtf8("Похоже вы хотите сдаться."));
         msgBox.setInformativeText(QString::fromUtf8("Вы действительно хотите сдаться и закончить игру?"));
         msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::No);
@@ -128,7 +118,6 @@ void Game::playerRetired()
         } while(players[currplayer]->getSurrendered());
         if (playersleft==1)
         {
-            //winner(players[currplayer]);
             int msp=0;
             for(int p=1;p<players.size();++p)
                 if ((players[p]->getScore()>players[msp]->getScore())) msp=p;
@@ -137,11 +126,6 @@ void Game::playerRetired()
         {
             players[currplayer]->startTurn();
         }
-    }
-    else
-    {//Недостижимо!
-        //this->deleteLater();
-        //emit gameOver();
     }
     QPushButton *surrender = widget->findChild<QPushButton*>(QString("pbSurrender"));
     if (dynamic_cast<LocalPlayer*>(players[currplayer]))
@@ -154,42 +138,25 @@ void Game::playerRetired()
 
 Game::~Game()
 {
-#ifdef DEBUG_DESTRUCTORS
-    cerr << "Game over" << endl;
-#endif
-    /*    for (int i=0;i<scenes.size();++i)
-    {
-        //scenes[i]->deleteLater();
-        delete scenes[i];
-        //delete players[i];
-    }
-    scenes.clear();*/
     clear();
     delete tablescene;
-    //delete table;
-    //delete ui;
 }
 
 void Game::clear() {
     for (int i=0;i<scenes.size();++i)
     {
-        //scenes[i]->deleteLater();
         delete scenes[i];
-        //        scenes.removeAt(1);
-        //delete players[i];
     }
     playersleft=0;
     currplayer=0;
     scenes.clear();
     players.clear();
-    //QList<QLCDNumber*> *lcd = widget->findChild<QLCDNumber*>(playerscore+QString::number(i+1));
     QList<QLCDNumber*> lcds = widget->findChildren<QLCDNumber*>();
     for(int i=0;i<lcds.size();++i)
     {
         lcds[i]->setPalette(QPalette());
         lcds[i]->display(0);
     }
-    //    delete table;
 }
 
 void Game::start()
@@ -210,7 +177,6 @@ void Game::start()
 
 void Game::winner(Player* winner)
 {
-    //cerr << winner->getName().toStdString() << "\n";
     QString winners;
     int count=0;
     for(int i=0;i<players.size();++i)
@@ -238,7 +204,6 @@ bool operator==(const ClientInfo& a1,const ClientInfo& a2)
 void Game::retirePlayer(int i)
 {
     if (players[i]->getSurrendered()) return;
-    cerr << i << " ======= " << currplayer << endl;
     if (currplayer==i)
     {
         playerRetired();
@@ -252,7 +217,6 @@ void Game::retirePlayer(int i)
     }
     if (playersleft==1)
     {
-        //winner(players[currplayer]);
         int msp=0;
         for(int p=1;p<players.size();++p)
             if (players[p]->getScore()>players[msp]->getScore()) msp=p;
@@ -264,7 +228,6 @@ void Game::retirePlayer(int i)
 
 void Game::updatePlayers(QList<ClientInfo> clients,QList<bool> local)
 {
-    cerr << players.size() << " " << clients.size() << " " << local.size() << endl;
     if (!running)
     {
         clear();
@@ -295,7 +258,6 @@ void Game::updatePlayers(QList<ClientInfo> clients,QList<bool> local)
                     pl=players.size();
                 }
             } else {
-                cerr << players[pl]->getName().toStdString() << " " << clients[cl].name().toStdString() << endl;
                 if (players[pl]->getName()==clients[cl].name()&&players[pl]->getColor()==clients[cl].color())
                 {
                     ++pl;
@@ -310,7 +272,6 @@ void Game::updatePlayers(QList<ClientInfo> clients,QList<bool> local)
             }
         }
     }
-    cerr << "----------players updated\n";
 }
 bool Game::isStarted() const
 {

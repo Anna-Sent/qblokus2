@@ -18,12 +18,10 @@ Tile::Tile(string src)
             if (src[i]!='0') ++scor;
         }
     }
-    //    rotateTile();
 }
 
 void Tile::rotateTile()
 {
-    //    cout << "rotate\n";
     vector<vector<char> > newdata(getWidth(),vector<char>(getHeight(),'0'));
     for(int i = 0;i<getHeight();++i)
     {
@@ -42,7 +40,6 @@ int Tile::score() const
 
 void Tile::reflectTile()
 {
-    //    cout << "rotate\n";
     vector<vector<char> > newdata(getHeight(),vector<char>(getWidth(),'0'));
     for(int i = 0;i<getHeight();++i)
     {
@@ -85,6 +82,5 @@ ostream& operator<<(ostream& to,const Tile& what)
 int main()
 {
     Tile tile("12|01");
-    cout << tile;
 }
 #endif
