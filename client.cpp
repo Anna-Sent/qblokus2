@@ -116,6 +116,7 @@ void LocalClient::localDisconnected() {
 void LocalClient::localError(QAbstractSocket::SocketError) {
     emit lcError(socket->errorString());
     emit lcError();
+    socket->abort();
 }
 
 void LocalClient::localPingMessageReceive(PingMessage msg) {

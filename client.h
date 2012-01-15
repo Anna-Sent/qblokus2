@@ -17,7 +17,7 @@ private:
     TcpMessageReceiver* messageReceiver;
     ClientInfo info;
     bool _isStarted;
-    void stop() {socket->close();localtimer.stop();_isStarted=false;}
+    void stop() {localtimer.stop();socket->disconnectFromHost();_isStarted=false;}
 public:
     LocalClient();
     ~LocalClient() { messageReceiver->deleteLater(); }

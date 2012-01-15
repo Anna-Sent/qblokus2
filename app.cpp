@@ -12,7 +12,6 @@ App::App(QWidget *parent)
     // from local client
     connect(&localClient, SIGNAL(lcError(QString)), this, SLOT(perror(QString)));
     connect(&localClient, SIGNAL(lcError()), &serversSearcher, SLOT(start()));
-    connect(&localClient, SIGNAL(lcError()), &localClient, SLOT(quit()));
     connect(&localClient, SIGNAL(lcError()), &server, SLOT(quit()));
     connect(&localClient, SIGNAL(lcConnected()), this, SLOT(localConnected()));
     connect(&localClient, SIGNAL(lcConnected()), lwPlayersList, SLOT(clear()));
@@ -21,7 +20,6 @@ App::App(QWidget *parent)
     connect(&localClient, SIGNAL(lcDisconnected()), this, SLOT(localDisconnected()));
     connect(&localClient, SIGNAL(lcDisconnected()), lwPlayersList, SLOT(clear()));
     connect(&localClient, SIGNAL(lcDisconnected()), lwServersList, SLOT(clear()));
-    connect(&localClient, SIGNAL(lcDisconnected()), &localClient, SLOT(quit()));
     connect(&localClient, SIGNAL(lcDisconnected()), &server, SLOT(quit()));
     connect(&localClient, SIGNAL(lcDisconnected()), &serversSearcher, SLOT(start()));
     connect(&localClient, SIGNAL(lcChatMessageReceive(QString, QColor, QString)), this, SLOT(localChatMessageReceive(QString, QColor, QString)));
@@ -100,7 +98,8 @@ void App::setTabOrder()
     QWidget::setTabOrder(sbPort, leNickname);
     QWidget::setTabOrder(leNickname, cbColor);
     QWidget::setTabOrder(cbColor, pbConnect);
-    QWidget::setTabOrder(pbConnect, lineEdit);
+    QWidget::setTabOrder(pbConnect, textEdit);
+    QWidget::setTabOrder(textEdit, lineEdit);
     QWidget::setTabOrder(lineEdit, lwServersList);
 }
 
@@ -110,42 +109,39 @@ void App::userStartGame()
     {
         if (server.getPlayersCount() == server.getMaxClientsCount())
         {
-            if (game)
+            if (game && game->isStarted())
             {
-                if (game->isStarted())
+                QMessageBox msgBox;
+                msgBox.setText("New game");
+                msgBox.setInformativeText("Start new game?");
+                msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                msgBox.setDefaultButton(QMessageBox::No);
+                msgBox.setIcon(QMessageBox::Warning);
+                int ret = msgBox.exec();
+                switch(ret)
                 {
-                    QMessageBox msgBox;
-                    msgBox.setText("New game");
-                    msgBox.setInformativeText("Start new game?");
-                    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-                    msgBox.setDefaultButton(QMessageBox::No);
-                    msgBox.setIcon(QMessageBox::Warning);
-                    int ret = msgBox.exec();
-                    switch(ret)
-                    {
-                    case(QMessageBox::No): return;
-                    case(QMessageBox::Yes): break;
-                    }
-
-                    delete game;
-                    game = new Game(this);
-                    QList<ClientInfo> list = server.getClients();
-                    QList<bool> isLocal;
-                    for (int i = 0; i < list.size(); ++i)
-                    {
-                        isLocal.append(list[i].name() == localClient.getNickname()
-                                       && list[i].color() == localClient.getColor());
-                    }
-
-                    game->updatePlayers(list, isLocal);
-                    game->start();
-                    emit restartGame(list);
+                case(QMessageBox::No): return;
+                case(QMessageBox::Yes): break;
                 }
-                else
+
+                delete game;
+                game = new Game(this);
+                QList<ClientInfo> list = server.getClients();
+                QList<bool> isLocal;
+                for (int i = 0; i < list.size(); ++i)
                 {
-                    game->start();
-                    emit startGame();
+                    isLocal.append(list[i].name() == localClient.getNickname()
+                                   && list[i].color() == localClient.getColor());
                 }
+
+                game->updatePlayers(list, isLocal);
+                game->start();
+                emit restartGame(list);
+            }
+            else
+            {
+                game->start();
+                emit startGame();
             }
         }
         else
@@ -198,20 +194,6 @@ void App::userSendMessage()
 
 void App::localConnected()
 {
-    pinfo("Connected");
-    lServersList->setDisabled(true);
-    lwServersList->setDisabled(true);
-    lServerAddress->setDisabled(true);
-    leServerAddress->setDisabled(true);
-    cbCreateServer->setDisabled(true);
-    sbClientsCount->setDisabled(true);
-    lPort->setDisabled(true);
-    sbPort->setDisabled(true);
-    lNickname->setDisabled(true);
-    leNickname->setDisabled(true);
-    lColor->setDisabled(true);
-    cbColor->setDisabled(true);
-    pbConnect->setText("Disconnect from server");
 }
 
 void App::localDisconnected()
@@ -289,6 +271,23 @@ void App::localConnectionAcceptedMessageReceive(int errorCode)
         }
 
         localClient.quit();
+    }
+    else
+    {
+        pinfo("Connected");
+        lServersList->setDisabled(true);
+        lwServersList->setDisabled(true);
+        lServerAddress->setDisabled(true);
+        leServerAddress->setDisabled(true);
+        cbCreateServer->setDisabled(true);
+        sbClientsCount->setDisabled(true);
+        lPort->setDisabled(true);
+        sbPort->setDisabled(true);
+        lNickname->setDisabled(true);
+        leNickname->setDisabled(true);
+        lColor->setDisabled(true);
+        cbColor->setDisabled(true);
+        pbConnect->setText("Disconnect from server");
     }
 }
 

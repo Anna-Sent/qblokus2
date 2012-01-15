@@ -16,16 +16,16 @@ public:
 
 private:
     Game *game;
-    Server server;
     LocalClient localClient;
+    Server server;
     ServersSearcher serversSearcher;
-    void setTabOrder();
 
 private slots:
-    void perror(QString);
-    void pinfo(QString);
+    void setTabOrder();
 
 public slots:
+    void perror(QString);
+    void pinfo(QString);
     // from graphics
     void userStartGame();
     void userQuit();
