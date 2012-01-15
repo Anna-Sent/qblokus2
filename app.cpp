@@ -10,7 +10,10 @@ App::App(QWidget *parent)
     setTabOrder();
 
     // from local client
-    connect(&localClient, SIGNAL(lcError(QString)), this, SLOT(localError(QString)));
+    connect(&localClient, SIGNAL(lcError(QString)), this, SLOT(perror(QString)));
+    connect(&localClient, SIGNAL(lcError()), &serversSearcher, SLOT(start()));
+    connect(&localClient, SIGNAL(lcError()), &localClient, SLOT(quit()));
+    connect(&localClient, SIGNAL(lcError()), &server, SLOT(quit()));
     connect(&localClient, SIGNAL(lcConnected()), this, SLOT(localConnected()));
     connect(&localClient, SIGNAL(lcConnected()), lwPlayersList, SLOT(clear()));
     connect(&localClient, SIGNAL(lcConnected()), lwServersList, SLOT(clear()));
@@ -18,6 +21,8 @@ App::App(QWidget *parent)
     connect(&localClient, SIGNAL(lcDisconnected()), this, SLOT(localDisconnected()));
     connect(&localClient, SIGNAL(lcDisconnected()), lwPlayersList, SLOT(clear()));
     connect(&localClient, SIGNAL(lcDisconnected()), lwServersList, SLOT(clear()));
+    connect(&localClient, SIGNAL(lcDisconnected()), &localClient, SLOT(quit()));
+    connect(&localClient, SIGNAL(lcDisconnected()), &server, SLOT(quit()));
     connect(&localClient, SIGNAL(lcDisconnected()), &serversSearcher, SLOT(start()));
     connect(&localClient, SIGNAL(lcChatMessageReceive(QString, QColor, QString)), this, SLOT(localChatMessageReceive(QString, QColor, QString)));
     connect(&localClient, SIGNAL(lcPlayersListMessageReceive(QList<ClientInfo>)), this, SLOT(localPlayersListMessageReceive(QList<ClientInfo>)));
@@ -189,14 +194,6 @@ void App::userSendMessage()
     {
         emit sendMessage(text);
     }
-}
-
-void App::localError(QString msg)
-{
-    perror("Error " + msg);
-    serversSearcher.start();
-    localClient.quit();
-    server.quit();
 }
 
 void App::localConnected()

@@ -19,9 +19,11 @@ private:
     Server server;
     LocalClient localClient;
     ServersSearcher serversSearcher;
+    void setTabOrder();
+
+private slots:
     void perror(QString);
     void pinfo(QString);
-    void setTabOrder();
 
 public slots:
     // from graphics
@@ -31,7 +33,6 @@ public slots:
     void userSendMessage();
 
     // from local client
-    void localError(QString);
     void localConnected();
     void localDisconnected();
     void localChatMessageReceive(QString, QColor, QString);

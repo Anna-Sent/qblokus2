@@ -115,6 +115,7 @@ void LocalClient::localDisconnected() {
 
 void LocalClient::localError(QAbstractSocket::SocketError) {
     emit lcError(socket->errorString());
+    emit lcError();
 }
 
 void LocalClient::localPingMessageReceive(PingMessage msg) {
@@ -125,7 +126,10 @@ void LocalClient::localPingMessageReceive(PingMessage msg) {
 void LocalClient::localTimerCheck() {
     int elapsed = lastpingtime.elapsed();
     if (elapsed > PING_TIME)
+    {
         emit lcError(QString::fromUtf8("Проверьте кабель"));
+        emit lcError();
+    }
 }
 
 void LocalClient::sendMessage(QString text) {

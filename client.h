@@ -21,7 +21,9 @@ private:
 public:
     LocalClient();
     ~LocalClient() { messageReceiver->deleteLater(); }
+public slots:
     void quit() { stop(); }
+public:
     void start(QString hostname, quint16 port) {socket->connectToHost(hostname, port);localtimer.start();_isStarted=true;}
     void setNickname(QString name) {info.setName(name);}
     void setColor(QColor color) {info.setColor(color);}
@@ -61,6 +63,7 @@ signals:
     void lcSurrenderMessageReceive(QString, QColor);
     void lcConnected();
     void lcDisconnected();
+    void lcError();
     void lcError(QString);
 };
 
