@@ -1,11 +1,11 @@
 #ifndef APP_H
 #define APP_H
 
-#include "ui_racingForm.h"
-#include "game.h"
 #include "client.h"
+#include "game.h"
 #include "server.h"
 #include "serverssearcher.h"
+#include "ui_racingForm.h"
 
 class App : public QMainWindow, public Ui::MainWindow {
     Q_OBJECT
@@ -15,56 +15,52 @@ public:
     ~App();
 
 private:
-    Game *game;
-    LocalClient localClient;
-    Server server;
-    ServersSearcher serversSearcher;
-
-private slots:
+    Game *_game;
+    LocalClient _localClient;
+    Server _server;
+    ServersSearcher _serversSearcher;
     void setTabOrder();
 
-public slots:
-    void perror(QString);
-    void pinfo(QString);
-    // from graphics
-    void userStartGame();
-    void userQuit();
+private slots:
+    void perror(const QString &);
+    void pinfo(const QString &);
+
+    // from user
     void userDisconnectFromServer();
+    void userQuit();
     void userSendMessage();
+    void userStartGame();
+    void userTryToConnect();
+
+    void guiCreateServerToggled(bool);
+    void guiPortValueChanged(int);
+    void guiServersListItemClicked(QListWidgetItem *item);
+    void guiServersListCurrentTextChanged(QString);
 
     // from local client
-    void localConnected();
-    void localDisconnected();
-    void localChatMessageReceive(QString, QColor, QString);
-    void localPlayersListMessageReceive(QList<ClientInfo>);
-    void localClientConnectMessageReceive(QString, QColor);
-    void localClientDisconnectMessageReceive(QString, QColor);
-    void localConnectionAcceptedMessageReceive(int);
-
-    // game signals
-    void localTurnMessageReceive(QColor, int, int, int, QString);
-    void localStartGameMessageReceive();
-    void localRestartGameMessageReceive(QList<ClientInfo>);
-    void localSurrenderMessageReceive(QString, QColor);
-
-    void connectClicked();
-    void serversListItemClicked(QListWidgetItem *item);
-    void serversListCurrentTextChanged(QString);
-    void createServerToggled(bool);
-    void portValueChanged(int);
+    void chatMessageReceived(QString, QColor, QString);
+    void clientConnectMessageReceived(QString, QColor);
+    void clientDisconnected();
+    void clientDisconnectMessageReceived(QString, QColor);
+    void connectionAccepted();
+    void playersListMessageReceived(QList<ClientInfo>);
+    void restartGameMessageReceived(QList<ClientInfo>);
+    void startGameMessageReceived();
+    void surrenderMessageReceived(QString, QColor);
+    void turnMessageReceived(QColor, int, int, int, QString);
 
     // from servers searcher
     void serverInfoMessageReceive(const QHostAddress &, QList<ClientInfo>);
 
 signals:
     // to server
-    void startGame();
-    void restartGame(QList<ClientInfo>);
+    void gameStarted();
+    void gameRestarted(QList<ClientInfo>);
 
     // to client
-    void sendMessage(QString);
-    void turnDone(QString name, QColor color, QString tile, int id, int x, int y);
+    void messageSent(QString);
     void playerSurrendered(QString name, QColor color);
+    void turnDone(QString name, QColor color, QString tile, int id, int x, int y);
 };
 
 #endif

@@ -2,6 +2,166 @@
 #define PING_INTERVAL 5000
 #define PING_TIME 1500000
 
+LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime())
+{
+    _localTimer.setInterval(PING_INTERVAL);
+    connect(&_localTimer, SIGNAL(timeout()), this, SLOT(timeout()));
+
+    _socket = new QTcpSocket;
+    _messageReceiver = new TcpMessageReceiver(_socket);
+    connect(_messageReceiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
+    connect(_messageReceiver, SIGNAL(clientConnectMessageReceive(ClientConnectMessage)), this, SLOT(clientConnectMessageReceived(ClientConnectMessage)));
+    connect(_messageReceiver, SIGNAL(clientDisconnectMessageReceive(ClientDisconnectMessage)), this, SLOT(clientDisconnectMessageReceived(ClientDisconnectMessage)));
+    connect(_messageReceiver, SIGNAL(connectionAcceptedMessageReceive(ConnectionAcceptedMessage)), this, SLOT(connectionAcceptedMessageReceived(ConnectionAcceptedMessage)));
+    connect(_messageReceiver, SIGNAL(pingMessageReceive(PingMessage)), this, SLOT(pingMessageReceived(PingMessage)));
+    connect(_messageReceiver, SIGNAL(playersListMessageReceive(PlayersListMessage)), this, SLOT(playersListMessageReceived(PlayersListMessage)));
+    connect(_messageReceiver, SIGNAL(restartGameMessageReceive(RestartGameMessage)), this, SLOT(restartGameMessageReceived(RestartGameMessage)));
+    connect(_messageReceiver, SIGNAL(serverReadyMessageReceive(ServerReadyMessage)), this, SLOT(serverReadyMessageReceived(ServerReadyMessage)));
+    connect(_messageReceiver, SIGNAL(startGameMessageReceive(StartGameMessage)), this, SLOT(startGameMessageReceived(StartGameMessage)));
+    connect(_messageReceiver, SIGNAL(surrenderMessageReceive(SurrenderMessage)), this, SLOT(surrenderMessageReceived(SurrenderMessage)));
+    connect(_messageReceiver, SIGNAL(turnMessageReceive(TurnMessage)), this, SLOT(turnMessageReceived(TurnMessage)));
+    connect(_socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
+    connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
+}
+
+LocalClient::~LocalClient()
+{
+    _messageReceiver->deleteLater();
+    //socket->deleteLater();
+}
+
+void LocalClient::start(QString hostname, quint16 port)
+{
+    _socket->connectToHost(hostname, port);
+    _localTimer.start();
+    _isStarted = true;
+}
+
+void LocalClient::stop()
+{
+    _isStarted = false;
+    _localTimer.stop();
+    _socket->disconnectFromHost();
+}
+
+void LocalClient::chatMessageReceived(ChatMessage msg)
+{
+    emit chatMessageReceived(msg.name(), msg.color(), msg.text());
+}
+
+void LocalClient::clientConnectMessageReceived(ClientConnectMessage msg)
+{
+    emit clientConnectMessageReceived(msg.name(), msg.color());
+}
+
+void LocalClient::clientDisconnectMessageReceived(ClientDisconnectMessage msg)
+{
+    emit clientDisconnectMessageReceived(msg.name(), msg.color());
+}
+
+void LocalClient::connectionAcceptedMessageReceived(ConnectionAcceptedMessage msg)
+{
+    if (msg.errorCode() == 0)
+    {
+        emit connectionAccepted();
+    }
+    else
+    {
+        QString reason;
+        switch (msg.errorCode())
+        {
+        case 1: reason = "This color is already in use"; break;
+        case 2: reason = "This nickname is already in use"; break;
+        case 4: reason = "The maximum allowed number of players has been reached for the game"; break;
+        default:reason = "Unknown reason";
+        }
+
+        emit connectionRejected(reason);
+        stop();
+    }
+}
+
+void LocalClient::pingMessageReceived(PingMessage msg)
+{
+    msg.send(_socket);
+    _lastPingTime.start();
+}
+
+void LocalClient::playersListMessageReceived(PlayersListMessage msg)
+{
+    emit playersListMessageReceived(msg.list());
+}
+
+void LocalClient::restartGameMessageReceived(RestartGameMessage msg)
+{
+    emit restartGameMessageReceived(msg.list());
+}
+
+void LocalClient::serverReadyMessageReceived(ServerReadyMessage)
+{
+    TryToConnectMessage msg(_info);
+    msg.send(_socket);
+}
+
+void LocalClient::startGameMessageReceived(StartGameMessage)
+{
+    emit startGameMessageReceived();
+}
+
+void LocalClient::surrenderMessageReceived(SurrenderMessage msg)
+{
+    emit surrenderMessageReceived(msg.name(), msg.color());
+}
+
+void LocalClient::turnMessageReceived(TurnMessage msg)
+{
+    emit turnMessageReceived(msg.color(), msg.x(), msg.y(), msg.id(), msg.mask());
+}
+
+void LocalClient::socketDisconnected()
+{
+    _isStarted = false;
+    _localTimer.stop();
+    emit disconnected();
+}
+
+void LocalClient::socketError(QAbstractSocket::SocketError)
+{
+    emit error(_socket->errorString());
+    emit error();
+    _socket->abort();
+    _isStarted = false;
+    _localTimer.stop();
+}
+
+void LocalClient::doTurn(QString name, QColor color, QString tile, int id, int x, int y)
+{
+    TurnMessage msg(name, color, tile, id, x, y);
+    msg.send(_socket);
+}
+
+void LocalClient::sendMessage(QString text)
+{
+    ChatMessage msg(_info.name(), _info.color(), text);
+    msg.send(_socket);
+}
+
+void LocalClient::surrender(QString name, QColor color)
+{
+    SurrenderMessage msg(name, color);
+    msg.send(_socket);
+}
+
+void LocalClient::timeout()
+{
+    int elapsed = _lastPingTime.elapsed();
+    if (elapsed > PING_TIME)
+    {
+        emit error(QString::fromUtf8("Disconnected"));
+        emit error();
+    }
+}
+
 RemoteClient::RemoteClient(QTcpSocket *s) : state(1), lastpingtime(QTime::currentTime()) {
     messageReceiver = new TcpMessageReceiver(s);
     connect(messageReceiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(remoteChatMessageReceive(ChatMessage)));
@@ -41,109 +201,4 @@ void RemoteClient::remoteDisconnected() {
 
 void RemoteClient::remoteError(QAbstractSocket::SocketError) {
     emit rcError(this);
-}
-
-LocalClient::LocalClient():lastpingtime(QTime::currentTime()),_isStarted(false) {
-    localtimer.setInterval(PING_INTERVAL);
-    connect(&localtimer, SIGNAL(timeout()), this, SLOT(localTimerCheck()));
-    socket = new QTcpSocket;
-    messageReceiver = new TcpMessageReceiver(socket);
-    connect(messageReceiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(localChatMessageReceive(ChatMessage)));
-    connect(messageReceiver, SIGNAL(playersListMessageReceive(PlayersListMessage)), this, SLOT(localPlayersListMessageReceive(PlayersListMessage)));
-    connect(messageReceiver, SIGNAL(serverReadyMessageReceive(ServerReadyMessage)), this, SLOT(localServerReadyMessageReceive(ServerReadyMessage)));
-    connect(messageReceiver, SIGNAL(clientConnectMessageReceive(ClientConnectMessage)), this, SLOT(localClientConnectMessageReceive(ClientConnectMessage)));
-    connect(messageReceiver, SIGNAL(clientDisconnectMessageReceive(ClientDisconnectMessage)), this, SLOT(localClientDisconnectMessageReceive(ClientDisconnectMessage)));
-    connect(messageReceiver, SIGNAL(connectionAcceptedMessageReceive(ConnectionAcceptedMessage)), this, SLOT(localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage)));
-    connect(messageReceiver, SIGNAL(pingMessageReceive(PingMessage)), this, SLOT(localPingMessageReceive(PingMessage)));
-    connect(messageReceiver, SIGNAL(startGameMessageReceive(StartGameMessage)), this, SLOT(localStartGameMessageReceive(StartGameMessage)));
-    connect(messageReceiver, SIGNAL(restartGameMessageReceive(RestartGameMessage)), this, SLOT(localRestartGameMessageReceive(RestartGameMessage)));
-    connect(messageReceiver, SIGNAL(turnMessageReceive(TurnMessage)), this, SLOT(localTurnMessageReceive(TurnMessage)));
-    connect(messageReceiver, SIGNAL(surrenderMessageReceive(SurrenderMessage)), this, SLOT(localSurrenderMessageReceive(SurrenderMessage)));
-    connect(socket, SIGNAL(connected()), this, SLOT(localConnected()));
-    connect(socket, SIGNAL(disconnected()), this, SLOT(localDisconnected()));
-    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(localError(QAbstractSocket::SocketError)));
-}
-
-void LocalClient::localChatMessageReceive(ChatMessage msg) {
-    emit lcChatMessageReceive(msg.name(), msg.color(), msg.text());
-}
-
-void LocalClient::localPlayersListMessageReceive(PlayersListMessage msg) {
-    emit lcPlayersListMessageReceive(msg.list());
-}
-
-void LocalClient::localServerReadyMessageReceive(ServerReadyMessage) {
-    TryToConnectMessage msg1(info);
-    msg1.send(socket);
-}
-
-void LocalClient::localClientConnectMessageReceive(ClientConnectMessage msg) {
-    emit lcClientConnectMessageReceive(msg.name(), msg.color());
-}
-
-void LocalClient::localClientDisconnectMessageReceive(ClientDisconnectMessage msg) {
-    emit lcClientDisconnectMessageReceive(msg.name(), msg.color());
-}
-
-void LocalClient::localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage msg) {
-    emit lcConnectionAcceptedMessageReceive(msg.errorCode());
-}
-
-void LocalClient::localStartGameMessageReceive(StartGameMessage) {
-    emit lcStartGameMessageReceive();
-}
-
-void LocalClient::localRestartGameMessageReceive(RestartGameMessage msg) {
-    emit lcRestartGameMessageReceive(msg.list());
-}
-
-void LocalClient::localTurnMessageReceive(TurnMessage msg) {
-    emit lcTurnMessageReceive(msg.color(), msg.x(), msg.y(), msg.id(), msg.mask());
-}
-
-void LocalClient::localSurrenderMessageReceive(SurrenderMessage msg) {
-    emit lcSurrenderMessageReceive(msg.name(), msg.color());
-}
-
-void LocalClient::localConnected() {
-    emit lcConnected();
-}
-
-void LocalClient::localDisconnected() {
-    emit lcDisconnected();
-}
-
-void LocalClient::localError(QAbstractSocket::SocketError) {
-    emit lcError(socket->errorString());
-    emit lcError();
-    socket->abort();
-}
-
-void LocalClient::localPingMessageReceive(PingMessage msg) {
-    msg.send(socket);
-    lastpingtime.start();
-}
-
-void LocalClient::localTimerCheck() {
-    int elapsed = lastpingtime.elapsed();
-    if (elapsed > PING_TIME)
-    {
-        emit lcError(QString::fromUtf8("Проверьте кабель"));
-        emit lcError();
-    }
-}
-
-void LocalClient::sendMessage(QString text) {
-    ChatMessage msg(info.name(), info.color(), text);
-    msg.send(socket);
-}
-
-void LocalClient::turnDone(QString name,QColor color,QString tile,int id,int x,int y) {
-    TurnMessage msg(name,color,tile,id,x,y);
-    msg.send(socket);
-}
-
-void LocalClient::playerSurrendered(QString name,QColor color) {
-    SurrenderMessage msg(name,color);
-    msg.send(socket);
 }

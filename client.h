@@ -4,67 +4,70 @@
 #include "messagereceiver.h"
 #include <QTime>
 #include <QTimer>
-#include <QThread>
-#include <QtNetwork/QTcpSocket>
 
-class LocalClient: public QObject {
+class LocalClient : public QObject
+{
     Q_OBJECT
+
 private:
-    QTimer localtimer;
-private:
-    QTime lastpingtime;
-    QTcpSocket* socket;
-    TcpMessageReceiver* messageReceiver;
-    ClientInfo info;
     bool _isStarted;
-    void stop() {localtimer.stop();socket->disconnectFromHost();_isStarted=false;}
+    ClientInfo _info;
+    QTime _lastPingTime;
+    QTimer _localTimer;
+    TcpMessageReceiver *_messageReceiver;
+    QTcpSocket *_socket;
+
 public:
     LocalClient();
-    ~LocalClient() { messageReceiver->deleteLater(); }
+    ~LocalClient();
+    QColor color() const { return _info.color(); }
+    bool isStarted() const { return _isStarted; }
+    QString nickname() const {return _info.name(); }
+
 public slots:
-    void quit() { stop(); }
-public:
-    void start(QString hostname, quint16 port) {socket->connectToHost(hostname, port);localtimer.start();_isStarted=true;}
-    void setNickname(QString name) {info.setName(name);}
-    void setColor(QColor color) {info.setColor(color);}
-    QString getNickname() {return info.name();}
-    QColor getColor() {return info.color();}
-    bool isStarted() const {return _isStarted;}
-private slots:
-    void localChatMessageReceive(ChatMessage);
-    void localPlayersListMessageReceive(PlayersListMessage);
-    void localServerReadyMessageReceive(ServerReadyMessage);
-    void localClientConnectMessageReceive(ClientConnectMessage);
-    void localClientDisconnectMessageReceive(ClientDisconnectMessage);
-    void localConnectionAcceptedMessageReceive(ConnectionAcceptedMessage);
-    void localPingMessageReceive(PingMessage);
-    void localStartGameMessageReceive(StartGameMessage);
-    void localRestartGameMessageReceive(RestartGameMessage);
-    void localTurnMessageReceive(TurnMessage);
-    void localSurrenderMessageReceive(SurrenderMessage);
-    void localConnected();
-    void localDisconnected();
-    void localError(QAbstractSocket::SocketError);
-    // from timer
-    void localTimerCheck();
-    // from form
+    void setNickname(QString name) { _info.setName(name); }
+    void setColor(QColor color) { _info.setColor(color); }
+
+    void start(QString hostname, quint16 port);
+    void stop();
+
+    void doTurn(QString name, QColor color, QString tile, int id, int x, int y);
     void sendMessage(QString text);
-    void turnDone(QString name,QColor color,QString tile,int id,int x,int y);
-    void playerSurrendered(QString name,QColor color);
+    void surrender(QString name, QColor color);
+
+private slots:
+    void chatMessageReceived(ChatMessage);
+    void clientConnectMessageReceived(ClientConnectMessage);
+    void clientDisconnectMessageReceived(ClientDisconnectMessage);
+    void connectionAcceptedMessageReceived(ConnectionAcceptedMessage);
+    void pingMessageReceived(PingMessage);
+    void playersListMessageReceived(PlayersListMessage);
+    void restartGameMessageReceived(RestartGameMessage);
+    void serverReadyMessageReceived(ServerReadyMessage);
+    void startGameMessageReceived(StartGameMessage);
+    void surrenderMessageReceived(SurrenderMessage);
+    void turnMessageReceived(TurnMessage);
+
+    void socketDisconnected();
+    void socketError(QAbstractSocket::SocketError);
+
+    void timeout();
+
 signals:
-    void lcChatMessageReceive(QString, QColor, QString);
-    void lcPlayersListMessageReceive(QList<ClientInfo>);
-    void lcClientConnectMessageReceive(QString, QColor);
-    void lcClientDisconnectMessageReceive(QString, QColor);
-    void lcConnectionAcceptedMessageReceive(int);
-    void lcStartGameMessageReceive();
-    void lcRestartGameMessageReceive(QList<ClientInfo>);
-    void lcTurnMessageReceive(QColor, int, int, int, QString);
-    void lcSurrenderMessageReceive(QString, QColor);
-    void lcConnected();
-    void lcDisconnected();
-    void lcError();
-    void lcError(QString);
+    void connectionAccepted();
+    void connectionRejected(const QString &);
+    void disconnected();
+    void error();
+    void error(QString);
+
+    void chatMessageReceived(QString, QColor, QString);
+    void clientConnectMessageReceived(QString, QColor);
+    void clientDisconnectMessageReceived(QString, QColor);
+    void playersListMessageReceived(QList<ClientInfo>);
+    void restartGameMessageReceived(QList<ClientInfo>);
+    void startGameMessageReceived();
+    void surrenderMessageReceived(QString, QColor);
+    void turnMessageReceived(QColor, int, int, int, QString);
 };
 
 class RemoteClient : public QObject {

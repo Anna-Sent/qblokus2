@@ -3,9 +3,8 @@
 
 #include "client.h"
 #include "message.h"
-#include <QTimer>
-#include <QtNetwork/QTcpServer>
-#include <QtNetwork/QUdpSocket>
+#include <QTcpServer>
+#include <QThread>
 
 class Server : public QThread {
     Q_OBJECT
