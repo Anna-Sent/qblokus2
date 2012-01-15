@@ -56,12 +56,12 @@ void MessageHeader::fill(const QByteArray &buffer)
     ::memmove(&_msgLen, data, sizeof(qint64));
 }
 
-ChatMessage::ChatMessage(QString name, QString text, QColor color) {
+ChatMessage::ChatMessage(QString name, QColor color, QString text) {
     _info.setName(name);
     _info.setColor(color);
+    _text = text;
     _header.setMsgLength(_info.size() + _text.toUtf8().size() + sizeof(int));
     _header.setMsgType(mtChat);
-    _text = text;
 }
 
 QByteArray ChatMessage::serialize() const

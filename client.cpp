@@ -129,7 +129,7 @@ void LocalClient::localTimerCheck() {
 }
 
 void LocalClient::sendMessage(QString text) {
-    ChatMessage msg(info.name(),text,info.color());
+    ChatMessage msg(info.name(), info.color(), text);
     msg.send(socket);
 }
 

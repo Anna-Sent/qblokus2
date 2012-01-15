@@ -69,9 +69,9 @@ private:
     QString _text;
     ClientInfo _info;
 public:
-    ChatMessage() { _header.setMsgLength(sizeof(int) + _text.toUtf8().size() + _info.size()); _header.setMsgType(mtChat); }
+    ChatMessage() { _header.setMsgLength(sizeof(int) + _info.size()); _header.setMsgType(mtChat); }
     ChatMessage(const MessageHeader &header) { _header = header; }
-    ChatMessage(QString name, QString text, QColor color);
+    ChatMessage(QString name, QColor color, QString text);
     QColor color() const { return _info.color(); }
     QString name() const { return _info.name(); }
     QByteArray serialize() const;
