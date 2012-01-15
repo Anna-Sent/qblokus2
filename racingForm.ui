@@ -145,53 +145,6 @@
            <item row="1" column="0">
             <widget class="QListWidget" name="lwServersList"/>
            </item>
-           <item row="5" column="0">
-            <layout class="QGridLayout" name="gridLayout_3">
-             <item row="0" column="0">
-              <widget class="QCheckBox" name="cbCreateServer">
-               <property name="text">
-                <string>Create server</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QSpinBox" name="sbClientsCount">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="minimum">
-                <number>3</number>
-               </property>
-               <property name="maximum">
-                <number>4</number>
-               </property>
-               <property name="value">
-                <number>4</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLineEdit" name="leServerAddress">
-             <property name="text">
-              <string>localhost</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="lServersList">
              <property name="text">
@@ -199,12 +152,15 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="lServerAddress">
+           <item row="3" column="0">
+            <widget class="QLabel" name="lPlayersList">
              <property name="text">
-              <string>Server address</string>
+              <string>Players list</string>
              </property>
             </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QListWidget" name="lwPlayersList"/>
            </item>
           </layout>
          </item>
@@ -214,24 +170,24 @@
         <layout class="QGridLayout" name="gridLayout_6">
          <item row="4" column="0">
           <layout class="QGridLayout" name="gridLayout_8">
-           <item row="1" column="0">
+           <item row="4" column="0">
             <widget class="QLabel" name="lPort">
              <property name="text">
               <string>Port</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
+           <item row="7" column="0">
             <widget class="QLabel" name="lNickname">
              <property name="text">
               <string>Nickname</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="0">
+           <item row="8" column="0">
             <widget class="QLineEdit" name="leNickname"/>
            </item>
-           <item row="2" column="0">
+           <item row="5" column="0">
             <widget class="QSpinBox" name="sbPort">
              <property name="minimum">
               <number>1024</number>
@@ -244,14 +200,64 @@
              </property>
             </widget>
            </item>
-           <item row="8" column="0">
+           <item row="13" column="0">
             <widget class="QPushButton" name="pbConnect">
              <property name="text">
               <string>Connect to server</string>
              </property>
             </widget>
            </item>
-           <item row="7" column="0">
+           <item row="1" column="0">
+            <widget class="QLineEdit" name="leServerAddress">
+             <property name="text">
+              <string>localhost</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QCheckBox" name="cbCreateServer">
+             <property name="text">
+              <string>Create server</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QSpinBox" name="sbClientsCount">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="minimum">
+              <number>3</number>
+             </property>
+             <property name="maximum">
+              <number>4</number>
+             </property>
+             <property name="value">
+              <number>4</number>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="0">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="lServerAddress">
+             <property name="text">
+              <string>Server address</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="0">
             <widget class="QComboBox" name="cbColor">
              <item>
               <property name="text">
@@ -275,30 +281,14 @@
              </item>
             </widget>
            </item>
+           <item row="9" column="0">
+            <widget class="QLabel" name="lColor">
+             <property name="text">
+              <string>Color</string>
+             </property>
+            </widget>
+           </item>
           </layout>
-         </item>
-         <item row="2" column="0">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="0">
-          <widget class="QListWidget" name="lwPlayersList"/>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="lPlayersList">
-           <property name="text">
-            <string>Players list</string>
-           </property>
-          </widget>
          </item>
         </layout>
        </item>
@@ -325,11 +315,6 @@
   <action name="actionDisconnectFromServer">
    <property name="text">
     <string>Disconnect from server</string>
-   </property>
-  </action>
-  <action name="actionReconnectToServer">
-   <property name="text">
-    <string>Переподключиться к серверу</string>
    </property>
   </action>
   <action name="actionStartGame">
@@ -364,22 +349,6 @@
     <hint type="destinationlabel">
      <x>190</x>
      <y>335</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cbCreateServer</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>lServersList</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>71</x>
-     <y>317</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>74</x>
-     <y>68</y>
     </hint>
    </hints>
   </connection>
@@ -444,6 +413,22 @@
     <hint type="destinationlabel">
      <x>-1</x>
      <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCreateServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lServersList</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>74</x>
+     <y>68</y>
     </hint>
    </hints>
   </connection>

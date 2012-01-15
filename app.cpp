@@ -7,6 +7,7 @@ App::App(QWidget *parent)
 {
     Q_UNUSED(parent);
     setupUi(this);
+    setTabOrder();
 
     // from local client
     connect(&localClient, SIGNAL(lcError(QString)), this, SLOT(localError(QString)));
@@ -36,6 +37,8 @@ App::App(QWidget *parent)
     connect(actionDisconnectFromServer, SIGNAL(activated()), this, SLOT(userDisconnectFromServer()));
     connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendMessage()));
     connect(lineEdit, SIGNAL(returnPressed()), lineEdit, SLOT(clear()));
+    connect(leNickname, SIGNAL(returnPressed()), pbConnect, SLOT(animateClick()));
+    connect(leNickname, SIGNAL(returnPressed()), pbConnect, SLOT(setFocus()));
 
     connect(this, SIGNAL(startGame()), &server, SLOT(startGame()));
     connect(this, SIGNAL(restartGame(QList<ClientInfo>)), &server, SLOT(restartGame(QList<ClientInfo>)));
@@ -73,6 +76,27 @@ void App::pinfo(QString text)
 {
     textEdit->setTextColor(Qt::darkBlue);
     textEdit->append(text);
+}
+
+void App::setTabOrder()
+{
+    QWidget::setTabOrder(gvPlayer1, gvPlayer2);
+    QWidget::setTabOrder(gvPlayer2, gvPlayer3);
+    QWidget::setTabOrder(gvPlayer3, gvPlayer4);
+    QWidget::setTabOrder(gvPlayer4, gvTable);
+    QWidget::setTabOrder(gvTable, pbSurrender);
+    QWidget::setTabOrder(pbSurrender, gvPlayer1);
+
+    QWidget::setTabOrder(lwServersList, lwPlayersList);
+    QWidget::setTabOrder(lwPlayersList, leServerAddress);
+    QWidget::setTabOrder(leServerAddress, cbCreateServer);
+    QWidget::setTabOrder(cbCreateServer, sbClientsCount);
+    QWidget::setTabOrder(sbClientsCount, sbPort);
+    QWidget::setTabOrder(sbPort, leNickname);
+    QWidget::setTabOrder(leNickname, cbColor);
+    QWidget::setTabOrder(cbColor, pbConnect);
+    QWidget::setTabOrder(pbConnect, lineEdit);
+    QWidget::setTabOrder(lineEdit, lwServersList);
 }
 
 void App::userStartGame()
@@ -188,6 +212,7 @@ void App::localConnected()
     sbPort->setDisabled(true);
     lNickname->setDisabled(true);
     leNickname->setDisabled(true);
+    lColor->setDisabled(true);
     cbColor->setDisabled(true);
     pbConnect->setText("Disconnect from server");
 }
@@ -205,6 +230,7 @@ void App::localDisconnected()
     sbPort->setDisabled(false);
     lNickname->setDisabled(false);
     leNickname->setDisabled(false);
+    lColor->setDisabled(false);
     cbColor->setDisabled(false);
     pbConnect->setText("Connect to server");
     if (game)

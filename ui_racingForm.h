@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Wed Jan 11 00:03:03 2012
+** Created: Sun Jan 15 13:12:59 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -41,7 +41,6 @@ class Ui_MainWindow
 public:
     QAction *actionQuit;
     QAction *actionDisconnectFromServer;
-    QAction *actionReconnectToServer;
     QAction *actionStartGame;
     QAction *actionConnectionWindow;
     QWidget *centralwidget;
@@ -68,13 +67,9 @@ public:
     QGridLayout *gridLayout_4;
     QGridLayout *gridLayout_2;
     QListWidget *lwServersList;
-    QGridLayout *gridLayout_3;
-    QCheckBox *cbCreateServer;
-    QSpinBox *sbClientsCount;
-    QSpacerItem *horizontalSpacer;
-    QLineEdit *leServerAddress;
     QLabel *lServersList;
-    QLabel *lServerAddress;
+    QLabel *lPlayersList;
+    QListWidget *lwPlayersList;
     QGridLayout *gridLayout_6;
     QGridLayout *gridLayout_8;
     QLabel *lPort;
@@ -82,10 +77,13 @@ public:
     QLineEdit *leNickname;
     QSpinBox *sbPort;
     QPushButton *pbConnect;
-    QComboBox *cbColor;
+    QLineEdit *leServerAddress;
+    QCheckBox *cbCreateServer;
+    QSpinBox *sbClientsCount;
     QSpacerItem *verticalSpacer;
-    QListWidget *lwPlayersList;
-    QLabel *lPlayersList;
+    QLabel *lServerAddress;
+    QComboBox *cbColor;
+    QLabel *lColor;
     QTextEdit *textEdit;
     QLineEdit *lineEdit;
 
@@ -98,8 +96,6 @@ public:
         actionQuit->setObjectName(QString::fromUtf8("actionQuit"));
         actionDisconnectFromServer = new QAction(MainWindow);
         actionDisconnectFromServer->setObjectName(QString::fromUtf8("actionDisconnectFromServer"));
-        actionReconnectToServer = new QAction(MainWindow);
-        actionReconnectToServer->setObjectName(QString::fromUtf8("actionReconnectToServer"));
         actionStartGame = new QAction(MainWindow);
         actionStartGame->setObjectName(QString::fromUtf8("actionStartGame"));
         actionConnectionWindow = new QAction(MainWindow);
@@ -211,43 +207,20 @@ public:
 
         gridLayout_2->addWidget(lwServersList, 1, 0, 1, 1);
 
-        gridLayout_3 = new QGridLayout();
-        gridLayout_3->setObjectName(QString::fromUtf8("gridLayout_3"));
-        cbCreateServer = new QCheckBox(dockWidgetContents);
-        cbCreateServer->setObjectName(QString::fromUtf8("cbCreateServer"));
-
-        gridLayout_3->addWidget(cbCreateServer, 0, 0, 1, 1);
-
-        sbClientsCount = new QSpinBox(dockWidgetContents);
-        sbClientsCount->setObjectName(QString::fromUtf8("sbClientsCount"));
-        sbClientsCount->setEnabled(false);
-        sbClientsCount->setMinimum(3);
-        sbClientsCount->setMaximum(4);
-        sbClientsCount->setValue(4);
-
-        gridLayout_3->addWidget(sbClientsCount, 1, 0, 1, 1);
-
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        gridLayout_3->addItem(horizontalSpacer, 1, 1, 1, 1);
-
-
-        gridLayout_2->addLayout(gridLayout_3, 5, 0, 1, 1);
-
-        leServerAddress = new QLineEdit(dockWidgetContents);
-        leServerAddress->setObjectName(QString::fromUtf8("leServerAddress"));
-
-        gridLayout_2->addWidget(leServerAddress, 3, 0, 1, 1);
-
         lServersList = new QLabel(dockWidgetContents);
         lServersList->setObjectName(QString::fromUtf8("lServersList"));
 
         gridLayout_2->addWidget(lServersList, 0, 0, 1, 1);
 
-        lServerAddress = new QLabel(dockWidgetContents);
-        lServerAddress->setObjectName(QString::fromUtf8("lServerAddress"));
+        lPlayersList = new QLabel(dockWidgetContents);
+        lPlayersList->setObjectName(QString::fromUtf8("lPlayersList"));
 
-        gridLayout_2->addWidget(lServerAddress, 2, 0, 1, 1);
+        gridLayout_2->addWidget(lPlayersList, 3, 0, 1, 1);
+
+        lwPlayersList = new QListWidget(dockWidgetContents);
+        lwPlayersList->setObjectName(QString::fromUtf8("lwPlayersList"));
+
+        gridLayout_2->addWidget(lwPlayersList, 4, 0, 1, 1);
 
 
         gridLayout_4->addLayout(gridLayout_2, 0, 0, 1, 1);
@@ -262,17 +235,17 @@ public:
         lPort = new QLabel(dockWidgetContents);
         lPort->setObjectName(QString::fromUtf8("lPort"));
 
-        gridLayout_8->addWidget(lPort, 1, 0, 1, 1);
+        gridLayout_8->addWidget(lPort, 4, 0, 1, 1);
 
         lNickname = new QLabel(dockWidgetContents);
         lNickname->setObjectName(QString::fromUtf8("lNickname"));
 
-        gridLayout_8->addWidget(lNickname, 4, 0, 1, 1);
+        gridLayout_8->addWidget(lNickname, 7, 0, 1, 1);
 
         leNickname = new QLineEdit(dockWidgetContents);
         leNickname->setObjectName(QString::fromUtf8("leNickname"));
 
-        gridLayout_8->addWidget(leNickname, 5, 0, 1, 1);
+        gridLayout_8->addWidget(leNickname, 8, 0, 1, 1);
 
         sbPort = new QSpinBox(dockWidgetContents);
         sbPort->setObjectName(QString::fromUtf8("sbPort"));
@@ -280,34 +253,53 @@ public:
         sbPort->setMaximum(65535);
         sbPort->setValue(1500);
 
-        gridLayout_8->addWidget(sbPort, 2, 0, 1, 1);
+        gridLayout_8->addWidget(sbPort, 5, 0, 1, 1);
 
         pbConnect = new QPushButton(dockWidgetContents);
         pbConnect->setObjectName(QString::fromUtf8("pbConnect"));
 
-        gridLayout_8->addWidget(pbConnect, 8, 0, 1, 1);
+        gridLayout_8->addWidget(pbConnect, 13, 0, 1, 1);
+
+        leServerAddress = new QLineEdit(dockWidgetContents);
+        leServerAddress->setObjectName(QString::fromUtf8("leServerAddress"));
+
+        gridLayout_8->addWidget(leServerAddress, 1, 0, 1, 1);
+
+        cbCreateServer = new QCheckBox(dockWidgetContents);
+        cbCreateServer->setObjectName(QString::fromUtf8("cbCreateServer"));
+
+        gridLayout_8->addWidget(cbCreateServer, 2, 0, 1, 1);
+
+        sbClientsCount = new QSpinBox(dockWidgetContents);
+        sbClientsCount->setObjectName(QString::fromUtf8("sbClientsCount"));
+        sbClientsCount->setEnabled(false);
+        sbClientsCount->setMinimum(3);
+        sbClientsCount->setMaximum(4);
+        sbClientsCount->setValue(4);
+
+        gridLayout_8->addWidget(sbClientsCount, 3, 0, 1, 1);
+
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        gridLayout_8->addItem(verticalSpacer, 11, 0, 1, 1);
+
+        lServerAddress = new QLabel(dockWidgetContents);
+        lServerAddress->setObjectName(QString::fromUtf8("lServerAddress"));
+
+        gridLayout_8->addWidget(lServerAddress, 0, 0, 1, 1);
 
         cbColor = new QComboBox(dockWidgetContents);
         cbColor->setObjectName(QString::fromUtf8("cbColor"));
 
-        gridLayout_8->addWidget(cbColor, 7, 0, 1, 1);
+        gridLayout_8->addWidget(cbColor, 10, 0, 1, 1);
+
+        lColor = new QLabel(dockWidgetContents);
+        lColor->setObjectName(QString::fromUtf8("lColor"));
+
+        gridLayout_8->addWidget(lColor, 9, 0, 1, 1);
 
 
         gridLayout_6->addLayout(gridLayout_8, 4, 0, 1, 1);
-
-        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        gridLayout_6->addItem(verticalSpacer, 2, 0, 1, 1);
-
-        lwPlayersList = new QListWidget(dockWidgetContents);
-        lwPlayersList->setObjectName(QString::fromUtf8("lwPlayersList"));
-
-        gridLayout_6->addWidget(lwPlayersList, 1, 0, 1, 1);
-
-        lPlayersList = new QLabel(dockWidgetContents);
-        lPlayersList->setObjectName(QString::fromUtf8("lPlayersList"));
-
-        gridLayout_6->addWidget(lPlayersList, 0, 0, 1, 1);
 
 
         gridLayout_7->addLayout(gridLayout_6, 0, 1, 1, 1);
@@ -339,11 +331,11 @@ public:
 
         retranslateUi(MainWindow);
         QObject::connect(actionConnectionWindow, SIGNAL(toggled(bool)), dockWidget, SLOT(setVisible(bool)));
-        QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lServersList, SLOT(setDisabled(bool)));
         QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lServerAddress, SLOT(setDisabled(bool)));
         QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), leServerAddress, SLOT(setDisabled(bool)));
         QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), sbClientsCount, SLOT(setEnabled(bool)));
         QObject::connect(dockWidget, SIGNAL(visibilityChanged(bool)), actionConnectionWindow, SLOT(setChecked(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lServersList, SLOT(setDisabled(bool)));
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
@@ -353,19 +345,19 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "QBLOKUS", 0, QApplication::UnicodeUTF8));
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
         actionDisconnectFromServer->setText(QApplication::translate("MainWindow", "Disconnect from server", 0, QApplication::UnicodeUTF8));
-        actionReconnectToServer->setText(QApplication::translate("MainWindow", "\320\237\320\265\321\200\320\265\320\277\320\276\320\264\320\272\320\273\321\216\321\207\320\270\321\202\321\214\321\201\321\217 \320\272 \321\201\320\265\321\200\320\262\320\265\321\200\321\203", 0, QApplication::UnicodeUTF8));
         actionStartGame->setText(QApplication::translate("MainWindow", "Start game", 0, QApplication::UnicodeUTF8));
         actionConnectionWindow->setText(QApplication::translate("MainWindow", "Connection window", 0, QApplication::UnicodeUTF8));
         pbSurrender->setText(QApplication::translate("MainWindow", "\320\241\320\264\320\260\321\202\321\214\321\201\321\217!", 0, QApplication::UnicodeUTF8));
         menu->setTitle(QApplication::translate("MainWindow", "Menu", 0, QApplication::UnicodeUTF8));
         menuView->setTitle(QApplication::translate("MainWindow", "View", 0, QApplication::UnicodeUTF8));
-        cbCreateServer->setText(QApplication::translate("MainWindow", "Create server", 0, QApplication::UnicodeUTF8));
-        leServerAddress->setText(QApplication::translate("MainWindow", "localhost", 0, QApplication::UnicodeUTF8));
         lServersList->setText(QApplication::translate("MainWindow", "Local servers list", 0, QApplication::UnicodeUTF8));
-        lServerAddress->setText(QApplication::translate("MainWindow", "Server address", 0, QApplication::UnicodeUTF8));
+        lPlayersList->setText(QApplication::translate("MainWindow", "Players list", 0, QApplication::UnicodeUTF8));
         lPort->setText(QApplication::translate("MainWindow", "Port", 0, QApplication::UnicodeUTF8));
         lNickname->setText(QApplication::translate("MainWindow", "Nickname", 0, QApplication::UnicodeUTF8));
         pbConnect->setText(QApplication::translate("MainWindow", "Connect to server", 0, QApplication::UnicodeUTF8));
+        leServerAddress->setText(QApplication::translate("MainWindow", "localhost", 0, QApplication::UnicodeUTF8));
+        cbCreateServer->setText(QApplication::translate("MainWindow", "Create server", 0, QApplication::UnicodeUTF8));
+        lServerAddress->setText(QApplication::translate("MainWindow", "Server address", 0, QApplication::UnicodeUTF8));
         cbColor->clear();
         cbColor->insertItems(0, QStringList()
          << QApplication::translate("MainWindow", "Red", 0, QApplication::UnicodeUTF8)
@@ -373,7 +365,7 @@ public:
          << QApplication::translate("MainWindow", "Green", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "Blue", 0, QApplication::UnicodeUTF8)
         );
-        lPlayersList->setText(QApplication::translate("MainWindow", "Players list", 0, QApplication::UnicodeUTF8));
+        lColor->setText(QApplication::translate("MainWindow", "Color", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

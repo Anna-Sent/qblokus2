@@ -21,6 +21,7 @@ private:
     ServersSearcher serversSearcher;
     void perror(QString);
     void pinfo(QString);
+    void setTabOrder();
 
 public slots:
     // from graphics
