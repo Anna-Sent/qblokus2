@@ -85,7 +85,7 @@ public:
 
 public:
     RemoteClient(QTcpSocket *);
-    ~RemoteClient() { _messageReceiver->deleteLater(); /*_socket->deleteLater();*/ }
+    ~RemoteClient();
     bool isConnectedToGame() const { return _state == 2; }
     QString name() const { return _info.name(); }
     QColor color() const { return _info.color(); }

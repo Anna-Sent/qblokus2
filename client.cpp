@@ -27,7 +27,7 @@ LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime
 LocalClient::~LocalClient()
 {
     _messageReceiver->deleteLater();
-    //socket->deleteLater();
+    _socket->deleteLater();
 }
 
 void LocalClient::start(QString hostname, quint16 port)
@@ -173,6 +173,12 @@ RemoteClient::RemoteClient(QTcpSocket *s) : _state(1), lastpingtime(QTime::curre
     connect(_messageReceiver, SIGNAL(turnMessageReceive(TurnMessage)), this, SLOT(remoteTurnMessageReceive(TurnMessage)));
     connect(socket, SIGNAL(disconnected()), this, SLOT(remoteDisconnected()));
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(remoteError(QAbstractSocket::SocketError)));
+}
+
+RemoteClient::~RemoteClient()
+{
+    _messageReceiver->deleteLater();
+    socket->deleteLater();
 }
 
 void RemoteClient::remoteChatMessageReceive(ChatMessage msg)

@@ -9,8 +9,6 @@ TcpMessageReceiver::TcpMessageReceiver(QTcpSocket *socket)
 
 TcpMessageReceiver::~TcpMessageReceiver()
 {
-    // important. do not use delete socket;
-    socket->deleteLater();
 }
 
 void TcpMessageReceiver::readyRead()
@@ -97,8 +95,6 @@ UdpMessageReceiver::UdpMessageReceiver(QUdpSocket *socket)
 
 UdpMessageReceiver::~UdpMessageReceiver()
 {
-    // important. do not use delete socket;
-    socket->deleteLater();
 }
 
 void UdpMessageReceiver::readyRead()
