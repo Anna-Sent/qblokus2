@@ -20,7 +20,7 @@ public:
     Server();
     ~Server();
     QString getErrorString() const {return serverConnection.errorString();}
-    int getPlayersCount() const {int count = 0;for(int i=0;i<clients.size();++i) if (clients[i]->state==2) ++count;return count;}
+    int getPlayersCount() const {int count = 0;for(int i=0;i<clients.size();++i) if (clients[i]->isConnectedToGame()) ++count;return count;}
     bool start(int maxClientsCount, quint16 port);
     QList<ClientInfo> getClients() const;
 private:

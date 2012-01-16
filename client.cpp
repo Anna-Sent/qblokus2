@@ -162,43 +162,50 @@ void LocalClient::timeout()
     }
 }
 
-RemoteClient::RemoteClient(QTcpSocket *s) : state(1), lastpingtime(QTime::currentTime()) {
-    messageReceiver = new TcpMessageReceiver(s);
-    connect(messageReceiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(remoteChatMessageReceive(ChatMessage)));
-    connect(messageReceiver, SIGNAL(tryToConnectMessageReceive(TryToConnectMessage)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage)));
-    connect(messageReceiver, SIGNAL(pingMessageReceive(PingMessage)), this, SLOT(remotePingMessageReceive(PingMessage)));
-    connect(messageReceiver, SIGNAL(turnMessageReceive(TurnMessage)), this, SLOT(remoteTurnMessageReceive(TurnMessage)));
-    connect(messageReceiver, SIGNAL(surrenderMessageReceive(SurrenderMessage)), this, SLOT(remoteSurrenderMessageReceive(SurrenderMessage)));
-    connect(s, SIGNAL(disconnected()), this, SLOT(remoteDisconnected()));
-    connect(s, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(remoteError(QAbstractSocket::SocketError)));
-    this->socket = s;
-    this->state = 1;
+RemoteClient::RemoteClient(QTcpSocket *s) : _state(1), lastpingtime(QTime::currentTime())
+{
+    socket = s;
+    _messageReceiver = new TcpMessageReceiver(s);
+    connect(_messageReceiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(remoteChatMessageReceive(ChatMessage)));
+    connect(_messageReceiver, SIGNAL(pingMessageReceive(PingMessage)), this, SLOT(remotePingMessageReceive(PingMessage)));
+    connect(_messageReceiver, SIGNAL(surrenderMessageReceive(SurrenderMessage)), this, SLOT(remoteSurrenderMessageReceive(SurrenderMessage)));
+    connect(_messageReceiver, SIGNAL(tryToConnectMessageReceive(TryToConnectMessage)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage)));
+    connect(_messageReceiver, SIGNAL(turnMessageReceive(TurnMessage)), this, SLOT(remoteTurnMessageReceive(TurnMessage)));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(remoteDisconnected()));
+    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(remoteError(QAbstractSocket::SocketError)));
 }
 
-void RemoteClient::remoteChatMessageReceive(ChatMessage msg) {
-    emit rcChatMessageReceive(msg,this);
+void RemoteClient::remoteChatMessageReceive(ChatMessage msg)
+{
+    emit rcChatMessageReceive(msg, this);
 }
 
-void RemoteClient::remoteTryToConnectMessageReceive(TryToConnectMessage msg) {
-    emit rcTryToConnectMessageReceive(msg,this);
-}
-
-void RemoteClient::remotePingMessageReceive(PingMessage msg) {
-    emit rcPingMessageReceive(msg,this);
-}
-
-void RemoteClient::remoteTurnMessageReceive(TurnMessage msg) {
-    emit rcTurnMessageReceive(msg,this);
-}
-
-void RemoteClient::remoteSurrenderMessageReceive(SurrenderMessage msg) {
-    emit rcSurrenderMessageReceive(msg,this);
-}
-
-void RemoteClient::remoteDisconnected() {
+void RemoteClient::remoteDisconnected()
+{
     emit rcDisconnected(this);
 }
 
-void RemoteClient::remoteError(QAbstractSocket::SocketError) {
+void RemoteClient::remoteError(QAbstractSocket::SocketError)
+{
     emit rcError(this);
+}
+
+void RemoteClient::remotePingMessageReceive(PingMessage msg)
+{
+    emit rcPingMessageReceive(msg, this);
+}
+
+void RemoteClient::remoteSurrenderMessageReceive(SurrenderMessage msg)
+{
+    emit rcSurrenderMessageReceive(msg, this);
+}
+
+void RemoteClient::remoteTurnMessageReceive(TurnMessage msg)
+{
+    emit rcTurnMessageReceive(msg, this);
+}
+
+void RemoteClient::remoteTryToConnectMessageReceive(TryToConnectMessage msg)
+{
+    emit rcTryToConnectMessageReceive(msg, this);
 }

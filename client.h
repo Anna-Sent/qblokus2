@@ -70,33 +70,47 @@ signals:
     void turnMessageReceived(QColor, int, int, int, QString);
 };
 
-class RemoteClient : public QObject {
+class RemoteClient : public QObject
+{
     Q_OBJECT
+
+private:
+    ClientInfo _info;
+    TcpMessageReceiver *_messageReceiver;
+    int _state;
+
 public:
-    int state;
-    QTime lastpingtime;
-    QTcpSocket* socket;
-    TcpMessageReceiver* messageReceiver;
-    ClientInfo info;
+    QTime lastpingtime; // make private
+    QTcpSocket *socket; // make private
+
 public:
-    ~RemoteClient() { messageReceiver->deleteLater(); }
-    RemoteClient(QTcpSocket*);
+    RemoteClient(QTcpSocket *);
+    ~RemoteClient() { _messageReceiver->deleteLater(); /*_socket->deleteLater();*/ }
+    bool isConnectedToGame() const { return _state == 2; }
+    QString name() const { return _info.name(); }
+    QColor color() const { return _info.color(); }
+    const ClientInfo &info() const { return _info; }
+
+public slots:
+    void setConnectedToGame(const QString &name, const QColor &color) { _info.setName(name); _info.setColor(color); _state = 2; }
+
 private slots:
     void remoteChatMessageReceive(ChatMessage);
-    void remoteTryToConnectMessageReceive(TryToConnectMessage);
-    void remotePingMessageReceive(PingMessage);
-    void remoteTurnMessageReceive(TurnMessage);
-    void remoteSurrenderMessageReceive(SurrenderMessage);
     void remoteDisconnected();
     void remoteError(QAbstractSocket::SocketError);
+    void remotePingMessageReceive(PingMessage);
+    void remoteSurrenderMessageReceive(SurrenderMessage);
+    void remoteTryToConnectMessageReceive(TryToConnectMessage);
+    void remoteTurnMessageReceive(TurnMessage);
+
 signals:
     void rcChatMessageReceive(ChatMessage,RemoteClient*);
-    void rcTryToConnectMessageReceive(TryToConnectMessage,RemoteClient*);
-    void rcPingMessageReceive(PingMessage,RemoteClient*);
-    void rcTurnMessageReceive(TurnMessage,RemoteClient*);
-    void rcSurrenderMessageReceive(SurrenderMessage,RemoteClient*);
     void rcDisconnected(RemoteClient*);
     void rcError(RemoteClient*);
+    void rcPingMessageReceive(PingMessage,RemoteClient*);
+    void rcSurrenderMessageReceive(SurrenderMessage,RemoteClient*);
+    void rcTryToConnectMessageReceive(TryToConnectMessage,RemoteClient*);
+    void rcTurnMessageReceive(TurnMessage,RemoteClient*);
 };
 
 #endif

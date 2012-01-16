@@ -7,8 +7,8 @@
 QList<ClientInfo> Server::getClients() const {
     QList<ClientInfo> list;
     for (int i=0;i<clients.size();++i)
-        if (clients[i]->state==2)
-            list.append(clients[i]->info);
+        if (clients[i]->isConnectedToGame())
+            list.append(clients[i]->info());
     return list;
 }
 
@@ -17,9 +17,9 @@ void Server::serverRequestMessageReceive(ServerRequestMessage, const QHostAddres
     QList<ClientInfo> list;
     for (int i = 0; i < clients.size(); ++i)
     {
-        if (clients[i]->state == 2)
+        if (clients[i]->isConnectedToGame())
         {
-            list.append(clients[i]->info);
+            list.append(clients[i]->info());
         }
     }
 
@@ -101,10 +101,10 @@ void Server::remoteSurrenderMessageReceive(SurrenderMessage msg, RemoteClient*) 
 
 void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteClient* client) {
     int i, error=0;
-    for (i=0; i<clients.size() && (msg.color()!=clients[i]->info.color() || clients[i]->state!=2); ++i) {}
+    for (i=0; i<clients.size() && (msg.color()!=clients[i]->color() || !clients[i]->isConnectedToGame()); ++i) {}
     if (i!=clients.size())
         error=1;
-    for (i=0; i<clients.size() && (msg.name()!=clients[i]->info.name() || clients[i]->state!=2); ++i) {}
+    for (i=0; i<clients.size() && (msg.name()!=clients[i]->name() || !clients[i]->isConnectedToGame()); ++i) {}
     if (i!=clients.size())
         error=2;
     if (getPlayersCount()==maxClientsCount)
@@ -112,9 +112,7 @@ void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteCli
     ConnectionAcceptedMessage msg1(error);
     msg1.send(client->socket);
     if (!error) {
-        client->info.setName(msg.name());
-        client->info.setColor(msg.color());
-        client->state = 2;
+        client->setConnectedToGame(msg.name(), msg.color());
         ClientConnectMessage msg1(msg.name(), msg.color());
         sendToAll(&msg1);
         sendPlayersList();
@@ -144,8 +142,8 @@ void Server::newConnection() {
 }
 
 void Server::remoteDisconnected(RemoteClient *client) {
-    if (client->state==2) {
-        ClientDisconnectMessage msg(client->info.name(), client->info.color());
+    if (client->isConnectedToGame()) {
+        ClientDisconnectMessage msg(client->name(), client->color());
         sendToAll(&msg);
         sendPlayersList();
     }
@@ -159,7 +157,7 @@ void Server::remoteChatMessageReceive(ChatMessage msg, RemoteClient*) {
 void Server::sendToAll(Message *msg) {
     QList<RemoteClient*>::iterator i;
     for (i = clients.begin(); i != clients.end(); ++i)
-        if ((*i)->state==2) {
+        if ((*i)->isConnectedToGame()) {
         msg->send((*i)->socket);
     }
 }
@@ -167,8 +165,8 @@ void Server::sendToAll(Message *msg) {
 void Server::sendPlayersList() {
     QList<ClientInfo> list;
     for (int i=0;i<clients.size();++i)
-        if (clients[i]->state==2)
-            list.append(clients[i]->info);
+        if (clients[i]->isConnectedToGame())
+            list.append(clients[i]->info());
     PlayersListMessage msg(list);
     sendToAll(&msg);
 }
