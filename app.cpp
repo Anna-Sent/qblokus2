@@ -143,7 +143,7 @@ void App::userStartGame()
 {
     if (_server.isRunning())
     {
-        if (_server.getPlayersCount() == _server.getMaxClientsCount())
+        if (_server.playersCount() == _server.maxClientsCount())
         {
             if (_game && _game->isStarted())
             {
@@ -162,7 +162,7 @@ void App::userStartGame()
 
                 delete _game;
                 _game = new Game(this);
-                QList<ClientInfo> list = _server.getClients();
+                QList<ClientInfo> list = _server.clients();
                 QList<bool> isLocal;
                 for (int i = 0; i < list.size(); ++i)
                 {
@@ -183,7 +183,7 @@ void App::userStartGame()
         else
         {
             QMessageBox::warning(this, "Warning", "Wait for "
-                                 + QString::number(_server.getMaxClientsCount()) + " players");
+                                 + QString::number(_server.maxClientsCount()) + " players");
         }
     }
     else
@@ -241,7 +241,7 @@ void App::userTryToConnect()
             bool listening = _server.start(maxClientsCount, port);
             if (!listening)
             {
-                QMessageBox::critical(this, "Error", _server.getErrorString());
+                QMessageBox::critical(this, "Error", _server.errorString());
                 return;
             }
         }

@@ -8,46 +8,55 @@
 
 class Server : public QThread {
     Q_OBJECT
+
 private:
-    QTcpServer serverConnection;
-    QUdpSocket listener;
-    UdpMessageReceiver *messageReceiver;
-    QList<RemoteClient*> clients;
-    QTimer timer;
-    int maxClientsCount;
+    QList<RemoteClient *> _clients;
+    QUdpSocket _listener;
+    int _maxClientsCount;
+    UdpMessageReceiver *_messageReceiver;
+    QTcpServer _tcpServer;
+    QTimer _timer;
+
 public:
-    int getMaxClientsCount() {return maxClientsCount;}
     Server();
     ~Server();
-    QString getErrorString() const {return serverConnection.errorString();}
-    int getPlayersCount() const {int count = 0;for(int i=0;i<clients.size();++i) if (clients[i]->isConnectedToGame()) ++count;return count;}
+    QList<ClientInfo> clients() const;
+    QString errorString() const { return _tcpServer.errorString(); }
+    int maxClientsCount() const { return _maxClientsCount; }
+    int playersCount() const;
     bool start(int maxClientsCount, quint16 port);
-    QList<ClientInfo> getClients() const;
+
 private:
-    void stop();
+    void removeClient(RemoteClient *);
     void sendPlayersList();
-    void sendToAll(Message*);
-    void removeClient(RemoteClient*);
+    void sendToAll(Message *);
+    void stop();
+
 protected:
     void run();
+
 private slots:
     //from app
     void startGame();
     void restartGame(QList<ClientInfo>);
+
     //from timer
     void ping();
+
     //from message receiver
     void serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16);
+
     //from tcpserver
     void newConnection();
+
     //from remote client
-    void remoteChatMessageReceive(ChatMessage,RemoteClient*);
-    void remoteTryToConnectMessageReceive(TryToConnectMessage,RemoteClient*);
-    void remotePingMessageReceive(PingMessage,RemoteClient*);
-    void remoteTurnMessageReceive(TurnMessage,RemoteClient*);
-    void remoteSurrenderMessageReceive(SurrenderMessage,RemoteClient*);
-    void remoteDisconnected(RemoteClient*);
-    void remoteError(RemoteClient*);
+    void remoteChatMessageReceive(ChatMessage, RemoteClient *);
+    void remoteDisconnected(RemoteClient *);
+    void remoteError(RemoteClient *);
+    void remotePingMessageReceive(PingMessage, RemoteClient *);
+    void remoteSurrenderMessageReceive(SurrenderMessage, RemoteClient *);
+    void remoteTryToConnectMessageReceive(TryToConnectMessage, RemoteClient *);
+    void remoteTurnMessageReceive(TurnMessage, RemoteClient *);
 };
 
 #endif
