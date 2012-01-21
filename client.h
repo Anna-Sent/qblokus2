@@ -19,7 +19,6 @@ private:
 
 public:
     LocalClient();
-    ~LocalClient();
     QColor color() const { return _info.color(); }
     bool isStarted() const { return _isStarted; }
     QString nickname() const {return _info.name(); }
@@ -76,23 +75,23 @@ class RemoteClient : public QObject
 
 private:
     ClientInfo _info;
+    QTime _lastPingTime;
     TcpMessageReceiver *_messageReceiver;
+    QTcpSocket *_socket;
     int _state;
 
 public:
-    QTime lastpingtime; // make private
-    QTcpSocket *socket; // make private
-
-public:
     RemoteClient(QTcpSocket *);
-    ~RemoteClient();
+    int elapsedSinceLastPing() const { return _lastPingTime.elapsed(); }
     bool isConnectedToGame() const { return _state == 2; }
     QString name() const { return _info.name(); }
     QColor color() const { return _info.color(); }
     const ClientInfo &info() const { return _info; }
 
 public slots:
-    void setConnectedToGame(const QString &name, const QColor &color) { _info.setName(name); _info.setColor(color); _state = 2; }
+    void setConnectedToGame(const QString &name, const QColor &color);
+    void setDisconnectedFromGame();
+    void sendMessage(const Message &msg);
 
 private slots:
     void remoteChatMessageReceive(ChatMessage);
@@ -107,7 +106,6 @@ signals:
     void rcChatMessageReceive(ChatMessage,RemoteClient*);
     void rcDisconnected(RemoteClient*);
     void rcError(RemoteClient*);
-    void rcPingMessageReceive(PingMessage,RemoteClient*);
     void rcSurrenderMessageReceive(SurrenderMessage,RemoteClient*);
     void rcTryToConnectMessageReceive(TryToConnectMessage,RemoteClient*);
     void rcTurnMessageReceive(TurnMessage,RemoteClient*);

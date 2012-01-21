@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Sun Jan 15 13:12:59 2012
+** Created: Sun Jan 22 01:04:21 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -79,11 +79,12 @@ public:
     QPushButton *pbConnect;
     QLineEdit *leServerAddress;
     QCheckBox *cbCreateServer;
-    QSpinBox *sbClientsCount;
+    QSpinBox *sbPlayersCount;
     QSpacerItem *verticalSpacer;
     QLabel *lServerAddress;
     QComboBox *cbColor;
     QLabel *lColor;
+    QLabel *lPlayersCount;
     QTextEdit *textEdit;
     QLineEdit *lineEdit;
 
@@ -235,17 +236,17 @@ public:
         lPort = new QLabel(dockWidgetContents);
         lPort->setObjectName(QString::fromUtf8("lPort"));
 
-        gridLayout_8->addWidget(lPort, 4, 0, 1, 1);
+        gridLayout_8->addWidget(lPort, 5, 0, 1, 1);
 
         lNickname = new QLabel(dockWidgetContents);
         lNickname->setObjectName(QString::fromUtf8("lNickname"));
 
-        gridLayout_8->addWidget(lNickname, 7, 0, 1, 1);
+        gridLayout_8->addWidget(lNickname, 8, 0, 1, 1);
 
         leNickname = new QLineEdit(dockWidgetContents);
         leNickname->setObjectName(QString::fromUtf8("leNickname"));
 
-        gridLayout_8->addWidget(leNickname, 8, 0, 1, 1);
+        gridLayout_8->addWidget(leNickname, 9, 0, 1, 1);
 
         sbPort = new QSpinBox(dockWidgetContents);
         sbPort->setObjectName(QString::fromUtf8("sbPort"));
@@ -253,12 +254,12 @@ public:
         sbPort->setMaximum(65535);
         sbPort->setValue(1500);
 
-        gridLayout_8->addWidget(sbPort, 5, 0, 1, 1);
+        gridLayout_8->addWidget(sbPort, 6, 0, 1, 1);
 
         pbConnect = new QPushButton(dockWidgetContents);
         pbConnect->setObjectName(QString::fromUtf8("pbConnect"));
 
-        gridLayout_8->addWidget(pbConnect, 13, 0, 1, 1);
+        gridLayout_8->addWidget(pbConnect, 14, 0, 1, 1);
 
         leServerAddress = new QLineEdit(dockWidgetContents);
         leServerAddress->setObjectName(QString::fromUtf8("leServerAddress"));
@@ -270,18 +271,18 @@ public:
 
         gridLayout_8->addWidget(cbCreateServer, 2, 0, 1, 1);
 
-        sbClientsCount = new QSpinBox(dockWidgetContents);
-        sbClientsCount->setObjectName(QString::fromUtf8("sbClientsCount"));
-        sbClientsCount->setEnabled(false);
-        sbClientsCount->setMinimum(3);
-        sbClientsCount->setMaximum(4);
-        sbClientsCount->setValue(4);
+        sbPlayersCount = new QSpinBox(dockWidgetContents);
+        sbPlayersCount->setObjectName(QString::fromUtf8("sbPlayersCount"));
+        sbPlayersCount->setEnabled(false);
+        sbPlayersCount->setMinimum(3);
+        sbPlayersCount->setMaximum(4);
+        sbPlayersCount->setValue(4);
 
-        gridLayout_8->addWidget(sbClientsCount, 3, 0, 1, 1);
+        gridLayout_8->addWidget(sbPlayersCount, 4, 0, 1, 1);
 
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        gridLayout_8->addItem(verticalSpacer, 11, 0, 1, 1);
+        gridLayout_8->addItem(verticalSpacer, 12, 0, 1, 1);
 
         lServerAddress = new QLabel(dockWidgetContents);
         lServerAddress->setObjectName(QString::fromUtf8("lServerAddress"));
@@ -291,12 +292,18 @@ public:
         cbColor = new QComboBox(dockWidgetContents);
         cbColor->setObjectName(QString::fromUtf8("cbColor"));
 
-        gridLayout_8->addWidget(cbColor, 10, 0, 1, 1);
+        gridLayout_8->addWidget(cbColor, 11, 0, 1, 1);
 
         lColor = new QLabel(dockWidgetContents);
         lColor->setObjectName(QString::fromUtf8("lColor"));
 
-        gridLayout_8->addWidget(lColor, 9, 0, 1, 1);
+        gridLayout_8->addWidget(lColor, 10, 0, 1, 1);
+
+        lPlayersCount = new QLabel(dockWidgetContents);
+        lPlayersCount->setObjectName(QString::fromUtf8("lPlayersCount"));
+        lPlayersCount->setEnabled(false);
+
+        gridLayout_8->addWidget(lPlayersCount, 3, 0, 1, 1);
 
 
         gridLayout_6->addLayout(gridLayout_8, 4, 0, 1, 1);
@@ -333,9 +340,11 @@ public:
         QObject::connect(actionConnectionWindow, SIGNAL(toggled(bool)), dockWidget, SLOT(setVisible(bool)));
         QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lServerAddress, SLOT(setDisabled(bool)));
         QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), leServerAddress, SLOT(setDisabled(bool)));
-        QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), sbClientsCount, SLOT(setEnabled(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), sbPlayersCount, SLOT(setEnabled(bool)));
         QObject::connect(dockWidget, SIGNAL(visibilityChanged(bool)), actionConnectionWindow, SLOT(setChecked(bool)));
         QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lServersList, SLOT(setDisabled(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lwServersList, SLOT(setDisabled(bool)));
+        QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lPlayersCount, SLOT(setEnabled(bool)));
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
@@ -366,6 +375,7 @@ public:
          << QApplication::translate("MainWindow", "Blue", 0, QApplication::UnicodeUTF8)
         );
         lColor->setText(QApplication::translate("MainWindow", "Color", 0, QApplication::UnicodeUTF8));
+        lPlayersCount->setText(QApplication::translate("MainWindow", "Players count", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

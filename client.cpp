@@ -1,12 +1,8 @@
 #include "client.h"
-#define PING_INTERVAL 5000
-#define PING_TIME 1500000
+#include "constants.h"
 
 LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime())
 {
-    _localTimer.setInterval(PING_INTERVAL);
-    connect(&_localTimer, SIGNAL(timeout()), this, SLOT(timeout()));
-
     _socket = new QTcpSocket;
     _messageReceiver = new TcpMessageReceiver(_socket);
     connect(_messageReceiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
@@ -20,28 +16,35 @@ LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime
     connect(_messageReceiver, SIGNAL(startGameMessageReceive(StartGameMessage)), this, SLOT(startGameMessageReceived(StartGameMessage)));
     connect(_messageReceiver, SIGNAL(surrenderMessageReceive(SurrenderMessage)), this, SLOT(surrenderMessageReceived(SurrenderMessage)));
     connect(_messageReceiver, SIGNAL(turnMessageReceive(TurnMessage)), this, SLOT(turnMessageReceived(TurnMessage)));
-    connect(_socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
+    connect(_socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()), Qt::QueuedConnection);
     connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
-}
 
-LocalClient::~LocalClient()
-{
-    _messageReceiver->deleteLater();
-    _socket->deleteLater();
+    connect(this, SIGNAL(destroyed()), this, SLOT(stop()));
+    connect(this, SIGNAL(destroyed()), _messageReceiver, SLOT(deleteLater()));
+    connect(this, SIGNAL(destroyed()), _socket, SLOT(deleteLater()));
+
+    _localTimer.setInterval(PING_INTERVAL);
+    connect(&_localTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 }
 
 void LocalClient::start(QString hostname, quint16 port)
 {
-    _socket->connectToHost(hostname, port);
-    _localTimer.start();
-    _isStarted = true;
+    if (!_isStarted)
+    {
+        _isStarted = true;
+        _socket->connectToHost(hostname, port);
+        _localTimer.start();
+    }
 }
 
 void LocalClient::stop()
 {
-    _isStarted = false;
-    _localTimer.stop();
-    _socket->disconnectFromHost();
+    if (_isStarted)
+    {
+        _isStarted = false;
+        _localTimer.stop();
+        _socket->disconnectFromHost();
+    }
 }
 
 void LocalClient::chatMessageReceived(ChatMessage msg)
@@ -120,18 +123,20 @@ void LocalClient::turnMessageReceived(TurnMessage msg)
 
 void LocalClient::socketDisconnected()
 {
-    _isStarted = false;
-    _localTimer.stop();
+    if (_isStarted)
+    {
+        _isStarted = false;
+        _localTimer.stop();
+    }
+
     emit disconnected();
 }
 
 void LocalClient::socketError(QAbstractSocket::SocketError)
 {
+    stop();
     emit error(_socket->errorString());
     emit error();
-    _socket->abort();
-    _isStarted = false;
-    _localTimer.stop();
 }
 
 void LocalClient::doTurn(QString name, QColor color, QString tile, int id, int x, int y)
@@ -157,28 +162,50 @@ void LocalClient::timeout()
     int elapsed = _lastPingTime.elapsed();
     if (elapsed > PING_TIME)
     {
-        emit error(QString::fromUtf8("Disconnected"));
+        stop();
+        emit error(QString::fromUtf8("Ping timeout"));
         emit error();
     }
 }
 
-RemoteClient::RemoteClient(QTcpSocket *s) : _state(1), lastpingtime(QTime::currentTime())
+RemoteClient::RemoteClient(QTcpSocket *s) : _lastPingTime(QTime::currentTime()), _state(1)
 {
-    socket = s;
+    _socket = s;
     _messageReceiver = new TcpMessageReceiver(s);
     connect(_messageReceiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(remoteChatMessageReceive(ChatMessage)));
     connect(_messageReceiver, SIGNAL(pingMessageReceive(PingMessage)), this, SLOT(remotePingMessageReceive(PingMessage)));
     connect(_messageReceiver, SIGNAL(surrenderMessageReceive(SurrenderMessage)), this, SLOT(remoteSurrenderMessageReceive(SurrenderMessage)));
     connect(_messageReceiver, SIGNAL(tryToConnectMessageReceive(TryToConnectMessage)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage)));
     connect(_messageReceiver, SIGNAL(turnMessageReceive(TurnMessage)), this, SLOT(remoteTurnMessageReceive(TurnMessage)));
-    connect(socket, SIGNAL(disconnected()), this, SLOT(remoteDisconnected()));
-    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(remoteError(QAbstractSocket::SocketError)));
+    connect(_socket, SIGNAL(disconnected()), this, SLOT(remoteDisconnected()), Qt::QueuedConnection);
+    connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(remoteError(QAbstractSocket::SocketError)));
+    connect(this, SIGNAL(destroyed()), this, SLOT(setDisconnectedFromGame()));
+    connect(this, SIGNAL(destroyed()), _messageReceiver, SLOT(deleteLater()));
+    connect(this, SIGNAL(destroyed()), _socket, SLOT(deleteLater()));
 }
 
-RemoteClient::~RemoteClient()
+void RemoteClient::setConnectedToGame(const QString &name, const QColor &color)
 {
-    _messageReceiver->deleteLater();
-    socket->deleteLater();
+    if (!isConnectedToGame())
+    {
+        _state = 2;
+        _info.setName(name);
+        _info.setColor(color);
+    }
+}
+
+void RemoteClient::setDisconnectedFromGame()
+{
+    if (_state != 3)
+    {
+        _state = 3;
+        _socket->disconnectFromHost();
+    }
+}
+
+void RemoteClient::sendMessage(const Message &msg)
+{
+    msg.send(_socket);
 }
 
 void RemoteClient::remoteChatMessageReceive(ChatMessage msg)
@@ -188,17 +215,23 @@ void RemoteClient::remoteChatMessageReceive(ChatMessage msg)
 
 void RemoteClient::remoteDisconnected()
 {
+    if (_state != 3)
+    {
+        _state = 3;
+    }
+
     emit rcDisconnected(this);
 }
 
 void RemoteClient::remoteError(QAbstractSocket::SocketError)
 {
+    setDisconnectedFromGame();
     emit rcError(this);
 }
 
-void RemoteClient::remotePingMessageReceive(PingMessage msg)
+void RemoteClient::remotePingMessageReceive(PingMessage)
 {
-    emit rcPingMessageReceive(msg, this);
+    _lastPingTime.start();
 }
 
 void RemoteClient::remoteSurrenderMessageReceive(SurrenderMessage msg)

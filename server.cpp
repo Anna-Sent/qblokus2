@@ -1,23 +1,21 @@
 #include "server.h"
 #include "constants.h"
 
-#define PING_INTERVAL 5000
-#define PING_TIME 1500000
-
 Server::Server()
 {
     connect(&_tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
     _messageReceiver = new UdpMessageReceiver(&_listener);
     connect(_messageReceiver, SIGNAL(serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16)), this, SLOT(serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16)));
+    connect(this, SIGNAL(destroyed()), _messageReceiver, SLOT(deleteLater()));
 
     _timer.setInterval(PING_INTERVAL);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(ping()));
-}
+    connect(this, SIGNAL(finished()), &_timer, SLOT(stop()));
+    connect(this, SIGNAL(terminated()), &_timer, SLOT(stop()));
 
-Server::~Server()
-{
-    _messageReceiver->deleteLater();
+    connect(this, SIGNAL(finished()), this, SLOT(stop()));
+    connect(this, SIGNAL(terminated()), this, SLOT(stop()));
 }
 
 QList<ClientInfo> Server::clients() const
@@ -52,46 +50,33 @@ void Server::ping()
 {
     for (int i = 0; i < _clients.size(); ++i)
     {
-        PingMessage msg;
-        msg.send(_clients[i]->socket);
-        QTime last = _clients[i]->lastpingtime;
-        int elapsed = last.elapsed();
+        int elapsed = _clients[i]->elapsedSinceLastPing();
         if (elapsed > PING_TIME)
         {
-            _clients[i]->socket->close();
+            _clients[i]->setDisconnectedFromGame();
+        }
+        else
+        {
+            PingMessage msg;
+            _clients[i]->sendMessage(msg);
         }
     }
-}
-
-void Server::run()
-{
-    exec();
-    stop();
 }
 
 void Server::sendPlayersList()
 {
-    QList<ClientInfo> list;
-    for (int i = 0; i < _clients.size(); ++i)
-    {
-        if (_clients[i]->isConnectedToGame())
-        {
-            list.append(_clients[i]->info());
-        }
-    }
-
-    PlayersListMessage msg(list);
-    sendToAll(&msg);
+    PlayersListMessage msg(clients());
+    sendToAll(msg);
 }
 
-void Server::sendToAll(Message *msg)
+void Server::sendToAll(const Message &msg)
 {
     QList<RemoteClient *>::iterator i;
     for (i = _clients.begin(); i != _clients.end(); ++i)
     {
         if ((*i)->isConnectedToGame())
         {
-            msg->send((*i)->socket);
+            (*i)->sendMessage(msg);
         }
     }
 }
@@ -99,125 +84,120 @@ void Server::sendToAll(Message *msg)
 void Server::startGame()
 {
     StartGameMessage msg;
-    sendToAll(&msg);
+    sendToAll(msg);
 }
 
 void Server::restartGame(QList<ClientInfo> list)
 {
     RestartGameMessage msg(list);
-    sendToAll(&msg);
+    sendToAll(msg);
 }
 
-bool Server::start(int maxClientsCount, quint16 port)
+void Server::start(int maxClientsCount, quint16 port)
 {
-    _maxClientsCount = maxClientsCount;
-    bool listening = _tcpServer.listen(QHostAddress::Any, port);
-    if (listening)
+    if (!isRunning())
     {
-        _timer.start();
-        _listener.bind(QHostAddress::Any, port);
-        QThread::start();
+        _maxClientsCount = maxClientsCount;
+        bool listening = _tcpServer.listen(QHostAddress::Any, port);
+        if (listening)
+        {
+            _timer.start();
+            _listener.bind(QHostAddress::Any, port);
+            QThread::start();
+        }
     }
-
-    return listening;
 }
 
 void Server::stop()
 {
-    if (_tcpServer.isListening())
-    {
-        _tcpServer.close();
-        _listener.close();
-        _timer.stop();
-        while (_clients.size()>0)
-        {
-            removeClient(_clients[0]);
-        }
-
-        _clients.clear();
-    }
+    _clients.clear();
+    _tcpServer.close();
+    _listener.disconnectFromHost();
 }
 
 void Server::removeClient(RemoteClient *client)
 {
-    client->socket->close();
-    _clients.removeAt(_clients.indexOf(client));
+    int index = _clients.indexOf(client);
+    if (index == -1)
+    {
+        qDebug() << "Client " << client->name() << " is already removed from list";
+    }
+    else
+    {
+        _clients.removeAt(index);
+    }
+
     client->deleteLater();
 }
 
 void Server::remoteChatMessageReceive(ChatMessage msg, RemoteClient *)
 {
-    sendToAll(&msg);
+    sendToAll(msg);
 }
 
 void Server::remoteDisconnected(RemoteClient *client)
 {
-    if (client->isConnectedToGame())
-    {
-        ClientDisconnectMessage msg(client->name(), client->color());
-        sendToAll(&msg);
-        sendPlayersList();
-    }
-
-    removeClient(client);
+    ClientDisconnectMessage msg(client->name(), client->color());
+    sendToAll(msg);
+    sendPlayersList();
 }
 
-void Server::remoteError(RemoteClient *client)
+void Server::remoteError(RemoteClient *)
 {
-    client->socket->close();
-}
-
-void Server::remotePingMessageReceive(PingMessage, RemoteClient *client)
-{
-    client->lastpingtime.start();
 }
 
 void Server::remoteSurrenderMessageReceive(SurrenderMessage msg, RemoteClient *)
 {
-    sendToAll(&msg);
+    sendToAll(msg);
 }
 
 void Server::remoteTurnMessageReceive(TurnMessage msg, RemoteClient *)
 {
-    sendToAll(&msg);
+    sendToAll(msg);
 }
 
 void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteClient *client)
 {
     int i, error = 0;
     for (i = 0; i < _clients.size()
-        && (msg.color() != _clients[i]->color() || !_clients[i]->isConnectedToGame()); ++i) { }
-
-    if (i != _clients.size())
-    {
-        error = 1;
-    }
-
-    for (i = 0; i < _clients.size()
         && (msg.name() != _clients[i]->name() || !_clients[i]->isConnectedToGame()); ++i) { }
-
     if (i != _clients.size())
     {
         error = 2;
     }
-
-    if (playersCount() == _maxClientsCount)
+    else
     {
-        error = 4;
+        for (i = 0; i < _clients.size()
+            && (msg.color() != _clients[i]->color() || !_clients[i]->isConnectedToGame()); ++i) { }
+        if (i != _clients.size())
+        {
+            error = 1;
+        }
+        else
+        {
+            if (playersCount() == _maxClientsCount)
+            {
+                error = 4;
+            }
+        }
     }
 
     ConnectionAcceptedMessage msg1(error);
-    msg1.send(client->socket);
-    if (!error)
+    client->sendMessage(msg1);
+    if (error)
     {
-        client->setConnectedToGame(msg.name(), msg.color());
-        ClientConnectMessage msg1(msg.name(), msg.color());
-        sendToAll(&msg1);
-        sendPlayersList();
+        client->setDisconnectedFromGame();
     }
     else
     {
-        removeClient(client);
+        connect(client, SIGNAL(rcChatMessageReceive(ChatMessage, RemoteClient *)), this, SLOT(remoteChatMessageReceive(ChatMessage, RemoteClient *)));
+        connect(client, SIGNAL(rcDisconnected(RemoteClient *)), this, SLOT(remoteDisconnected(RemoteClient *)));
+        connect(client, SIGNAL(rcSurrenderMessageReceive(SurrenderMessage, RemoteClient *)), this, SLOT(remoteSurrenderMessageReceive(SurrenderMessage, RemoteClient *)));
+        connect(client, SIGNAL(rcTurnMessageReceive(TurnMessage, RemoteClient *)), this, SLOT(remoteTurnMessageReceive(TurnMessage, RemoteClient *)));
+        client->setConnectedToGame(msg.name(), msg.color());
+        ClientConnectMessage msg1(msg.name(), msg.color());
+        sendToAll(msg1);
+        sendPlayersList();
     }
 }
 
@@ -227,13 +207,12 @@ void Server::newConnection()
     {
         QTcpSocket *s = _tcpServer.nextPendingConnection();
         RemoteClient *client = new RemoteClient(s);
-        connect(client, SIGNAL(rcChatMessageReceive(ChatMessage, RemoteClient *)), this, SLOT(remoteChatMessageReceive(ChatMessage, RemoteClient *)));
+        connect(client, SIGNAL(rcDisconnected(RemoteClient *)), this, SLOT(removeClient(RemoteClient *)));
         connect(client, SIGNAL(rcTryToConnectMessageReceive(TryToConnectMessage, RemoteClient *)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage, RemoteClient *)));
-        connect(client, SIGNAL(rcPingMessageReceive(PingMessage, RemoteClient *)), this, SLOT(remotePingMessageReceive(PingMessage, RemoteClient *)));
-        connect(client, SIGNAL(rcTurnMessageReceive(TurnMessage, RemoteClient *)), this, SLOT(remoteTurnMessageReceive(TurnMessage, RemoteClient *)));
-        connect(client, SIGNAL(rcSurrenderMessageReceive(SurrenderMessage, RemoteClient *)), this, SLOT(remoteSurrenderMessageReceive(SurrenderMessage, RemoteClient *)));
-        connect(client, SIGNAL(rcDisconnected(RemoteClient *)), this, SLOT(remoteDisconnected(RemoteClient *)));
-        connect(client, SIGNAL(rcError(RemoteClient *)), this, SLOT(remoteError(RemoteClient *)));
+        connect(this, SIGNAL(finished()), client, SLOT(setDisconnectedFromGame()));
+        connect(this, SIGNAL(finished()), client, SLOT(deleteLater()));
+        connect(this, SIGNAL(terminated()), client, SLOT(setDisconnectedFromGame()));
+        connect(this, SIGNAL(terminated()), client, SLOT(deleteLater()));
         _clients.append(client);
         ServerReadyMessage msg;
         msg.send(s);
@@ -242,15 +221,6 @@ void Server::newConnection()
 
 void Server::serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &host, quint16 port)
 {
-    QList<ClientInfo> list;
-    for (int i = 0; i < _clients.size(); ++i)
-    {
-        if (_clients[i]->isConnectedToGame())
-        {
-            list.append(_clients[i]->info());
-        }
-    }
-
-    ServerInfoMessage msg(list);
+    ServerInfoMessage msg(clients());
     msg.send(&_listener, host, port);
 }

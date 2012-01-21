@@ -2,5 +2,7 @@
 #define CONSTANTS_H
 
 #define MAGIC_NUMBER 110807
+#define PING_INTERVAL 5000
+#define PING_TIME 1500000
 
 #endif // CONSTANTS_H

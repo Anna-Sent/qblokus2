@@ -2,7 +2,7 @@
 #include <QApplication>
 
 int main(int argc, char *argv[]) {
-    qRegisterMetaType<QAbstractSocket::SocketError>("QAbstractSocket::SocketError");
+    //qRegisterMetaType<QAbstractSocket::SocketError>("QAbstractSocket::SocketError");
     qRegisterMetaType<ChatMessage>("ChatMessage");
     qRegisterMetaType<ClientConnectMessage>("ClientConnectMessage");
     qRegisterMetaType<ClientDisconnectMessage>("ClientDisconnectMessage");

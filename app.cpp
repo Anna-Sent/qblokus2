@@ -16,10 +16,11 @@ App::App(QWidget *parent)
     connect(&_localClient, SIGNAL(connectionAccepted()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(connectionAccepted()), lwServersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(connectionAccepted()), &_serversSearcher, SLOT(stop()));
+    connect(&_localClient, SIGNAL(connectionAccepted()), this, SLOT(connectionAccepted()));
     connect(&_localClient, SIGNAL(connectionRejected(const QString &)), this, SLOT(perror(const QString &)));
     connect(&_localClient, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
-    connect(&_localClient, SIGNAL(disconnected()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(disconnected()), lwServersList, SLOT(clear()));
+    connect(&_localClient, SIGNAL(disconnected()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(disconnected()), &_serversSearcher, SLOT(start()));
     connect(&_localClient, SIGNAL(chatMessageReceived(QString, QColor, QString)), this, SLOT(chatMessageReceived(QString, QColor, QString)));
     connect(&_localClient, SIGNAL(clientConnectMessageReceived(QString, QColor)), this, SLOT(clientConnectMessageReceived(QString, QColor)));
@@ -65,8 +66,11 @@ App::~App()
     }
 
     _localClient.stop();
-    _server.quit();
     _serversSearcher.stop();
+    if (_server.isRunning())
+    {
+        _server.quit();
+    }
 }
 
 void App::perror(const QString &text)
@@ -93,8 +97,8 @@ void App::setTabOrder()
     QWidget::setTabOrder(lwServersList, lwPlayersList);
     QWidget::setTabOrder(lwPlayersList, leServerAddress);
     QWidget::setTabOrder(leServerAddress, cbCreateServer);
-    QWidget::setTabOrder(cbCreateServer, sbClientsCount);
-    QWidget::setTabOrder(sbClientsCount, sbPort);
+    QWidget::setTabOrder(cbCreateServer, sbPlayersCount);
+    QWidget::setTabOrder(sbPlayersCount, sbPort);
     QWidget::setTabOrder(sbPort, leNickname);
     QWidget::setTabOrder(leNickname, cbColor);
     QWidget::setTabOrder(cbColor, pbConnect);
@@ -121,7 +125,10 @@ void App::userDisconnectFromServer()
         }
 
         _localClient.stop();
-        _server.quit();
+        if (_server.isRunning())
+        {
+            _server.quit();
+        }
     }
 }
 
@@ -237,9 +244,9 @@ void App::userTryToConnect()
         if (cbCreateServer->checkState())
         {
             // create server
-            int maxClientsCount = sbClientsCount->value();
-            bool listening = _server.start(maxClientsCount, port);
-            if (!listening)
+            int maxClientsCount = sbPlayersCount->value();
+            _server.start(maxClientsCount, port);
+            if (!_server.isRunning())
             {
                 QMessageBox::critical(this, "Error", _server.errorString());
                 return;
@@ -282,7 +289,8 @@ void App::clientDisconnected()
     lServerAddress->setDisabled(cbCreateServer->isChecked());
     leServerAddress->setDisabled(cbCreateServer->isChecked());
     cbCreateServer->setDisabled(false);
-    sbClientsCount->setEnabled(cbCreateServer->isChecked());
+    lPlayersCount->setEnabled(cbCreateServer->isChecked());
+    sbPlayersCount->setEnabled(cbCreateServer->isChecked());
     lPort->setDisabled(false);
     sbPort->setDisabled(false);
     lNickname->setDisabled(false);
@@ -311,7 +319,8 @@ void App::connectionAccepted()
     lServerAddress->setDisabled(true);
     leServerAddress->setDisabled(true);
     cbCreateServer->setDisabled(true);
-    sbClientsCount->setDisabled(true);
+    lPlayersCount->setDisabled(true);
+    sbPlayersCount->setDisabled(true);
     lPort->setDisabled(true);
     sbPort->setDisabled(true);
     lNickname->setDisabled(true);
@@ -410,6 +419,8 @@ void App::guiCreateServerToggled(bool value)
     }
     else
     {
+        lwPlayersList->clear();
+        lwServersList->clear();
         _serversSearcher.start();
     }
 }

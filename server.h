@@ -19,23 +19,20 @@ private:
 
 public:
     Server();
-    ~Server();
     QList<ClientInfo> clients() const;
     QString errorString() const { return _tcpServer.errorString(); }
     int maxClientsCount() const { return _maxClientsCount; }
     int playersCount() const;
-    bool start(int maxClientsCount, quint16 port);
+    void start(int maxClientsCount, quint16 port);
 
 private:
-    void removeClient(RemoteClient *);
     void sendPlayersList();
-    void sendToAll(Message *);
-    void stop();
-
-protected:
-    void run();
+    void sendToAll(const Message &);
 
 private slots:
+    void stop();
+    void removeClient(RemoteClient *);
+
     //from app
     void startGame();
     void restartGame(QList<ClientInfo>);
@@ -53,7 +50,6 @@ private slots:
     void remoteChatMessageReceive(ChatMessage, RemoteClient *);
     void remoteDisconnected(RemoteClient *);
     void remoteError(RemoteClient *);
-    void remotePingMessageReceive(PingMessage, RemoteClient *);
     void remoteSurrenderMessageReceive(SurrenderMessage, RemoteClient *);
     void remoteTryToConnectMessageReceive(TryToConnectMessage, RemoteClient *);
     void remoteTurnMessageReceive(TurnMessage, RemoteClient *);

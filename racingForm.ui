@@ -170,24 +170,24 @@
         <layout class="QGridLayout" name="gridLayout_6">
          <item row="4" column="0">
           <layout class="QGridLayout" name="gridLayout_8">
-           <item row="4" column="0">
+           <item row="5" column="0">
             <widget class="QLabel" name="lPort">
              <property name="text">
               <string>Port</string>
              </property>
             </widget>
            </item>
-           <item row="7" column="0">
+           <item row="8" column="0">
             <widget class="QLabel" name="lNickname">
              <property name="text">
               <string>Nickname</string>
              </property>
             </widget>
            </item>
-           <item row="8" column="0">
+           <item row="9" column="0">
             <widget class="QLineEdit" name="leNickname"/>
            </item>
-           <item row="5" column="0">
+           <item row="6" column="0">
             <widget class="QSpinBox" name="sbPort">
              <property name="minimum">
               <number>1024</number>
@@ -200,7 +200,7 @@
              </property>
             </widget>
            </item>
-           <item row="13" column="0">
+           <item row="14" column="0">
             <widget class="QPushButton" name="pbConnect">
              <property name="text">
               <string>Connect to server</string>
@@ -221,8 +221,8 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
-            <widget class="QSpinBox" name="sbClientsCount">
+           <item row="4" column="0">
+            <widget class="QSpinBox" name="sbPlayersCount">
              <property name="enabled">
               <bool>false</bool>
              </property>
@@ -237,7 +237,7 @@
              </property>
             </widget>
            </item>
-           <item row="11" column="0">
+           <item row="12" column="0">
             <spacer name="verticalSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -257,7 +257,7 @@
              </property>
             </widget>
            </item>
-           <item row="10" column="0">
+           <item row="11" column="0">
             <widget class="QComboBox" name="cbColor">
              <item>
               <property name="text">
@@ -281,10 +281,20 @@
              </item>
             </widget>
            </item>
-           <item row="9" column="0">
+           <item row="10" column="0">
             <widget class="QLabel" name="lColor">
              <property name="text">
               <string>Color</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="lPlayersCount">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Players count</string>
              </property>
             </widget>
            </item>
@@ -387,7 +397,7 @@
   <connection>
    <sender>cbCreateServer</sender>
    <signal>toggled(bool)</signal>
-   <receiver>sbClientsCount</receiver>
+   <receiver>sbPlayersCount</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -429,6 +439,38 @@
     <hint type="destinationlabel">
      <x>74</x>
      <y>68</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCreateServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lwServersList</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>301</x>
+     <y>126</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>117</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCreateServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lPlayersCount</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>301</x>
+     <y>126</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>301</x>
+     <y>152</y>
     </hint>
    </hints>
   </connection>
