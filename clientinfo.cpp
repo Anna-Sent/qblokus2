@@ -5,9 +5,9 @@ QByteArray ClientInfo::serialize() const
     QByteArray result;
     QByteArray tmp = _name.toUtf8();
     int size = tmp.size();
-    result.append(QByteArray::fromRawData((const char *)&size,sizeof(int)));
+    result.append(QByteArray::fromRawData((const char *)&size, sizeof(int)));
     result.append(tmp);
-    result.append(QByteArray::fromRawData((const char *)&_color,sizeof(QColor)));
+    result.append(QByteArray::fromRawData((const char *)&_color, sizeof(QColor)));
     return result;
 }
 
