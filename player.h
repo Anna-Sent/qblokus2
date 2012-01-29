@@ -3,43 +3,48 @@
 
 #include "coloritem.h"
 
-class Player: public QObject, public QGraphicsItem
+class Player : public QObject, public QGraphicsItem
 {
     Q_INTERFACES(QGraphicsItem);
     Q_OBJECT
+
+private:
+    bool lastactive;
+
+protected:
+    QList<ColorItem *> items;
+    int height, width;
+    bool active;
+    QColor color;
+    QString name;
+    bool surrendered;
+    int score;
+    int tilesleft;
+    virtual void activateAll();
+    virtual void deactivateAll();
+    friend class Game;
+
 public:
-    Player(QColor color, int width=300, int height=200, QGraphicsItem * parent = 0, QGraphicsScene * scene = 0);
+    Player(QColor color, int width = 300, int height = 200, QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
     ~Player();
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const;
+    QColor getColor() const { return color; }
+    const QString &getName() const;
+    int getScore() const { return score; }
     bool getSurrendered() const;
-    int getScore() const {return score;}
-    QColor getColor() const {return color;}
-    const QString& getName() const;
-    void setName(const QString&);
-    ColorItem* getTile(int i) const {return items[i];}
+    ColorItem *getTile(int i) const { return items[i]; }
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void setName(const QString &);
+
 public slots:
     virtual void startTurn();
-    virtual void turnComplete(QColor color,QString tile,int item,int x,int y);
+    virtual void turnComplete(QColor color, QString tile, int item, int x, int y);
     virtual void surrender();
+
 signals:
     void turnComplete();
     void scoreChanged(int score);
-    void iWin(Player*);
-protected:
-    QList<ColorItem*> items;
-    virtual void deactivateAll();
-    virtual void activateAll();
-    int height,width;
-    QColor color;
-    QString name;
-    int score;
-    int tilesleft;
-    bool surrendered;
-    bool active;
-    friend class Game;
-private:
-    bool lastactive;
+    void iWin(Player *);
 };
 
 #endif
