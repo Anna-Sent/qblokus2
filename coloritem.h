@@ -6,24 +6,23 @@
 
 class ColorItem : public QGraphicsItem, public Tile
 {
+private:
+    bool _active;
+    QColor _color;
+    int _id;
+
+protected:
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
 public:
     ColorItem(string mask, QColor clr, int id);
-    void deactivate();
     void activate();
-    QRectF boundingRect() const;
+    void deactivate();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-#ifdef DEBUG_DESTRUCTORS
-    ~ColorItem();
-#endif
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
-private:
-    QColor color;
-    int Id;
-    bool active;
+    QRectF boundingRect() const;
 };
 
 #endif

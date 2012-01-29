@@ -1,19 +1,18 @@
 #include "coloritem.h"
 #include <QtGui>
 
-ColorItem::ColorItem(string mask, QColor clr,int id)
-    :Tile(mask), color(clr), Id(id),active(false)
-
+ColorItem::ColorItem(string mask, QColor clr, int id)
+    : Tile(mask), _color(clr), _id(id), _active(false)
 {
     setToolTip(QString("QColor(%1, %2, %3)\n%4")
-               .arg(color.red()).arg(color.green()).arg(color.blue())
+               .arg(_color.red()).arg(_color.green()).arg(_color.blue())
                .arg("Click and drag this color onto the robot!"));
     setCursor(Qt::OpenHandCursor);
 }
 
 QRectF ColorItem::boundingRect() const
 {
-    return QRectF(0,0,getWidth()*20,getHeight()*20);
+    return QRectF(0, 0, getWidth() * 20, getHeight() * 20);
 }
 
 void ColorItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -21,27 +20,36 @@ void ColorItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     Q_UNUSED(option);
     Q_UNUSED(widget);
     painter->setPen(QPen(Qt::black, 1));
-    painter->setBrush(QBrush(color));
-    int h,s,v;
-    color.getHsv(&h,&s,&v);
-    QColor clr = color;
-    if (!active)
+    painter->setBrush(QBrush(_color));
+    int h, s, v;
+    _color.getHsv(&h, &s, &v);
+    QColor clr = _color;
+    if (!_active)
     {
-        clr.setHsv(h,s/2,v);
+        clr.setHsv(h, s/2, v);
     }
-    for(int i=0;i<getHeight();++i)
+
+    for(int i = 0; i < getHeight(); ++i)
     {
-        for(int j=0;j<getWidth();++j)
+        for(int j = 0; j < getWidth(); ++j)
         {
-            if (Tile::data[i][j]!='0') painter->fillRect(j*20+1,i*20+1,18,18,clr);
+            if (Tile::data[i][j] != '0')
+            {
+                painter->fillRect(j * 20 + 1, i * 20 + 1, 18, 18, clr);
+            }
         }
     }
 }
 
 void ColorItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (!active) return;
-    switch(event->button()) {
+    if (!_active)
+    {
+        return;
+    }
+
+    switch(event->button())
+    {
     case(Qt::LeftButton):
         setCursor(Qt::ClosedHandCursor);
         break;
@@ -55,19 +63,28 @@ void ColorItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         break;
     }
 }
-void ColorItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event )
+
+void ColorItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
-    if (!active) return;
+    if (!_active)
+    {
+        return;
+    }
+
     reflectTile();
     update();
 }
 
 void ColorItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (!active) return;
-    if (QLineF(event->screenPos(), event->buttonDownScreenPos(Qt::LeftButton))
-        .length() < QApplication::startDragDistance()) {
+    if (!_active)
+    {
+        return;
+    }
+
+    if (QLineF(event->screenPos(), event->buttonDownScreenPos(Qt::LeftButton)).length() < QApplication::startDragDistance())
+    {
         return;
     }
 
@@ -75,10 +92,10 @@ void ColorItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QMimeData *mime = new QMimeData;
     drag->setMimeData(mime);
 
-    mime->setColorData(color);
-    mime->setText(QString::number(Id)+QString(':')+QString(getAsText().c_str()));
+    mime->setColorData(_color);
+    mime->setText(QString::number(_id) + QString(':') + QString(getAsText().c_str()));
 
-    QPixmap pixmap(getWidth()*20, getHeight()*20);
+    QPixmap pixmap(getWidth() * 20, getHeight() * 20);
     pixmap.fill(Qt::white);
 
     QPainter painter(&pixmap);
@@ -102,9 +119,10 @@ void ColorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 
 void ColorItem::activate()
 {
-    active=true;
+    _active = true;
 }
+
 void ColorItem::deactivate()
 {
-    active=false;
+    _active = false;
 }
