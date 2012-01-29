@@ -9,42 +9,46 @@
 #include <QColor>
 #include <QGraphicsScene>
 
-enum PlayerType {ptLocal,ptNetwork};
+enum PlayerType { ptLocal, ptNetwork };
 
-class Game: public QObject
+class Game : public QObject
 {
     Q_OBJECT
+
+private:
+    QList<Player *> players;
+    QList<QGraphicsScene *> scenes;
+    Table *table;
+    QGraphicsScene *tablescene;
+    Ui::MainWindow *ui;
+    QWidget *widget;
+    int currplayer;
+    bool isserver;
+    int playersleft;
+    bool running;
+    void retirePlayer(int);
+
 public:
-    Game(QWidget* widget);
+    Game(QWidget *widget);
     ~Game();
-    void updatePlayers(QList<ClientInfo>,QList<bool>);
     void clear();
+    void remotePlayerRetired(QString name, QColor color);
+    void updatePlayers(QList<ClientInfo>, QList<bool>);
     bool isStarted() const;
-    void remotePlayerRetired(QString name,QColor color);
 
 public slots:
-    void start();
-    void turnDone(QColor color, QString tile,int id,int x,int y);
-    void addPlayer(QString name,QColor color, PlayerType type);
+    void addPlayer(QString name, QColor color, PlayerType type);
     void playerRetired();
+    void start();
+    void turnDone(QColor color, QString tile, int id, int x, int y);
+
 private slots:
     void winner(Player*);
+
 signals:
-    void gameOver(QString winner,int score,QColor color);
+    void gameOver(QString winner, int score, QColor color);
     void playerRetired(QString name, QColor color);
-    void turnDone(QString name,QColor color, QString mask,int id,int x,int y);
-protected:
-    QList<Player*> players;
-    QList<QGraphicsScene*> scenes;
-    QGraphicsScene* tablescene;
-    Table* table;
-    Ui::MainWindow* ui;
-    QWidget* widget;
-    int currplayer;
-    bool running;
-    int playersleft;
-    bool isserver;
-    void retirePlayer(int);
+    void turnDone(QString name, QColor color, QString mask, int id, int x, int y);
 };
 
 #endif
