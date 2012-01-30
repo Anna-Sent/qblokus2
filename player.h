@@ -17,8 +17,8 @@ protected:
     bool active;
     QColor color;
     QString name;
-    bool surrendered;
     int score;
+    bool surrendered;
     int tilesleft;
     virtual void activateAll();
     virtual void deactivateAll();

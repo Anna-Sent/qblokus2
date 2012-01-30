@@ -2,7 +2,7 @@
 #include <QtGui>
 
 ColorItem::ColorItem(string mask, QColor clr, int id)
-    : Tile(mask), _color(clr), _id(id), _active(false)
+    :  Tile(mask), _active(false), _color(clr), _id(id)
 {
     setToolTip(QString("QColor(%1, %2, %3)\n%4")
                .arg(_color.red()).arg(_color.green()).arg(_color.blue())

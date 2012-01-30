@@ -16,7 +16,7 @@ intstr_t dataparse(QString what)
 }
 
 TableCell::TableCell(QGraphicsItem *parent, int x, int y)
-    : QGraphicsItem(parent), color(Qt::lightGray), dragOver(false), xpos(x), ypos(y)
+    : QGraphicsItem(parent), xpos(x), ypos(y), color(Qt::lightGray), dragOver(false)
 {
     setAcceptDrops(true);
 }
