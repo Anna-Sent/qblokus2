@@ -170,6 +170,10 @@ void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteCli
     {
         error = 3;
     }
+    else if (playersCount() == _maxClientsCount)
+    {
+        error = 4;
+    }
     else
     {
         for (i = 0; i < _clients.size()
@@ -185,13 +189,6 @@ void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteCli
             if (i != _clients.size())
             {
                 error = 1;
-            }
-            else
-            {
-                if (playersCount() == _maxClientsCount)
-                {
-                    error = 4;
-                }
             }
         }
     }
