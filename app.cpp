@@ -123,7 +123,7 @@ void App::userDisconnectFromServer()
         msgBox.setDefaultButton(QMessageBox::No);
         msgBox.setIcon(QMessageBox::Warning);
         int ret = msgBox.exec();
-        if (ret = QMessageBox::No)
+        if (ret == QMessageBox::No)
         {
             return;
         }
@@ -165,7 +165,7 @@ void App::userStartGame()
                 msgBox.setDefaultButton(QMessageBox::No);
                 msgBox.setIcon(QMessageBox::Warning);
                 int ret = msgBox.exec();
-                if (ret = QMessageBox::No)
+                if (ret == QMessageBox::No)
                 {
                     return;
                 }
