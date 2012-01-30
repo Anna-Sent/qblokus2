@@ -32,7 +32,7 @@ void Game::addPlayer(QString name, QColor color, PlayerType type)
         player = new LocalPlayer(color);
         break;
     case(ptNetwork):
-        player = new NetworkPlayer(color,table);
+        player = new NetworkPlayer(color, table);
         break;
     default:
         return;
@@ -249,6 +249,7 @@ void Game::winner(Player *winner)
     }
 
     msgBox.exec();
+    running = false;
     emit gameOver(winner->getName(), winner->getScore(), winner->getColor());
 }
 
@@ -322,7 +323,9 @@ void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
                     for(int i = pl; i < players.size(); ++i)
                     {
                         if (!players[i]->getSurrendered())
+                        {
                             retirePlayer(i);
+                        }
                     }
 
                     pl = players.size();

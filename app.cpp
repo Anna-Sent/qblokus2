@@ -56,6 +56,11 @@ App::App(QWidget *parent)
     _serversSearcher.start();
 
     _game = new Game(this);
+    connect(_game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)),
+            &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
+    connect(_game, SIGNAL(playerRetired(QString,QColor)),
+            &_localClient, SLOT(surrender(QString,QColor)));
+    connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
 }
 
 App::~App()
@@ -118,10 +123,9 @@ void App::userDisconnectFromServer()
         msgBox.setDefaultButton(QMessageBox::No);
         msgBox.setIcon(QMessageBox::Warning);
         int ret = msgBox.exec();
-        switch(ret)
+        if (ret = QMessageBox::No)
         {
-        case(QMessageBox::No): return;
-        case(QMessageBox::Yes): break;
+            return;
         }
 
         _localClient.stop();
@@ -161,14 +165,18 @@ void App::userStartGame()
                 msgBox.setDefaultButton(QMessageBox::No);
                 msgBox.setIcon(QMessageBox::Warning);
                 int ret = msgBox.exec();
-                switch(ret)
+                if (ret = QMessageBox::No)
                 {
-                case(QMessageBox::No): return;
-                case(QMessageBox::Yes): break;
+                    return;
                 }
 
                 delete _game;
                 _game = new Game(this);
+                connect(_game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)),
+                        &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
+                connect(_game, SIGNAL(playerRetired(QString,QColor)),
+                        &_localClient, SLOT(surrender(QString,QColor)));
+                connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
                 QList<ClientInfo> list = _server.clients();
                 QList<bool> isLocal;
                 for (int i = 0; i < list.size(); ++i)
@@ -256,15 +264,14 @@ void App::userTryToConnect()
         if (!_game)
         {
             _game = new Game(this);
+            connect(_game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)),
+                    &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
+            connect(_game, SIGNAL(playerRetired(QString,QColor)),
+                    &_localClient, SLOT(surrender(QString,QColor)));
+            connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
         }
 
         _localClient.setNickname(leNickname->text());
-        connect(_game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)),
-                &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
-        connect(_game, SIGNAL(playerRetired(QString,QColor)),
-                &_localClient, SLOT(surrender(QString,QColor)));
-        connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
-
         _localClient.start(hostname, port);
     }
 }
@@ -303,7 +310,12 @@ void App::clientDisconnected()
     if (_game)
     {
         delete _game;
-        _game = NULL;
+        _game = new Game(this);
+        connect(_game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)),
+                &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
+        connect(_game, SIGNAL(playerRetired(QString,QColor)),
+                &_localClient, SLOT(surrender(QString,QColor)));
+        connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
     }
 }
 
