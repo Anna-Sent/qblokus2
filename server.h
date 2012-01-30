@@ -11,6 +11,7 @@ class Server : public QThread {
 
 private:
     QList<RemoteClient *> _clients;
+    bool _isGameStarted;
     QUdpSocket _listener;
     int _maxClientsCount;
     UdpMessageReceiver *_messageReceiver;
@@ -33,10 +34,6 @@ private slots:
     void stop();
     void removeClient(RemoteClient *);
 
-    //from app
-    void startGame();
-    void restartGame(QList<ClientInfo>);
-
     //from timer
     void ping();
 
@@ -53,6 +50,12 @@ private slots:
     void remoteSurrenderMessageReceive(SurrenderMessage, RemoteClient *);
     void remoteTryToConnectMessageReceive(TryToConnectMessage, RemoteClient *);
     void remoteTurnMessageReceive(TurnMessage, RemoteClient *);
+
+public slots:
+    //from app
+    void startGame();
+    void restartGame(QList<ClientInfo>);
+    void gameOver();
 };
 
 #endif

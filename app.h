@@ -52,6 +52,9 @@ private slots:
     // from servers searcher
     void serverInfoMessageReceive(const QHostAddress &, QList<ClientInfo>);
 
+    // from game
+    void gameOver(QString, int, QColor);
+
 signals:
     // to server
     void gameStarted();

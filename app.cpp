@@ -263,6 +263,8 @@ void App::userTryToConnect()
                 &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
         connect(_game, SIGNAL(playerRetired(QString,QColor)),
                 &_localClient, SLOT(surrender(QString,QColor)));
+        connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
+
         _localClient.start(hostname, port);
     }
 }
@@ -360,6 +362,7 @@ void App::restartGameMessageReceived(QList<ClientInfo> list)
                 &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
         connect(_game, SIGNAL(playerRetired(QString,QColor)),
                 &_localClient, SLOT(surrender(QString,QColor)));
+        connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
         QList<bool> isLocal;
         for (int i = 0; i < list.size(); ++i)
         {
@@ -390,6 +393,14 @@ void App::serverInfoMessageReceive(const QHostAddress &host, QList<ClientInfo> c
         {
             item->setData(Qt::UserRole, qVariantFromValue(clients));
         }
+    }
+}
+
+void App::gameOver(QString, int, QColor)
+{
+    if (_server.isRunning())
+    {
+        _server.gameOver();
     }
 }
 

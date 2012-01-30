@@ -1,7 +1,7 @@
 #include "server.h"
 #include "constants.h"
 
-Server::Server()
+Server::Server() : _isGameStarted(false)
 {
     connect(&_tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
@@ -83,14 +83,21 @@ void Server::sendToAll(const Message &msg)
 
 void Server::startGame()
 {
+    _isGameStarted = true;
     StartGameMessage msg;
     sendToAll(msg);
 }
 
 void Server::restartGame(QList<ClientInfo> list)
 {
+    _isGameStarted = true;
     RestartGameMessage msg(list);
     sendToAll(msg);
+}
+
+void Server::gameOver()
+{
+    _isGameStarted = false;
 }
 
 void Server::start(int maxClientsCount, quint16 port)
@@ -159,25 +166,32 @@ void Server::remoteTurnMessageReceive(TurnMessage msg, RemoteClient *)
 void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteClient *client)
 {
     int i, error = 0;
-    for (i = 0; i < _clients.size()
-        && (msg.name() != _clients[i]->name() || !_clients[i]->isConnectedToGame()); ++i) { }
-    if (i != _clients.size())
+    if (_isGameStarted)
     {
-        error = 2;
+        error = 3;
     }
     else
     {
         for (i = 0; i < _clients.size()
-            && (msg.color() != _clients[i]->color() || !_clients[i]->isConnectedToGame()); ++i) { }
+            && (msg.name() != _clients[i]->name() || !_clients[i]->isConnectedToGame()); ++i) { }
         if (i != _clients.size())
         {
-            error = 1;
+            error = 2;
         }
         else
         {
-            if (playersCount() == _maxClientsCount)
+            for (i = 0; i < _clients.size()
+                && (msg.color() != _clients[i]->color() || !_clients[i]->isConnectedToGame()); ++i) { }
+            if (i != _clients.size())
             {
-                error = 4;
+                error = 1;
+            }
+            else
+            {
+                if (playersCount() == _maxClientsCount)
+                {
+                    error = 4;
+                }
             }
         }
     }

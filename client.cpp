@@ -75,6 +75,7 @@ void LocalClient::connectionAcceptedMessageReceived(ConnectionAcceptedMessage ms
         {
         case 1: reason = "This color is already in use"; break;
         case 2: reason = "This nickname is already in use"; break;
+        case 3: reason = "The game is already started. Wait for finish of the game"; break;
         case 4: reason = "The maximum allowed number of players has been reached for the game"; break;
         default:reason = "Unknown reason";
         }
