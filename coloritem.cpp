@@ -60,7 +60,6 @@ void ColorItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         break;
     default:
         event->ignore();
-        break;
     }
 }
 

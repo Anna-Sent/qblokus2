@@ -36,7 +36,6 @@ void Game::addPlayer(QString name, QColor color, PlayerType type)
         break;
     default:
         return;
-        break;
     }
 
     int i = playersleft;
@@ -123,10 +122,9 @@ void Game::playerRetired()
         msgBox.setDefaultButton(QMessageBox::No);
         msgBox.setIcon(QMessageBox::Warning);
         int ret = msgBox.exec();
-        switch(ret)
+        if (ret == QMessageBox::No)
         {
-        case(QMessageBox::No):  return;
-        case(QMessageBox::Yes): break;
+            return;
         }
 
         emit playerRetired(players[currplayer]->getName(), players[currplayer]->getColor());
