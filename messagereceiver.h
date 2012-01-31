@@ -23,18 +23,18 @@ private slots:
     void readyRead();
 
 signals:
-    void chatMessageReceive(ChatMessage);
-    void clientConnectMessageReceive(ClientConnectMessage);
-    void clientDisconnectMessageReceive(ClientDisconnectMessage);
-    void connectionAcceptedMessageReceive(ConnectionAcceptedMessage);
-    void pingMessageReceive(PingMessage);
-    void playersListMessageReceive(PlayersListMessage);
-    void restartGameMessageReceive(RestartGameMessage);
-    void serverReadyMessageReceive(ServerReadyMessage);
-    void startGameMessageReceive(StartGameMessage);
-    void surrenderMessageReceive(SurrenderMessage);
-    void tryToConnectMessageReceive(TryToConnectMessage);
-    void turnMessageReceive(TurnMessage);
+    void chatMessageReceived(ChatMessage);
+    void clientConnectMessageReceived(ClientConnectMessage);
+    void clientDisconnectMessageReceived(ClientDisconnectMessage);
+    void connectionAcceptedMessageReceived(ConnectionAcceptedMessage);
+    void pingMessageReceived(PingMessage);
+    void playersListMessageReceived(PlayersListMessage);
+    void restartGameMessageReceived(RestartGameMessage);
+    void serverReadyMessageReceived(ServerReadyMessage);
+    void startGameMessageReceived(StartGameMessage);
+    void surrenderMessageReceived(SurrenderMessage);
+    void tryToConnectMessageReceived(TryToConnectMessage);
+    void turnMessageReceived(TurnMessage);
 };
 
 class UdpMessageReceiver : public QObject
@@ -53,8 +53,8 @@ private slots:
     void readyRead();
 
 signals:
-    void serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16);
-    void serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16);
+    void serverInfoMessageReceived(ServerInfoMessage, const QHostAddress &, quint16);
+    void serverRequestMessageReceived(ServerRequestMessage, const QHostAddress &, quint16);
 };
 
 #endif

@@ -5,17 +5,17 @@ LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime
 {
     _socket = new QTcpSocket;
     _messageReceiver = new TcpMessageReceiver(_socket);
-    connect(_messageReceiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
-    connect(_messageReceiver, SIGNAL(clientConnectMessageReceive(ClientConnectMessage)), this, SLOT(clientConnectMessageReceived(ClientConnectMessage)));
-    connect(_messageReceiver, SIGNAL(clientDisconnectMessageReceive(ClientDisconnectMessage)), this, SLOT(clientDisconnectMessageReceived(ClientDisconnectMessage)));
-    connect(_messageReceiver, SIGNAL(connectionAcceptedMessageReceive(ConnectionAcceptedMessage)), this, SLOT(connectionAcceptedMessageReceived(ConnectionAcceptedMessage)));
-    connect(_messageReceiver, SIGNAL(pingMessageReceive(PingMessage)), this, SLOT(pingMessageReceived(PingMessage)));
-    connect(_messageReceiver, SIGNAL(playersListMessageReceive(PlayersListMessage)), this, SLOT(playersListMessageReceived(PlayersListMessage)));
-    connect(_messageReceiver, SIGNAL(restartGameMessageReceive(RestartGameMessage)), this, SLOT(restartGameMessageReceived(RestartGameMessage)));
-    connect(_messageReceiver, SIGNAL(serverReadyMessageReceive(ServerReadyMessage)), this, SLOT(serverReadyMessageReceived(ServerReadyMessage)));
-    connect(_messageReceiver, SIGNAL(startGameMessageReceive(StartGameMessage)), this, SLOT(startGameMessageReceived(StartGameMessage)));
-    connect(_messageReceiver, SIGNAL(surrenderMessageReceive(SurrenderMessage)), this, SLOT(surrenderMessageReceived(SurrenderMessage)));
-    connect(_messageReceiver, SIGNAL(turnMessageReceive(TurnMessage)), this, SLOT(turnMessageReceived(TurnMessage)));
+    connect(_messageReceiver, SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
+    connect(_messageReceiver, SIGNAL(clientConnectMessageReceived(ClientConnectMessage)), this, SLOT(clientConnectMessageReceived(ClientConnectMessage)));
+    connect(_messageReceiver, SIGNAL(clientDisconnectMessageReceived(ClientDisconnectMessage)), this, SLOT(clientDisconnectMessageReceived(ClientDisconnectMessage)));
+    connect(_messageReceiver, SIGNAL(connectionAcceptedMessageReceived(ConnectionAcceptedMessage)), this, SLOT(connectionAcceptedMessageReceived(ConnectionAcceptedMessage)));
+    connect(_messageReceiver, SIGNAL(pingMessageReceived(PingMessage)), this, SLOT(pingMessageReceived(PingMessage)));
+    connect(_messageReceiver, SIGNAL(playersListMessageReceived(PlayersListMessage)), this, SLOT(playersListMessageReceived(PlayersListMessage)));
+    connect(_messageReceiver, SIGNAL(restartGameMessageReceived(RestartGameMessage)), this, SLOT(restartGameMessageReceived(RestartGameMessage)));
+    connect(_messageReceiver, SIGNAL(serverReadyMessageReceived(ServerReadyMessage)), this, SLOT(serverReadyMessageReceived(ServerReadyMessage)));
+    connect(_messageReceiver, SIGNAL(startGameMessageReceived(StartGameMessage)), this, SLOT(startGameMessageReceived(StartGameMessage)));
+    connect(_messageReceiver, SIGNAL(surrenderMessageReceived(SurrenderMessage)), this, SLOT(surrenderMessageReceived(SurrenderMessage)));
+    connect(_messageReceiver, SIGNAL(turnMessageReceived(TurnMessage)), this, SLOT(turnMessageReceived(TurnMessage)));
     connect(_socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()), Qt::QueuedConnection);
     connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
 
@@ -173,11 +173,11 @@ RemoteClient::RemoteClient(QTcpSocket *s) : _lastPingTime(QTime::currentTime()),
 {
     _socket = s;
     _messageReceiver = new TcpMessageReceiver(s);
-    connect(_messageReceiver, SIGNAL(chatMessageReceive(ChatMessage)), this, SLOT(remoteChatMessageReceive(ChatMessage)));
-    connect(_messageReceiver, SIGNAL(pingMessageReceive(PingMessage)), this, SLOT(remotePingMessageReceive(PingMessage)));
-    connect(_messageReceiver, SIGNAL(surrenderMessageReceive(SurrenderMessage)), this, SLOT(remoteSurrenderMessageReceive(SurrenderMessage)));
-    connect(_messageReceiver, SIGNAL(tryToConnectMessageReceive(TryToConnectMessage)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage)));
-    connect(_messageReceiver, SIGNAL(turnMessageReceive(TurnMessage)), this, SLOT(remoteTurnMessageReceive(TurnMessage)));
+    connect(_messageReceiver, SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(remoteChatMessageReceive(ChatMessage)));
+    connect(_messageReceiver, SIGNAL(pingMessageReceived(PingMessage)), this, SLOT(remotePingMessageReceive(PingMessage)));
+    connect(_messageReceiver, SIGNAL(surrenderMessageReceived(SurrenderMessage)), this, SLOT(remoteSurrenderMessageReceive(SurrenderMessage)));
+    connect(_messageReceiver, SIGNAL(tryToConnectMessageReceived(TryToConnectMessage)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage)));
+    connect(_messageReceiver, SIGNAL(turnMessageReceived(TurnMessage)), this, SLOT(remoteTurnMessageReceive(TurnMessage)));
     connect(_socket, SIGNAL(disconnected()), this, SLOT(remoteDisconnected()), Qt::QueuedConnection);
     connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(remoteError(QAbstractSocket::SocketError)));
     connect(this, SIGNAL(destroyed()), this, SLOT(setDisconnectedFromGame()));

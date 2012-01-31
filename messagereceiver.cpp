@@ -35,18 +35,18 @@ void TcpMessageReceiver::processData()
         current->fill(buffer);
         switch (current->type())
         {
-        case mtChat:                DISPATCH_MESSAGE(chatMessageReceive, ChatMessage); break;
-        case mtClientConnect:       DISPATCH_MESSAGE(clientConnectMessageReceive, ClientConnectMessage); break;
-        case mtClientDisconnect:    DISPATCH_MESSAGE(clientDisconnectMessageReceive, ClientDisconnectMessage); break;
-        case mtConnectionAccepted:  DISPATCH_MESSAGE(connectionAcceptedMessageReceive, ConnectionAcceptedMessage); break;
-        case mtPing:                DISPATCH_MESSAGE(pingMessageReceive, PingMessage); break;
-        case mtPlayersList:         DISPATCH_MESSAGE(playersListMessageReceive, PlayersListMessage); break;
-        case mtRestartGame:         DISPATCH_MESSAGE(restartGameMessageReceive, RestartGameMessage); break;
-        case mtServerReady:         DISPATCH_MESSAGE(serverReadyMessageReceive, ServerReadyMessage); break;
-        case mtStartGame:           DISPATCH_MESSAGE(startGameMessageReceive, StartGameMessage); break;
-        case mtSurrender:           DISPATCH_MESSAGE(surrenderMessageReceive, SurrenderMessage); break;
-        case mtTurn:                DISPATCH_MESSAGE(turnMessageReceive, TurnMessage); break;
-        case mtTryToConnect:        DISPATCH_MESSAGE(tryToConnectMessageReceive, TryToConnectMessage); break;
+        case mtChat:                DISPATCH_MESSAGE(chatMessageReceived, ChatMessage); break;
+        case mtClientConnect:       DISPATCH_MESSAGE(clientConnectMessageReceived, ClientConnectMessage); break;
+        case mtClientDisconnect:    DISPATCH_MESSAGE(clientDisconnectMessageReceived, ClientDisconnectMessage); break;
+        case mtConnectionAccepted:  DISPATCH_MESSAGE(connectionAcceptedMessageReceived, ConnectionAcceptedMessage); break;
+        case mtPing:                DISPATCH_MESSAGE(pingMessageReceived, PingMessage); break;
+        case mtPlayersList:         DISPATCH_MESSAGE(playersListMessageReceived, PlayersListMessage); break;
+        case mtRestartGame:         DISPATCH_MESSAGE(restartGameMessageReceived, RestartGameMessage); break;
+        case mtServerReady:         DISPATCH_MESSAGE(serverReadyMessageReceived, ServerReadyMessage); break;
+        case mtStartGame:           DISPATCH_MESSAGE(startGameMessageReceived, StartGameMessage); break;
+        case mtSurrender:           DISPATCH_MESSAGE(surrenderMessageReceived, SurrenderMessage); break;
+        case mtTurn:                DISPATCH_MESSAGE(turnMessageReceived, TurnMessage); break;
+        case mtTryToConnect:        DISPATCH_MESSAGE(tryToConnectMessageReceived, TryToConnectMessage); break;
         default: ;
         }
 
@@ -97,12 +97,12 @@ void UdpMessageReceiver::processData(QByteArray &buffer, const QHostAddress &hos
         case mtServerInfo:
             if (ServerInfoMessage *msg = dynamic_cast<ServerInfoMessage *>(current))
             {
-                emit serverInfoMessageReceive(*msg, host, port);
+                emit serverInfoMessageReceived(*msg, host, port);
             }
         case mtServerRequest:
             if (ServerRequestMessage *msg = dynamic_cast<ServerRequestMessage *>(current))
             {
-                emit serverRequestMessageReceive(*msg, host, port);
+                emit serverRequestMessageReceived(*msg, host, port);
             }
         default: ;
         }

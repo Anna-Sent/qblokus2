@@ -5,7 +5,7 @@
 ServersSearcher::ServersSearcher()
 {
     messageReceiver = new UdpMessageReceiver(&socket);
-    connect(messageReceiver, SIGNAL(serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16)), this, SLOT(serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16)));
+    connect(messageReceiver, SIGNAL(serverInfoMessageReceived(ServerInfoMessage, const QHostAddress &, quint16)), this, SLOT(serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16)));
     timer.setInterval(1000);
     connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
 }
@@ -18,7 +18,7 @@ ServersSearcher::~ServersSearcher()
 void ServersSearcher::serverInfoMessageReceive(ServerInfoMessage msg, const QHostAddress &host, quint16 port)
 {
     Q_UNUSED(port);
-    emit serverInfoMessageReceive(host, msg.list());
+    emit serverInfoMessageReceived(host, msg.list());
 }
 
 void ServersSearcher::timeout()

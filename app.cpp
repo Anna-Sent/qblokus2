@@ -50,7 +50,7 @@ App::App(QWidget *parent)
     connect(this, SIGNAL(messageSent(QString)), &_localClient, SLOT(sendMessage(QString)));
 
     // from servers searcher
-    connect(&_serversSearcher, SIGNAL(serverInfoMessageReceive(const QHostAddress &,QList<ClientInfo>)), this, SLOT(serverInfoMessageReceive(const QHostAddress &,QList<ClientInfo>)));
+    connect(&_serversSearcher, SIGNAL(serverInfoMessageReceived(const QHostAddress &,QList<ClientInfo>)), this, SLOT(serverInfoMessageReceive(const QHostAddress &,QList<ClientInfo>)));
 
     _serversSearcher.setPort(sbPort->value());
     _serversSearcher.start();

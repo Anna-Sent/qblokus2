@@ -6,7 +6,7 @@ Server::Server() : _isGameStarted(false)
     connect(&_tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
     _messageReceiver = new UdpMessageReceiver(&_listener);
-    connect(_messageReceiver, SIGNAL(serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16)), this, SLOT(serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16)));
+    connect(_messageReceiver, SIGNAL(serverRequestMessageReceived(ServerRequestMessage, const QHostAddress &, quint16)), this, SLOT(serverRequestMessageReceive(ServerRequestMessage, const QHostAddress &, quint16)));
     connect(this, SIGNAL(destroyed()), _messageReceiver, SLOT(deleteLater()));
 
     _timer.setInterval(PING_INTERVAL);
