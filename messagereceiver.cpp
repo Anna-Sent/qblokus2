@@ -26,58 +26,28 @@ void TcpMessageReceiver::readyRead()
     processData();
 }
 
+#define DISPATCH_MESSAGE(signal, type) if (type *msg = dynamic_cast<type *>(current)) emit signal(*msg);
+
 void TcpMessageReceiver::processData()
 {
     while (current->length() <= buffer.size())
     {
         current->fill(buffer);
-        if (ChatMessage *msg = dynamic_cast<ChatMessage *>(current))
+        switch (current->type())
         {
-            emit chatMessageReceive(*msg);
-        }
-        else if (ClientConnectMessage *msg = dynamic_cast<ClientConnectMessage *>(current))
-        {
-            emit clientConnectMessageReceive(*msg);
-        }
-        else if (ClientDisconnectMessage *msg = dynamic_cast<ClientDisconnectMessage *>(current))
-        {
-            emit clientDisconnectMessageReceive(*msg);
-        }
-        else if (ConnectionAcceptedMessage *msg = dynamic_cast<ConnectionAcceptedMessage *>(current))
-        {
-            emit connectionAcceptedMessageReceive(*msg);
-        }
-        else if (PingMessage *msg = dynamic_cast<PingMessage *>(current))
-        {
-            emit pingMessageReceive(*msg);
-        }
-        else if (PlayersListMessage *msg = dynamic_cast<PlayersListMessage *>(current))
-        {
-            emit playersListMessageReceive(*msg);
-        }
-        else if (RestartGameMessage *msg = dynamic_cast<RestartGameMessage *>(current))
-        {
-            emit restartGameMessageReceive(*msg);
-        }
-        else if (ServerReadyMessage *msg = dynamic_cast<ServerReadyMessage *>(current))
-        {
-            emit serverReadyMessageReceive(*msg);
-        }
-        else if (StartGameMessage *msg = dynamic_cast<StartGameMessage *>(current))
-        {
-            emit startGameMessageReceive(*msg);
-        }
-        else if (SurrenderMessage *msg = dynamic_cast<SurrenderMessage *>(current))
-        {
-            emit surrenderMessageReceive(*msg);
-        }
-        else if (TurnMessage *msg = dynamic_cast<TurnMessage *>(current))
-        {
-            emit turnMessageReceive(*msg);
-        }
-        else if (TryToConnectMessage *msg = dynamic_cast<TryToConnectMessage *>(current))
-        {
-            emit tryToConnectMessageReceive(*msg);
+        case mtChat:                DISPATCH_MESSAGE(chatMessageReceive, ChatMessage); break;
+        case mtClientConnect:       DISPATCH_MESSAGE(clientConnectMessageReceive, ClientConnectMessage); break;
+        case mtClientDisconnect:    DISPATCH_MESSAGE(clientDisconnectMessageReceive, ClientDisconnectMessage); break;
+        case mtConnectionAccepted:  DISPATCH_MESSAGE(connectionAcceptedMessageReceive, ConnectionAcceptedMessage); break;
+        case mtPing:                DISPATCH_MESSAGE(pingMessageReceive, PingMessage); break;
+        case mtPlayersList:         DISPATCH_MESSAGE(playersListMessageReceive, PlayersListMessage); break;
+        case mtRestartGame:         DISPATCH_MESSAGE(restartGameMessageReceive, RestartGameMessage); break;
+        case mtServerReady:         DISPATCH_MESSAGE(serverReadyMessageReceive, ServerReadyMessage); break;
+        case mtStartGame:           DISPATCH_MESSAGE(startGameMessageReceive, StartGameMessage); break;
+        case mtSurrender:           DISPATCH_MESSAGE(surrenderMessageReceive, SurrenderMessage); break;
+        case mtTurn:                DISPATCH_MESSAGE(turnMessageReceive, TurnMessage); break;
+        case mtTryToConnect:        DISPATCH_MESSAGE(tryToConnectMessageReceive, TryToConnectMessage); break;
+        default: ;
         }
 
         buffer.remove(0, current->length());
@@ -122,14 +92,21 @@ void UdpMessageReceiver::processData(QByteArray &buffer, const QHostAddress &hos
     while (current->length() <= buffer.size())
     {
         current->fill(buffer);
-        if (ServerInfoMessage *msg = dynamic_cast<ServerInfoMessage *>(current))
+        switch (current->type())
         {
-            emit serverInfoMessageReceive(*msg, host, port);
+        case mtServerInfo:
+            if (ServerInfoMessage *msg = dynamic_cast<ServerInfoMessage *>(current))
+            {
+                emit serverInfoMessageReceive(*msg, host, port);
+            }
+        case mtServerRequest:
+            if (ServerRequestMessage *msg = dynamic_cast<ServerRequestMessage *>(current))
+            {
+                emit serverRequestMessageReceive(*msg, host, port);
+            }
+        default: ;
         }
-        else if (ServerRequestMessage *msg = dynamic_cast<ServerRequestMessage *>(current))
-        {
-            emit serverRequestMessageReceive(*msg, host, port);
-        }
+
 
         buffer.remove(0, current->length());
         Message* old = current;

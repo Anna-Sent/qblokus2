@@ -30,6 +30,7 @@ class Message
 {
 public:
     virtual qint64 length() const = 0;
+    virtual MessageType type() const = 0;
     virtual Message *next() const;
     void send(QTcpSocket *) const;
     void send(QUdpSocket *, const QHostAddress &, quint16) const;
@@ -45,7 +46,9 @@ private:
 public:
     MessageHeader() { _msgLen = 0; }
     qint64 length() const { return sizeof(MessageType) + sizeof(qint64); }
+    MessageType type() const { return mtHeader; }
     qint64 msgLength() const { return _msgLen; }
+    MessageType msgType() const { return _msgType; }
     Message *next() const;
     QByteArray serialize() const;
     void setMsgLength(qint64 value) { _msgLen = value; }
@@ -59,6 +62,7 @@ protected:
     MessageHeader _header;
 public:
     qint64 length() const { return _header.msgLength(); }
+    MessageType type() const { return _header.msgType(); }
     QByteArray serialize() const { return _header.serialize(); }
     void fill(const QByteArray &) { }
 };
