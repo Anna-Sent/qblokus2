@@ -170,28 +170,10 @@ void App::userStartGame()
                     return;
                 }
 
-                delete _game;
-                _game = new Game(this);
-                connect(_game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)),
-                        &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
-                connect(_game, SIGNAL(playerRetired(QString,QColor)),
-                        &_localClient, SLOT(surrender(QString,QColor)));
-                connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
-                QList<ClientInfo> list = _server.clients();
-                QList<bool> isLocal;
-                for (int i = 0; i < list.size(); ++i)
-                {
-                    isLocal.append(list[i].name() == _localClient.nickname()
-                                   && list[i].color() == _localClient.color());
-                }
-
-                _game->updatePlayers(list, isLocal);
-                _game->start();
-                emit gameRestarted(list);
+                emit gameRestarted(_server.clients());
             }
             else
             {
-                _game->start();
                 emit gameStarted();
             }
         }
