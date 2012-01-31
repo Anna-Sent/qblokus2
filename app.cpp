@@ -11,8 +11,8 @@ App::App(QWidget *parent)
     setTabOrder();
 
     // from local client
-    connect(&_localClient, SIGNAL(error(QString)), this, SLOT(perror(QString)));
-    connect(&_localClient, SIGNAL(error()), &_serversSearcher, SLOT(start()));
+    connect(&_localClient, SIGNAL(errorOccurred(QString)), this, SLOT(perror(QString)));
+    connect(&_localClient, SIGNAL(errorOccurred()), &_serversSearcher, SLOT(start()));
     connect(&_localClient, SIGNAL(connectionAccepted()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(connectionAccepted()), lwServersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(connectionAccepted()), &_serversSearcher, SLOT(stop()));

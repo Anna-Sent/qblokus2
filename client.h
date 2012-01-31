@@ -56,8 +56,8 @@ signals:
     void connectionAccepted();
     void connectionRejected(const QString &);
     void disconnected();
-    void error();
-    void error(QString);
+    void errorOccurred();
+    void errorOccurred(QString);
 
     void chatMessageReceived(QString, QColor, QString);
     void clientConnectMessageReceived(QString, QColor);
@@ -103,12 +103,12 @@ private slots:
     void remoteTurnMessageReceive(TurnMessage);
 
 signals:
-    void rcChatMessageReceive(ChatMessage,RemoteClient*);
-    void rcDisconnected(RemoteClient*);
-    void rcError(RemoteClient*);
-    void rcSurrenderMessageReceive(SurrenderMessage,RemoteClient*);
-    void rcTryToConnectMessageReceive(TryToConnectMessage,RemoteClient*);
-    void rcTurnMessageReceive(TurnMessage,RemoteClient*);
+    void chatMessageReceived(ChatMessage,RemoteClient*);
+    void disconnected(RemoteClient*);
+    void errorOccurred(RemoteClient*);
+    void surrenderMessageReceived(SurrenderMessage, RemoteClient *);
+    void tryToConnectMessageReceived(TryToConnectMessage, RemoteClient *);
+    void turnMessageReceived(TurnMessage, RemoteClient *);
 };
 
 #endif

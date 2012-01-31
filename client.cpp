@@ -136,8 +136,8 @@ void LocalClient::socketDisconnected()
 void LocalClient::socketError(QAbstractSocket::SocketError)
 {
     stop();
-    emit error(_socket->errorString());
-    emit error();
+    emit errorOccurred(_socket->errorString());
+    emit errorOccurred();
 }
 
 void LocalClient::doTurn(QString name, QColor color, QString tile, int id, int x, int y)
@@ -164,8 +164,8 @@ void LocalClient::timeout()
     if (elapsed > PING_TIME)
     {
         stop();
-        emit error(QString::fromUtf8("Ping timeout"));
-        emit error();
+        emit errorOccurred(QString::fromUtf8("Ping timeout"));
+        emit errorOccurred();
     }
 }
 
@@ -211,7 +211,7 @@ void RemoteClient::sendMessage(const Message &msg)
 
 void RemoteClient::remoteChatMessageReceive(ChatMessage msg)
 {
-    emit rcChatMessageReceive(msg, this);
+    emit chatMessageReceived(msg, this);
 }
 
 void RemoteClient::remoteDisconnected()
@@ -221,13 +221,13 @@ void RemoteClient::remoteDisconnected()
         _state = 3;
     }
 
-    emit rcDisconnected(this);
+    emit disconnected(this);
 }
 
 void RemoteClient::remoteError(QAbstractSocket::SocketError)
 {
     setDisconnectedFromGame();
-    emit rcError(this);
+    emit errorOccurred(this);
 }
 
 void RemoteClient::remotePingMessageReceive(PingMessage)
@@ -237,15 +237,15 @@ void RemoteClient::remotePingMessageReceive(PingMessage)
 
 void RemoteClient::remoteSurrenderMessageReceive(SurrenderMessage msg)
 {
-    emit rcSurrenderMessageReceive(msg, this);
+    emit surrenderMessageReceived(msg, this);
 }
 
 void RemoteClient::remoteTurnMessageReceive(TurnMessage msg)
 {
-    emit rcTurnMessageReceive(msg, this);
+    emit turnMessageReceived(msg, this);
 }
 
 void RemoteClient::remoteTryToConnectMessageReceive(TryToConnectMessage msg)
 {
-    emit rcTryToConnectMessageReceive(msg, this);
+    emit tryToConnectMessageReceived(msg, this);
 }

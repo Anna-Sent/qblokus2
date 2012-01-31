@@ -201,10 +201,10 @@ void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteCli
     }
     else
     {
-        connect(client, SIGNAL(rcChatMessageReceive(ChatMessage, RemoteClient *)), this, SLOT(remoteChatMessageReceive(ChatMessage, RemoteClient *)));
-        connect(client, SIGNAL(rcDisconnected(RemoteClient *)), this, SLOT(remoteDisconnected(RemoteClient *)));
-        connect(client, SIGNAL(rcSurrenderMessageReceive(SurrenderMessage, RemoteClient *)), this, SLOT(remoteSurrenderMessageReceive(SurrenderMessage, RemoteClient *)));
-        connect(client, SIGNAL(rcTurnMessageReceive(TurnMessage, RemoteClient *)), this, SLOT(remoteTurnMessageReceive(TurnMessage, RemoteClient *)));
+        connect(client, SIGNAL(chatMessageReceived(ChatMessage, RemoteClient *)), this, SLOT(remoteChatMessageReceive(ChatMessage, RemoteClient *)));
+        connect(client, SIGNAL(disconnected(RemoteClient *)), this, SLOT(remoteDisconnected(RemoteClient *)));
+        connect(client, SIGNAL(surrenderMessageReceived(SurrenderMessage, RemoteClient *)), this, SLOT(remoteSurrenderMessageReceive(SurrenderMessage, RemoteClient *)));
+        connect(client, SIGNAL(turnMessageReceived(TurnMessage, RemoteClient *)), this, SLOT(remoteTurnMessageReceive(TurnMessage, RemoteClient *)));
         client->setConnectedToGame(msg.name(), msg.color());
         ClientConnectMessage msg1(msg.name(), msg.color());
         sendToAll(msg1);
@@ -218,8 +218,8 @@ void Server::newConnection()
     {
         QTcpSocket *s = _tcpServer.nextPendingConnection();
         RemoteClient *client = new RemoteClient(s);
-        connect(client, SIGNAL(rcDisconnected(RemoteClient *)), this, SLOT(removeClient(RemoteClient *)));
-        connect(client, SIGNAL(rcTryToConnectMessageReceive(TryToConnectMessage, RemoteClient *)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage, RemoteClient *)));
+        connect(client, SIGNAL(disconnected(RemoteClient *)), this, SLOT(removeClient(RemoteClient *)));
+        connect(client, SIGNAL(tryToConnectMessageReceived(TryToConnectMessage, RemoteClient *)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage, RemoteClient *)));
         connect(this, SIGNAL(finished()), client, SLOT(setDisconnectedFromGame()));
         connect(this, SIGNAL(finished()), client, SLOT(deleteLater()));
         connect(this, SIGNAL(terminated()), client, SLOT(setDisconnectedFromGame()));
