@@ -33,7 +33,7 @@ void TableCell::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
         if (table)
         {
             QColor color = qVariantValue<QColor>(event->mimeData()->hasColor() ? event->mimeData()->colorData() : QColor(0, 0, 0));
-            result = table->Accept(xpos, ypos, tile, data.first, false, true, color);
+            result = table->accept(xpos, ypos, tile, data.first, false, true, color);
         }
     }
 
@@ -63,7 +63,7 @@ void TableCell::dropEvent(QGraphicsSceneDragDropEvent *event)
         if (table)
         {
             QColor color = qVariantValue<QColor>(event->mimeData()->hasColor() ? event->mimeData()->colorData() : QColor(0, 0, 0));
-            result = table->Accept(xpos, ypos, tile, data.first, true, true, color);
+            result = table->accept(xpos, ypos, tile, data.first, true, true, color);
         }
     }
 
@@ -104,6 +104,18 @@ Table::Table(int w, int h) : width(w), height(h)
     }
 }
 
+void Table::clear()
+{
+    for(int i = 0; i < height; ++i)
+    {
+        for(int j = 0; j < width; ++j)
+        {
+            cells[i][j]->color = Qt::lightGray;
+            cells[i][j]->update();
+        }
+    }
+}
+
 QRectF Table::boundingRect() const
 {
     return QRectF(0, 0, width * 20, height * 20);
@@ -124,7 +136,7 @@ string readColor(QColor color)
     return res.toStdString();
 }
 
-bool Table::Accept(int x, int y, const Tile &what, int id, bool really, bool local, QColor color)
+bool Table::accept(int x, int y, const Tile &what, int id, bool really, bool local, QColor color)
 {
     if (x + what.getWidth() > width)
     {

@@ -243,16 +243,6 @@ void App::userTryToConnect()
             }
         }
 
-        if (!_game)
-        {
-            _game = new Game(this);
-            connect(_game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)),
-                    &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
-            connect(_game, SIGNAL(playerRetired(QString,QColor)),
-                    &_localClient, SLOT(surrender(QString,QColor)));
-            connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
-        }
-
         _localClient.setNickname(leNickname->text());
         _localClient.start(hostname, port);
     }
@@ -289,16 +279,7 @@ void App::clientDisconnected()
     lColor->setDisabled(false);
     cbColor->setDisabled(false);
     pbConnect->setText("Connect to server");
-    if (_game)
-    {
-        delete _game;
-        _game = new Game(this);
-        connect(_game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)),
-                &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
-        connect(_game, SIGNAL(playerRetired(QString,QColor)),
-                &_localClient, SLOT(surrender(QString,QColor)));
-        connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
-    }
+    _game->clear();
 }
 
 void App::clientDisconnectMessageReceived(QString name, QColor color)
@@ -348,25 +329,16 @@ void App::playersListMessageReceived(QList<ClientInfo> list)
 
 void App::restartGameMessageReceived(QList<ClientInfo> list)
 {
-    if (_game)
+    QList<bool> isLocal;
+    for (int i = 0; i < list.size(); ++i)
     {
-        delete _game;
-        _game = new Game(this);
-        connect(_game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)),
-                &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
-        connect(_game, SIGNAL(playerRetired(QString,QColor)),
-                &_localClient, SLOT(surrender(QString,QColor)));
-        connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
-        QList<bool> isLocal;
-        for (int i = 0; i < list.size(); ++i)
-        {
-            isLocal.append(list[i].name() == _localClient.nickname()
-                           && list[i].color() == _localClient.color());
-        }
-
-        _game->updatePlayers(list, isLocal);
-        _game->start();
+        isLocal.append(list[i].name() == _localClient.nickname()
+                       && list[i].color() == _localClient.color());
     }
+
+    _game->clear();
+    _game->updatePlayers(list, isLocal);
+    _game->start();
 }
 
 void App::serverInfoMessageReceive(const QHostAddress &host, QList<ClientInfo> clients)

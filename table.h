@@ -34,6 +34,8 @@ class Table : public QObject, public QGraphicsItem
 
 private:
     int width, height;
+    QRectF boundingRect() const;
+    void clearDrags();
 
 protected:
     vector<vector<TableCell *> > cells;
@@ -41,9 +43,8 @@ protected:
 
 public:
     Table(int w, int h);
-    bool Accept(int x, int y, const Tile &what, int id, bool really, bool local, QColor color);
-    void clearDrags();
-    QRectF boundingRect() const;
+    bool accept(int x, int y, const Tile &what, int id, bool really, bool local, QColor color);
+    void clear();
 
 signals:
     void turnComplete(QColor color, QString mask, int id, int x, int y);

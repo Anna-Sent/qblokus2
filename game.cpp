@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Game::Game(QWidget* widget) : currplayer(0), running(false)
+Game::Game(QWidget* widget)
 {
     ui = dynamic_cast<Ui::MainWindow *>(widget);
     table = new Table(20, 20);
@@ -19,7 +19,6 @@ Game::Game(QWidget* widget) : currplayer(0), running(false)
     surrender->setEnabled(false);
 
     this->widget = widget;
-    playersleft = 0;
     clear();
 }
 
@@ -178,6 +177,7 @@ Game::~Game()
 
 void Game::clear()
 {
+    running = false;
     for (int i = 0; i < scenes.size(); ++i)
     {
         delete scenes[i];
@@ -185,6 +185,7 @@ void Game::clear()
 
     playersleft = 0;
     currplayer = 0;
+    table->clear();
     scenes.clear();
     players.clear();
     QList<QLCDNumber *> lcds = widget->findChildren<QLCDNumber *>();

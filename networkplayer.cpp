@@ -14,5 +14,5 @@ void NetworkPlayer::turnComplete(QColor color, QString tile, int item, int x, in
 
     Tile til(tile.toStdString());
     Player::turnComplete(color, tile, item, x, y);
-    tbl->Accept(x, y, til, item, true, false, color);
+    tbl->accept(x, y, til, item, true, false, color);
 }
