@@ -213,7 +213,7 @@ void App::userTryToConnect()
         if (leNickname->text() == "")
         {
             QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
-                    "Enter nickname"));
+                    "Enter the nickname"));
             dockWidget->activateWindow();
             leNickname->setFocus();
             return;
@@ -285,7 +285,7 @@ void App::clientDisconnected()
     leNickname->setDisabled(false);
     lColor->setDisabled(false);
     cbColor->setDisabled(false);
-    pbConnect->setText(QString::fromUtf8("Connect to server"));
+    pbConnect->setText(QString::fromUtf8("Connect to the server"));
     _game->clear();
 }
 
@@ -311,7 +311,7 @@ void App::connectionAccepted()
     leNickname->setDisabled(true);
     lColor->setDisabled(true);
     cbColor->setDisabled(true);
-    pbConnect->setText(QString::fromUtf8("Disconnect from server"));
+    pbConnect->setText(QString::fromUtf8("Disconnect from the server"));
 }
 
 void App::playersListMessageReceived(QList<ClientInfo> list)
