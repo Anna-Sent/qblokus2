@@ -228,25 +228,31 @@ void Game::start()
 
 void Game::winner(Player *winner)
 {
-    QString winners;
-    int count = 0;
+    QList<QString> winners;
     for(int i = 0; i < players.size(); ++i)
     {
         if (players[i]->getScore() == winner->getScore())
         {
-            winners.append(players[i]->getName() + " ");
-            ++count;
+            winners.append(players[i]->getName());
         }
     }
 
+    int count = winners.count();
     QMessageBox msgBox;
     if (count == 1)
     {
-        msgBox.setText(QString::fromUtf8("The winner is ") + winners);
+        msgBox.setText(QString::fromUtf8("The winner is ") + winners[0]);
     }
     else
     {
-        msgBox.setText(QString::fromUtf8("The winners are ") + winners);
+        QString str;
+        for (int i = 0; i < count - 1; ++i)
+        {
+            str += winners[i] + ", ";
+        }
+
+        str += winners[count - 1];
+        msgBox.setText(QString::fromUtf8("The winners are ") + str);
     }
 
     msgBox.exec();
