@@ -129,13 +129,6 @@ void Table::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->fillRect(0, 0, width * 20, height * 20, Qt::darkGray);
 }
 
-string readColor(QColor color)
-{
-    QString res = QString("QColor(%1, %2, %3)\n")
-                  .arg(color.red()).arg(color.green()).arg(color.blue());
-    return res.toStdString();
-}
-
 bool Table::accept(int x, int y, const Tile &what, int id, bool really, bool local, QColor color)
 {
     if (x + what.getWidth() > width)

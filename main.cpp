@@ -1,7 +1,8 @@
 #include "app.h"
 #include <QApplication>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     qRegisterMetaType<ChatMessage>("ChatMessage");
     qRegisterMetaType<ClientConnectMessage>("ClientConnectMessage");
     qRegisterMetaType<ClientDisconnectMessage>("ClientDisconnectMessage");

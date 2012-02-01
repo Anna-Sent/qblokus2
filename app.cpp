@@ -117,8 +117,8 @@ void App::userDisconnectFromServer()
     if (_localClient.isStarted())
     {
         QMessageBox msgBox;
-        msgBox.setText("Disconnection");
-        msgBox.setInformativeText("Disconnect from server?");
+        msgBox.setText(QString::fromUtf8("Disconnection"));
+        msgBox.setInformativeText(QString::fromUtf8("Disconnect from server?"));
         msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::No);
         msgBox.setIcon(QMessageBox::Warning);
@@ -159,8 +159,9 @@ void App::userStartGame()
             if (_game && _game->isStarted())
             {
                 QMessageBox msgBox;
-                msgBox.setText("New game");
-                msgBox.setInformativeText("Start new game?");
+                msgBox.setText(QString::fromUtf8("New game"));
+                msgBox.setInformativeText(QString::fromUtf8(
+                        "Are you sure you want to start a new game?"));
                 msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                 msgBox.setDefaultButton(QMessageBox::No);
                 msgBox.setIcon(QMessageBox::Warning);
@@ -179,13 +180,15 @@ void App::userStartGame()
         }
         else
         {
-            QMessageBox::warning(this, "Warning", "Wait for "
-                                 + QString::number(_server.maxClientsCount()) + " players");
+            QMessageBox::warning(this, QString::fromUtf8("Warning"), QString::fromUtf8("Wait for ")
+                                 + QString::number(_server.maxClientsCount())
+                                 + QString::fromUtf8(" players"));
         }
     }
     else
     {
-        QMessageBox::warning(this, "Warning", "Only server can start the game");
+        QMessageBox::warning(this, QString::fromUtf8("Warning"), QString::fromUtf8(
+                "Only the server can start a game"));
     }
 }
 
@@ -203,19 +206,22 @@ void App::userTryToConnect()
         case 1:     _localClient.setColor(Qt::darkYellow); break;
         case 2:     _localClient.setColor(Qt::green); break;
         case 3:     _localClient.setColor(Qt::blue); break;
-        default:    QMessageBox::warning(this, "Error", "Incorrect color"); return;
+        default:    QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
+                    "Incorrect color")); return;
         }
 
         if (leNickname->text() == "")
         {
-            QMessageBox::warning(this, "Error", "Enter nickname");
+            QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
+                    "Enter nickname"));
             dockWidget->activateWindow();
             leNickname->setFocus();
             return;
         }
         else if (leNickname->text().toUtf8().size() > 100)
         {
-            QMessageBox::warning(this, "Error", "Your nickname is too long");
+            QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
+                    "Your nickname is too long"));
             dockWidget->activateWindow();
             leNickname->setFocus();
             return;
@@ -225,7 +231,8 @@ void App::userTryToConnect()
         QString hostname = cbCreateServer->checkState() ? "localhost" : leServerAddress->text();
         if (hostname == "")
         {
-            QMessageBox::warning(this, "Error", "Enter server address");
+            QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
+                    "Enter the server"));
             dockWidget->activateWindow();
             leServerAddress->setFocus();
             return;
@@ -238,7 +245,7 @@ void App::userTryToConnect()
             _server.start(maxClientsCount, port);
             if (!_server.isRunning())
             {
-                QMessageBox::critical(this, "Error", _server.errorString());
+                QMessageBox::critical(this, QString::fromUtf8("Error"), _server.errorString());
                 return;
             }
         }
@@ -259,12 +266,12 @@ void App::chatMessageReceived(QString name, QColor color, QString text)
 void App::clientConnectMessageReceived(QString name, QColor color)
 {
     textEdit->setTextColor(color);
-    textEdit->append(name + " connected");
+    textEdit->append(name + QString::fromUtf8(" connected"));
 }
 
 void App::clientDisconnected()
 {
-    pinfo("Disconnected");
+    pinfo(QString::fromUtf8("Disconnected"));
     lServersList->setDisabled(cbCreateServer->isChecked());
     lwServersList->setDisabled(cbCreateServer->isChecked());
     lServerAddress->setDisabled(cbCreateServer->isChecked());
@@ -278,19 +285,19 @@ void App::clientDisconnected()
     leNickname->setDisabled(false);
     lColor->setDisabled(false);
     cbColor->setDisabled(false);
-    pbConnect->setText("Connect to server");
+    pbConnect->setText(QString::fromUtf8("Connect to server"));
     _game->clear();
 }
 
 void App::clientDisconnectMessageReceived(QString name, QColor color)
 {
     textEdit->setTextColor(color);
-    textEdit->append(name + " disconnected");
+    textEdit->append(name + QString::fromUtf8(" disconnected"));
 }
 
 void App::connectionAccepted()
 {
-    pinfo("Connected");
+    pinfo(QString::fromUtf8("Connected"));
     lServersList->setDisabled(true);
     lwServersList->setDisabled(true);
     lServerAddress->setDisabled(true);
@@ -304,7 +311,7 @@ void App::connectionAccepted()
     leNickname->setDisabled(true);
     lColor->setDisabled(true);
     cbColor->setDisabled(true);
-    pbConnect->setText("Disconnect from server");
+    pbConnect->setText(QString::fromUtf8("Disconnect from server"));
 }
 
 void App::playersListMessageReceived(QList<ClientInfo> list)

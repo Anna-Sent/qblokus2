@@ -118,12 +118,12 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *style, QWi
 
     if (surrendered)
     {
-        painter->drawText(boundingRect(), Qt::AlignCenter, QString::fromUtf8("Игрок сдался"));
+        painter->drawText(boundingRect(), Qt::AlignCenter, QString::fromUtf8("I gave up"));
     }
 
     if (tilesleft == 0)
     {
-        painter->drawText(boundingRect(), Qt::AlignCenter, QString::fromUtf8("Игрок выиграл!!"));
+        painter->drawText(boundingRect(), Qt::AlignCenter, QString::fromUtf8("I won!"));
     }
 }
 

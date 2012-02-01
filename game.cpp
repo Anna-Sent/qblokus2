@@ -14,7 +14,7 @@ Game::Game(QWidget* widget)
     tablescene->addItem(table);
     ui->gvTable->setScene(tablescene);
     connect(table, SIGNAL(turnComplete(QColor,QString,int,int,int)), this, SLOT(turnDone(QColor,QString,int,int,int)));
-    QPushButton *surrender = widget->findChild<QPushButton *>(QString("pbSurrender"));
+    QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
     connect(surrender, SIGNAL(clicked()), this, SLOT(playerRetired()));
     surrender->setEnabled(false);
 
@@ -38,8 +38,8 @@ void Game::addPlayer(QString name, QColor color, PlayerType type)
     }
 
     int i = playersleft;
-    QString playerwidget("gvPlayer");
-    QString playerscore("score");
+    QString playerwidget(QString::fromUtf8("gvPlayer"));
+    QString playerscore(QString::fromUtf8("score"));
     player->setPos(0, 0);
     player->setName(name);
     players.append(player);
@@ -79,7 +79,7 @@ void Game::turnDone(QColor color, QString tile, int id, int x, int y)
         currplayer = (currplayer + 1) % players.size();
     }
     while(players[currplayer]->getSurrendered());
-    QPushButton *surrender = widget->findChild<QPushButton *>(QString("pbSurrender"));
+    QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
     if (dynamic_cast<LocalPlayer *>(players[currplayer]))
     {
         surrender->setEnabled(true);
@@ -116,7 +116,7 @@ void Game::playerRetired()
         }
 
         QMessageBox msgBox;
-        msgBox.setInformativeText(QString::fromUtf8("Вы действительно хотите сдаться и закончить игру?"));
+        msgBox.setInformativeText(QString::fromUtf8("Do you really want to give up and finish the game?"));
         msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::No);
         msgBox.setIcon(QMessageBox::Warning);
@@ -158,7 +158,7 @@ void Game::playerRetired()
         }
     }
 
-    QPushButton *surrender = widget->findChild<QPushButton *>(QString("pbSurrender"));
+    QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
     if (dynamic_cast<LocalPlayer *>(players[currplayer]))
     {
         surrender->setEnabled(true);
@@ -208,7 +208,7 @@ void Game::start()
         return;
     }
 
-    QPushButton *surrender = widget->findChild<QPushButton *>(QString("pbSurrender"));
+    QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
     if (dynamic_cast<LocalPlayer *>(players[currplayer]))
     {
         surrender->setEnabled(true);
@@ -242,11 +242,11 @@ void Game::winner(Player *winner)
     QMessageBox msgBox;
     if (count == 1)
     {
-        msgBox.setText(QString::fromUtf8("Победитель: ") + winners);
+        msgBox.setText(QString::fromUtf8("The winner is ") + winners);
     }
     else
     {
-        msgBox.setText(QString::fromUtf8("Победители: ")+winners);
+        msgBox.setText(QString::fromUtf8("The winners are ") + winners);
     }
 
     msgBox.exec();

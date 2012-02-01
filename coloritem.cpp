@@ -4,9 +4,6 @@
 ColorItem::ColorItem(string mask, QColor clr, int id)
     :  Tile(mask), _active(false), _color(clr), _id(id)
 {
-    setToolTip(QString("QColor(%1, %2, %3)\n%4")
-               .arg(_color.red()).arg(_color.green()).arg(_color.blue())
-               .arg("Click and drag this color onto the robot!"));
     setCursor(Qt::OpenHandCursor);
 }
 

@@ -85,7 +85,7 @@ ostream &operator<<(ostream &to, const Tile &what)
             to << what.data[i][j];
         }
 
-        to << "\n";
+        to << endl;
     }
 
     return to;
