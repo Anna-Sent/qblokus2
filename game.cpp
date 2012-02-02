@@ -142,7 +142,7 @@ void Game::playerRetired()
         if (playersleft == 1)
         {
             int msp = 0;
-            for(int p = 1; p < players.size(); ++p)
+            for (int p = 1; p < players.size(); ++p)
             {
                 if ((players[p]->getScore() > players[msp]->getScore()))
                 {
@@ -172,24 +172,33 @@ void Game::playerRetired()
 Game::~Game()
 {
     clear();
-    delete tablescene;
+    tablescene->deleteLater();
+    table->deleteLater();
 }
 
 void Game::clear()
 {
     running = false;
-    for (int i = 0; i < scenes.size(); ++i)
-    {
-        delete scenes[i];
-    }
-
     playersleft = 0;
     currplayer = 0;
     table->clear();
+
+    for (int i = 0; i < scenes.size(); ++i)
+    {
+        scenes[i]->deleteLater();
+    }
+
     scenes.clear();
+
+    for (int i = 0; i < scenes.size(); ++i)
+    {
+        players[i]->deleteLater();
+    }
+
     players.clear();
+
     QList<QLCDNumber *> lcds = widget->findChildren<QLCDNumber *>();
-    for(int i = 0;i < lcds.size(); ++i)
+    for (int i = 0;i < lcds.size(); ++i)
     {
         lcds[i]->setPalette(QPalette());
         lcds[i]->display(0);
@@ -229,7 +238,7 @@ void Game::start()
 void Game::winner(Player *winner)
 {
     QList<QString> winners;
-    for(int i = 0; i < players.size(); ++i)
+    for (int i = 0; i < players.size(); ++i)
     {
         if (players[i]->getScore() == winner->getScore())
         {
@@ -288,7 +297,7 @@ void Game::retirePlayer(int i)
     if (playersleft == 1)
     {
         int msp = 0;
-        for(int p = 1; p < players.size(); ++p)
+        for (int p = 1; p < players.size(); ++p)
         {
             if (players[p]->getScore() > players[msp]->getScore())
             {
@@ -307,7 +316,7 @@ void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
     if (!running)
     {
         clear();
-        for(int i = 0; i < clients.size(); ++i)
+        for (int i = 0; i < clients.size(); ++i)
         {
             addPlayer(clients[i].name(), clients[i].color(), local[i] ? ptLocal : ptNetwork);
         }
@@ -327,7 +336,7 @@ void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
 
                 if (cl == clients.size())
                 {
-                    for(int i = pl; i < players.size(); ++i)
+                    for (int i = pl; i < players.size(); ++i)
                     {
                         if (!players[i]->getSurrendered())
                         {
