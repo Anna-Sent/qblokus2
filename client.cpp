@@ -77,11 +77,12 @@ void LocalClient::connectionAcceptedMessageReceived(ConnectionAcceptedMessage ms
         QString reason;
         switch (msg.errorCode())
         {
-        case ERROR_COLOR_IN_USE:    reason = QString::fromUtf8("This color is already in use"); break;
-        case ERROR_NAME_IN_USE:     reason = QString::fromUtf8("This nickname is already in use"); break;
-        case ERROR_GAME_STARTED:    reason = QString::fromUtf8("The game is already started. Wait for finish of the game"); break;
-        case ERROR_MAX_PLAYERS_NUM: reason = QString::fromUtf8("The maximum allowed number of players has been reached for the game"); break;
-        default:reason = QString::fromUtf8("Unknown reason");
+        case ERROR_MAX_CONNECTIONS_NUM: reason = QString::fromUtf8("The maximum allowed connections number has been reached for the server"); break;
+        case ERROR_GAME_STARTED:        reason = QString::fromUtf8("The game is already started. Wait for finish of the game"); break;
+        case ERROR_MAX_PLAYERS_NUM:     reason = QString::fromUtf8("The maximum allowed number of players has been reached for the game"); break;
+        case ERROR_NAME_IN_USE:         reason = QString::fromUtf8("This nickname is already in use"); break;
+        case ERROR_COLOR_IN_USE:        reason = QString::fromUtf8("This color is already in use"); break;
+        default:                        reason = QString::fromUtf8("Unknown reason");
         }
 
         emit connectionRejected(reason);

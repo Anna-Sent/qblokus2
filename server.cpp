@@ -1,6 +1,8 @@
 #include "server.h"
 #include "constants.h"
 
+#define MAX_CONNECTIONS_COUNT   10
+
 Server::Server() : _isGameStarted(false)
 {
     connect(&_tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
@@ -166,7 +168,11 @@ void Server::remoteTurnMessageReceive(TurnMessage msg, RemoteClient *)
 void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteClient *client)
 {
     int i, error = 0;
-    if (_isGameStarted)
+    if (_clients.size() >= MAX_CONNECTIONS_COUNT)
+    {
+        error = ERROR_MAX_CONNECTIONS_NUM;
+    }
+    else if (_isGameStarted)
     {
         error = ERROR_GAME_STARTED;
     }
@@ -217,6 +223,13 @@ void Server::newConnection()
     if (_tcpServer.hasPendingConnections())
     {
         QTcpSocket *s = _tcpServer.nextPendingConnection();
+        if (_clients.size() >= MAX_CONNECTIONS_COUNT)
+        {
+            s->disconnectFromHost();
+            s->deleteLater();
+            return;
+        }
+
         RemoteClient *client = new RemoteClient(s);
         connect(client, SIGNAL(disconnected(RemoteClient *)), this, SLOT(removeClient(RemoteClient *)));
         connect(client, SIGNAL(tryToConnectMessageReceived(TryToConnectMessage, RemoteClient *)), this, SLOT(remoteTryToConnectMessageReceive(TryToConnectMessage, RemoteClient *)));
