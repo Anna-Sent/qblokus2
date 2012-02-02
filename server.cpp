@@ -168,11 +168,11 @@ void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteCli
     int i, error = 0;
     if (_isGameStarted)
     {
-        error = 3;
+        error = ERROR_GAME_STARTED;
     }
     else if (playersCount() == _maxClientsCount)
     {
-        error = 4;
+        error = ERROR_MAX_PLAYERS_NUM;
     }
     else
     {
@@ -180,7 +180,7 @@ void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteCli
             && (msg.name() != _clients[i]->name() || !_clients[i]->isConnectedToGame()); ++i) { }
         if (i != _clients.size())
         {
-            error = 2;
+            error = ERROR_NAME_IN_USE;
         }
         else
         {
@@ -188,7 +188,7 @@ void Server::remoteTryToConnectMessageReceive(TryToConnectMessage msg, RemoteCli
                 && (msg.color() != _clients[i]->color() || !_clients[i]->isConnectedToGame()); ++i) { }
             if (i != _clients.size())
             {
-                error = 1;
+                error = ERROR_COLOR_IN_USE;
             }
         }
     }

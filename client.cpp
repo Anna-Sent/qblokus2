@@ -1,6 +1,10 @@
 #include "client.h"
 #include "constants.h"
 
+#define STATE_CONNECTED_TO_SERVER       1
+#define STATE_ACCEPTED_TO_GAME          2
+#define STATE_DISCONNECTED_FROM_SERVER  3
+
 LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime())
 {
     _socket = new QTcpSocket;
@@ -73,10 +77,10 @@ void LocalClient::connectionAcceptedMessageReceived(ConnectionAcceptedMessage ms
         QString reason;
         switch (msg.errorCode())
         {
-        case 1: reason = QString::fromUtf8("This color is already in use"); break;
-        case 2: reason = QString::fromUtf8("This nickname is already in use"); break;
-        case 3: reason = QString::fromUtf8("The game is already started. Wait for finish of the game"); break;
-        case 4: reason = QString::fromUtf8("The maximum allowed number of players has been reached for the game"); break;
+        case ERROR_COLOR_IN_USE:    reason = QString::fromUtf8("This color is already in use"); break;
+        case ERROR_NAME_IN_USE:     reason = QString::fromUtf8("This nickname is already in use"); break;
+        case ERROR_GAME_STARTED:    reason = QString::fromUtf8("The game is already started. Wait for finish of the game"); break;
+        case ERROR_MAX_PLAYERS_NUM: reason = QString::fromUtf8("The maximum allowed number of players has been reached for the game"); break;
         default:reason = QString::fromUtf8("Unknown reason");
         }
 
@@ -169,7 +173,7 @@ void LocalClient::timeout()
     }
 }
 
-RemoteClient::RemoteClient(QTcpSocket *s) : _lastPingTime(QTime::currentTime()), _state(1)
+RemoteClient::RemoteClient(QTcpSocket *s) : _lastPingTime(QTime::currentTime()), _state(STATE_CONNECTED_TO_SERVER)
 {
     _socket = s;
     _messageReceiver = new TcpMessageReceiver(s);
@@ -189,7 +193,7 @@ void RemoteClient::setConnectedToGame(const QString &name, const QColor &color)
 {
     if (!isConnectedToGame())
     {
-        _state = 2;
+        _state = STATE_ACCEPTED_TO_GAME;
         _info.setName(name);
         _info.setColor(color);
     }
@@ -197,9 +201,9 @@ void RemoteClient::setConnectedToGame(const QString &name, const QColor &color)
 
 void RemoteClient::setDisconnectedFromGame()
 {
-    if (_state != 3)
+    if (_state != STATE_DISCONNECTED_FROM_SERVER)
     {
-        _state = 3;
+        _state = STATE_DISCONNECTED_FROM_SERVER;
         _socket->disconnectFromHost();
     }
 }
@@ -216,9 +220,9 @@ void RemoteClient::remoteChatMessageReceive(ChatMessage msg)
 
 void RemoteClient::remoteDisconnected()
 {
-    if (_state != 3)
+    if (_state != STATE_DISCONNECTED_FROM_SERVER)
     {
-        _state = 3;
+        _state = STATE_DISCONNECTED_FROM_SERVER;
     }
 
     emit disconnected(this);
