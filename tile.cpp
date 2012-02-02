@@ -7,7 +7,7 @@ Tile::Tile(string src)
 {
     data.resize(1);
     scor = 0;
-    for(size_t i = 0; i < src.size(); ++i)
+    for (size_t i = 0; i < src.size(); ++i)
     {
         if(src[i] == '|')
         {
@@ -27,9 +27,9 @@ Tile::Tile(string src)
 void Tile::rotateTile()
 {
     vector<vector<char> > newdata(getWidth(), vector<char>(getHeight(),'0'));
-    for(int i = 0; i < getHeight(); ++i)
+    for (int i = 0; i < getHeight(); ++i)
     {
-        for(int j = 0; j < getWidth(); ++j)
+        for (int j = 0; j < getWidth(); ++j)
         {
             newdata[j][getHeight() - i - 1] = data[i][j];
         }
@@ -46,9 +46,9 @@ int Tile::score() const
 void Tile::reflectTile()
 {
     vector<vector<char> > newdata(getHeight(), vector<char>(getWidth(), '0'));
-    for(int i = 0; i < getHeight(); ++i)
+    for (int i = 0; i < getHeight(); ++i)
     {
-        for(int j = 0; j < getWidth(); ++j)
+        for (int j = 0; j < getWidth(); ++j)
         {
             newdata[i][getWidth() - j - 1] = data[i][j];
         }
@@ -60,9 +60,9 @@ void Tile::reflectTile()
 string Tile::getAsText() const
 {
     string result;
-    for(int i = 0; i < getHeight(); ++i)
+    for (int i = 0; i < getHeight(); ++i)
     {
-        for(int j = 0; j < getWidth(); ++j)
+        for (int j = 0; j < getWidth(); ++j)
         {
             result.push_back(data[i][j]);
         }
@@ -78,9 +78,9 @@ string Tile::getAsText() const
 
 ostream &operator<<(ostream &to, const Tile &what)
 {
-    for(size_t i = 0; i < what.data.size(); ++i)
+    for (size_t i = 0; i < what.data.size(); ++i)
     {
-        for(size_t j = 0; j < what.data[i].size(); ++j)
+        for (size_t j = 0; j < what.data[i].size(); ++j)
         {
             to << what.data[i][j];
         }

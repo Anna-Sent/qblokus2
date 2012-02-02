@@ -78,7 +78,7 @@ void Player::startTurn()
 
 void Player::deactivateAll()
 {
-    for(int i = 0; i < items.size(); ++i)
+    for (int i = 0; i < items.size(); ++i)
     {
         items[i]->deactivate();
     }
@@ -89,7 +89,7 @@ void Player::deactivateAll()
 
 void Player::activateAll()
 {
-    for(int i = 0; i < items.size(); ++i)
+    for (int i = 0; i < items.size(); ++i)
     {
         items[i]->activate();
     }

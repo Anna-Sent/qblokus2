@@ -92,10 +92,10 @@ QRectF TableCell::boundingRect() const
 Table::Table(int w, int h) : width(w), height(h)
 {
     cells.resize(h);
-    for(int i = 0; i < h; ++i)
+    for (int i = 0; i < h; ++i)
     {
         cells[i].resize(w);
-        for(int j = 0; j < w; ++j)
+        for (int j = 0; j < w; ++j)
         {
             TableCell *ne = new TableCell(this, j, i);
             ne->setPos(j * 20, i * 20);
@@ -106,9 +106,9 @@ Table::Table(int w, int h) : width(w), height(h)
 
 void Table::clear()
 {
-    for(int i = 0; i < height; ++i)
+    for (int i = 0; i < height; ++i)
     {
-        for(int j = 0; j < width; ++j)
+        for (int j = 0; j < width; ++j)
         {
             cells[i][j]->color = Qt::lightGray;
             cells[i][j]->update();
@@ -145,9 +145,9 @@ bool Table::accept(int x, int y, const Tile &what, int id, bool really, bool loc
     bool inAngle = false;
     bool touchAngles = false;
     bool valid = true;
-    for(int i = x; i < x + what.getWidth(); ++i)
+    for (int i = x; i < x + what.getWidth(); ++i)
     {
-        for(int j = y; j < y + what.getHeight(); ++j)
+        for (int j = y; j < y + what.getHeight(); ++j)
         {
             if (what.data[j - y][i - x] != '0')
             {
@@ -261,9 +261,9 @@ bool Table::accept(int x, int y, const Tile &what, int id, bool really, bool loc
 
 void Table::clearDrags()
 {
-    for(int i = 0; i < width; ++i)
+    for (int i = 0; i < width; ++i)
     {
-        for(int j = 0; j < height; ++j)
+        for (int j = 0; j < height; ++j)
         {
             cells[i][j]->dragOver = false;
             cells[i][j]->update();

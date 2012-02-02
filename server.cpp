@@ -37,7 +37,7 @@ QList<ClientInfo> Server::clients() const
 int Server::playersCount() const
 {
     int count = 0;
-    for(int i = 0; i < _clients.size(); ++i)
+    for (int i = 0; i < _clients.size(); ++i)
     {
         if (_clients[i]->isConnectedToGame())
         {

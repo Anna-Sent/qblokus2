@@ -26,9 +26,9 @@ void ColorItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
         clr.setHsv(h, s/2, v);
     }
 
-    for(int i = 0; i < getHeight(); ++i)
+    for (int i = 0; i < getHeight(); ++i)
     {
-        for(int j = 0; j < getWidth(); ++j)
+        for (int j = 0; j < getWidth(); ++j)
         {
             if (Tile::data[i][j] != '0')
             {
