@@ -29,7 +29,7 @@ signals:
     void connectionAcceptedMessageReceived(ConnectionAcceptedMessage);
     void pingMessageReceived(PingMessage);
     void playersListMessageReceived(PlayersListMessage);
-    void restartGameMessageReceived(RestartGameMessage);
+    void startGameMessageReceived(StartGameMessage);
     void serverReadyMessageReceived(ServerReadyMessage);
     void surrenderMessageReceived(SurrenderMessage);
     void tryToConnectMessageReceived(TryToConnectMessage);

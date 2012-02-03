@@ -20,7 +20,7 @@ enum MessageType
     mtConnectionAccepted,
     mtPing,
     mtTryToConnect,
-    mtRestartGame,
+    mtStartGame,
     mtTurn,
     mtSurrender
 };
@@ -143,12 +143,12 @@ public:
     void fill(const QByteArray &);
 };
 
-class RestartGameMessage : public PlayersListMessage
+class StartGameMessage : public PlayersListMessage
 {
 public:
-    RestartGameMessage() { _header.setMsgType(mtRestartGame); }
-    RestartGameMessage(const MessageHeader &header) { _header = header; }
-    RestartGameMessage(QList<ClientInfo>);
+    StartGameMessage() { _header.setMsgType(mtStartGame); }
+    StartGameMessage(const MessageHeader &header) { _header = header; }
+    StartGameMessage(QList<ClientInfo>);
 };
 
 class ServerInfoMessage : public PlayersListMessage

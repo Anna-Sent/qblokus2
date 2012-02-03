@@ -83,10 +83,10 @@ void Server::sendToAll(const Message &msg)
     }
 }
 
-void Server::restartGame(QList<ClientInfo> list)
+void Server::startGame(QList<ClientInfo> list)
 {
     _isGameStarted = true;
-    RestartGameMessage msg(list);
+    StartGameMessage msg(list);
     sendToAll(msg);
 }
 

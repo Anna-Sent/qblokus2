@@ -32,7 +32,7 @@ Message *MessageHeader::next() const
     case mtSurrender :              return new SurrenderMessage(*this);
     case mtPing :                   return new PingMessage(*this);
     case mtPlayersList :            return new PlayersListMessage(*this);
-    case mtRestartGame :            return new RestartGameMessage(*this);
+    case mtStartGame :              return new StartGameMessage(*this);
     case mtTryToConnect :           return new TryToConnectMessage(*this);
     case mtTurn :                   return new TurnMessage(*this);
     default :                       return NULL;
@@ -164,13 +164,13 @@ void PlayersListMessage::fill(const QByteArray &buffer)
     }
 }
 
-RestartGameMessage::RestartGameMessage(QList<ClientInfo> list)
+StartGameMessage::StartGameMessage(QList<ClientInfo> list)
 {
     _list = list;
     qint64 len = sizeof(int);
     for (int i = 0; i < list.size(); len += list[i++].size()) { }
     _header.setMsgLength(len);
-    _header.setMsgType(mtRestartGame);
+    _header.setMsgType(mtStartGame);
 }
 
 ServerInfoMessage::ServerInfoMessage(QList<ClientInfo> list)

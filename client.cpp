@@ -15,7 +15,7 @@ LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime
     connect(_messageReceiver, SIGNAL(connectionAcceptedMessageReceived(ConnectionAcceptedMessage)), this, SLOT(connectionAcceptedMessageReceived(ConnectionAcceptedMessage)));
     connect(_messageReceiver, SIGNAL(pingMessageReceived(PingMessage)), this, SLOT(pingMessageReceived(PingMessage)));
     connect(_messageReceiver, SIGNAL(playersListMessageReceived(PlayersListMessage)), this, SLOT(playersListMessageReceived(PlayersListMessage)));
-    connect(_messageReceiver, SIGNAL(restartGameMessageReceived(RestartGameMessage)), this, SLOT(restartGameMessageReceived(RestartGameMessage)));
+    connect(_messageReceiver, SIGNAL(startGameMessageReceived(StartGameMessage)), this, SLOT(startGameMessageReceived(StartGameMessage)));
     connect(_messageReceiver, SIGNAL(serverReadyMessageReceived(ServerReadyMessage)), this, SLOT(serverReadyMessageReceived(ServerReadyMessage)));
     connect(_messageReceiver, SIGNAL(surrenderMessageReceived(SurrenderMessage)), this, SLOT(surrenderMessageReceived(SurrenderMessage)));
     connect(_messageReceiver, SIGNAL(turnMessageReceived(TurnMessage)), this, SLOT(turnMessageReceived(TurnMessage)));
@@ -100,9 +100,9 @@ void LocalClient::playersListMessageReceived(PlayersListMessage msg)
     emit playersListMessageReceived(msg.list());
 }
 
-void LocalClient::restartGameMessageReceived(RestartGameMessage msg)
+void LocalClient::startGameMessageReceived(StartGameMessage msg)
 {
-    emit restartGameMessageReceived(msg.list());
+    emit startGameMessageReceived(msg.list());
 }
 
 void LocalClient::serverReadyMessageReceived(ServerReadyMessage)

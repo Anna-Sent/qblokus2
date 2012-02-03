@@ -41,7 +41,7 @@ private slots:
     void connectionAcceptedMessageReceived(ConnectionAcceptedMessage);
     void pingMessageReceived(PingMessage);
     void playersListMessageReceived(PlayersListMessage);
-    void restartGameMessageReceived(RestartGameMessage);
+    void startGameMessageReceived(StartGameMessage);
     void serverReadyMessageReceived(ServerReadyMessage);
     void surrenderMessageReceived(SurrenderMessage);
     void turnMessageReceived(TurnMessage);
@@ -62,7 +62,7 @@ signals:
     void clientConnectMessageReceived(QString, QColor);
     void clientDisconnectMessageReceived(QString, QColor);
     void playersListMessageReceived(QList<ClientInfo>);
-    void restartGameMessageReceived(QList<ClientInfo>);
+    void startGameMessageReceived(QList<ClientInfo>);
     void startGameMessageReceived();
     void surrenderMessageReceived(QString, QColor);
     void turnMessageReceived(QColor, int, int, int, QString);

@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<ConnectionAcceptedMessage>("ConnectionAcceptedMessage");
     qRegisterMetaType<PingMessage>("PingMessage");
     qRegisterMetaType<PlayersListMessage>("PlayersListMessage");
-    qRegisterMetaType<RestartGameMessage>("RestartGameMessage");
+    qRegisterMetaType<StartGameMessage>("StartGameMessage");
     qRegisterMetaType<ServerInfoMessage>("ServerInfoMessage");
     qRegisterMetaType<ServerReadyMessage>("ServerReadyMessage");
     qRegisterMetaType<ServerRequestMessage>("ServerRequestMessage");
