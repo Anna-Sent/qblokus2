@@ -19,10 +19,10 @@ protected:
 
 public:
     ColorItem(string mask, QColor clr, int id);
+    QRectF boundingRect() const;
     void activate();
     void deactivate();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    QRectF boundingRect() const;
 };
 
 #endif

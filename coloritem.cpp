@@ -9,7 +9,7 @@ ColorItem::ColorItem(string mask, QColor clr, int id)
 
 QRectF ColorItem::boundingRect() const
 {
-    return QRectF(0, 0, getWidth() * 20, getHeight() * 20);
+    return QRectF(0, 0, width() * 20, height() * 20);
 }
 
 void ColorItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -26,9 +26,9 @@ void ColorItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
         clr.setHsv(h, s/2, v);
     }
 
-    for (int i = 0; i < getHeight(); ++i)
+    for (int i = 0; i < height(); ++i)
     {
-        for (int j = 0; j < getWidth(); ++j)
+        for (int j = 0; j < width(); ++j)
         {
             if (Tile::data[i][j] != '0')
             {
@@ -52,7 +52,7 @@ void ColorItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         break;
     case(Qt::RightButton):
         prepareGeometryChange();
-        rotateTile();
+        Tile::rotate();
         update();
         break;
     default:
@@ -68,7 +68,7 @@ void ColorItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    reflectTile();
+    reflect();
     update();
 }
 
@@ -91,7 +91,7 @@ void ColorItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     mime->setColorData(_color);
     mime->setText(QString::number(_id) + QString(':') + QString(getAsText().c_str()));
 
-    QPixmap pixmap(getWidth() * 20, getHeight() * 20);
+    QPixmap pixmap(width() * 20, height() * 20);
     pixmap.fill(Qt::white);
 
     QPainter painter(&pixmap);

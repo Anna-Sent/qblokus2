@@ -131,12 +131,12 @@ void Table::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 bool Table::accept(int x, int y, const Tile &what, int id, bool really, bool local, QColor color)
 {
-    if (x + what.getWidth() > width)
+    if (x + what.width() > width)
     {
         return false;
     }
 
-    if (y + what.getHeight() > height)
+    if (y + what.height() > height)
     {
         return false;
     }
@@ -145,9 +145,9 @@ bool Table::accept(int x, int y, const Tile &what, int id, bool really, bool loc
     bool inAngle = false;
     bool touchAngles = false;
     bool valid = true;
-    for (int i = x; i < x + what.getWidth(); ++i)
+    for (int i = x; i < x + what.width(); ++i)
     {
-        for (int j = y; j < y + what.getHeight(); ++j)
+        for (int j = y; j < y + what.height(); ++j)
         {
             if (what.data[j - y][i - x] != '0')
             {

@@ -6,7 +6,7 @@ using namespace std;
 Tile::Tile(string src)
 {
     data.resize(1);
-    scor = 0;
+    _score = 0;
     for (size_t i = 0; i < src.size(); ++i)
     {
         if(src[i] == '|')
@@ -18,39 +18,34 @@ Tile::Tile(string src)
             data.back().push_back(src[i]);
             if (src[i] != '0')
             {
-                ++scor;
+                ++_score;
             }
         }
     }
 }
 
-void Tile::rotateTile()
+void Tile::rotate()
 {
-    vector<vector<char> > newdata(getWidth(), vector<char>(getHeight(),'0'));
-    for (int i = 0; i < getHeight(); ++i)
+    vector<vector<char> > newdata(width(), vector<char>(height(),'0'));
+    for (int i = 0; i < height(); ++i)
     {
-        for (int j = 0; j < getWidth(); ++j)
+        for (int j = 0; j < width(); ++j)
         {
-            newdata[j][getHeight() - i - 1] = data[i][j];
+            newdata[j][height() - i - 1] = data[i][j];
         }
     }
 
     data.swap(newdata);
 }
 
-int Tile::score() const
+void Tile::reflect()
 {
-    return scor;
-}
-
-void Tile::reflectTile()
-{
-    vector<vector<char> > newdata(getHeight(), vector<char>(getWidth(), '0'));
-    for (int i = 0; i < getHeight(); ++i)
+    vector<vector<char> > newdata(height(), vector<char>(width(), '0'));
+    for (int i = 0; i < height(); ++i)
     {
-        for (int j = 0; j < getWidth(); ++j)
+        for (int j = 0; j < width(); ++j)
         {
-            newdata[i][getWidth() - j - 1] = data[i][j];
+            newdata[i][width() - j - 1] = data[i][j];
         }
     }
 
@@ -60,14 +55,14 @@ void Tile::reflectTile()
 string Tile::getAsText() const
 {
     string result;
-    for (int i = 0; i < getHeight(); ++i)
+    for (int i = 0; i < height(); ++i)
     {
-        for (int j = 0; j < getWidth(); ++j)
+        for (int j = 0; j < width(); ++j)
         {
             result.push_back(data[i][j]);
         }
 
-        if (i < getHeight() - 1)
+        if (i < height() - 1)
         {
             result.push_back('|');
         }

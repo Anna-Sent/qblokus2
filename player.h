@@ -25,8 +25,12 @@ private:
     int tilesleft;
 
 public:
-    Player(const QColor &color, const QString &name, int width = 300, int height = 200, QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
-    ~Player();
+    Player(const QColor &color,
+           const QString &name,
+           int width = 300,
+           int height = 200,
+           QGraphicsItem *parent = 0,
+           QGraphicsScene *scene = 0);
     QRectF boundingRect() const;
     QColor color() const { return _info.color(); }
     const ClientInfo &info() const { return _info; }

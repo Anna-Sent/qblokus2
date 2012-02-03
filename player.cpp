@@ -25,11 +25,11 @@ Player::Player(const QColor &color, const QString &name, int wid, int hei, QGrap
         items.append(item);
         item->setParentItem(this);
         item->setPos(xs, ys);
-        int dim = max(item->getHeight(), item->getWidth());
+        int dim = max(item->height(), item->width());
         xs += dim * 20 * dscale + 10;
         int height = (dim * 20 * dscale + 10);
         item->scale(dscale, dscale);
-        if (height>maxheight)
+        if (height > maxheight)
         {
             maxheight = height;
         }
@@ -51,10 +51,6 @@ Player::Player(const QColor &color, const QString &name, int wid, int hei, QGrap
     realheight += maxheight;
     height = realheight;
     width = realwidth;
-}
-
-Player::~Player()
-{
 }
 
 QRectF Player::boundingRect() const 
@@ -104,6 +100,7 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *style, QWi
 {
     Q_UNUSED(style);
     Q_UNUSED(widget);
+
     if (active != lastactive)
     {
         if (active)
@@ -133,6 +130,7 @@ void Player::turnComplete(QColor color, QString, int item, int x, int y)
 {
     Q_UNUSED(x);
     Q_UNUSED(y);
+
     if (color != _info.color())
     {
         return;
