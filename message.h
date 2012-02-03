@@ -20,7 +20,6 @@ enum MessageType
     mtConnectionAccepted,
     mtPing,
     mtTryToConnect,
-    mtStartGame,
     mtRestartGame,
     mtTurn,
     mtSurrender
@@ -172,13 +171,6 @@ class ServerRequestMessage : public ComplexMessage
 public:
     ServerRequestMessage() { _header.setMsgLength(0); _header.setMsgType(mtServerRequest); }
     ServerRequestMessage(const MessageHeader &header) { _header = header; }
-};
-
-class StartGameMessage : public ComplexMessage
-{
-public:
-    StartGameMessage() { _header.setMsgLength(0); _header.setMsgType(mtStartGame); }
-    StartGameMessage(const MessageHeader &header) { _header = header; }
 };
 
 class SurrenderMessage : public ClientMessage

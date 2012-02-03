@@ -53,9 +53,8 @@ public slots:
     void stop();
 
     //from app
-    void startGame();
-    void restartGame(QList<ClientInfo>);
     void gameOver();
+    void restartGame(QList<ClientInfo>);
 };
 
 #endif

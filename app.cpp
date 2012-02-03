@@ -28,7 +28,6 @@ App::App(QWidget *parent)
     connect(&_localClient, SIGNAL(turnMessageReceived(QColor, int, int, int, QString)), this, SLOT(turnMessageReceived(QColor, int, int, int, QString)));
     connect(&_localClient, SIGNAL(playersListMessageReceived(QList<ClientInfo>)), this, SLOT(playersListMessageReceived(QList<ClientInfo>)));
     connect(&_localClient, SIGNAL(restartGameMessageReceived(QList<ClientInfo>)), this, SLOT(restartGameMessageReceived(QList<ClientInfo>)));
-    connect(&_localClient, SIGNAL(startGameMessageReceived()), this, SLOT(startGameMessageReceived()));
     connect(&_localClient, SIGNAL(surrenderMessageReceived(QString, QColor)), this, SLOT(surrenderMessageReceived(QString, QColor)));
 
     // from user
@@ -45,7 +44,6 @@ App::App(QWidget *parent)
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiCreateServerToggled(bool)));
     connect(sbPort, SIGNAL(valueChanged(int)), this, SLOT(guiPortValueChanged(int)));
 
-    connect(this, SIGNAL(gameStarted()), &_server, SLOT(startGame()));
     connect(this, SIGNAL(gameRestarted(QList<ClientInfo>)), &_server, SLOT(restartGame(QList<ClientInfo>)));
     connect(this, SIGNAL(messageSent(QString)), &_localClient, SLOT(sendMessage(QString)));
 
@@ -157,13 +155,9 @@ void App::userStartGame()
                 {
                     return;
                 }
+            }
 
-                emit gameRestarted(_server.clients());
-            }
-            else
-            {
-                emit gameStarted();
-            }
+            emit gameRestarted(_server.clients());
         }
         else
         {
@@ -362,11 +356,6 @@ void App::gameOver(QString, int, QColor)
     {
         _server.gameOver();
     }
-}
-
-void App::startGameMessageReceived()
-{
-    _game->start();
 }
 
 void App::surrenderMessageReceived(QString name, QColor color)

@@ -13,7 +13,6 @@ int main(int argc, char *argv[])
     qRegisterMetaType<ServerInfoMessage>("ServerInfoMessage");
     qRegisterMetaType<ServerReadyMessage>("ServerReadyMessage");
     qRegisterMetaType<ServerRequestMessage>("ServerRequestMessage");
-    qRegisterMetaType<StartGameMessage>("StartGameMessage");
     qRegisterMetaType<TryToConnectMessage>("TryToConnectMessage");
     qRegisterMetaType<TurnMessage>("TurnMessage");
     qRegisterMetaType<SurrenderMessage>("SurrenderMessage");

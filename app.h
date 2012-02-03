@@ -44,7 +44,6 @@ private slots:
     void connectionAccepted();
     void playersListMessageReceived(QList<ClientInfo>);
     void restartGameMessageReceived(QList<ClientInfo>);
-    void startGameMessageReceived();
     void surrenderMessageReceived(QString, QColor);
     void turnMessageReceived(QColor, int, int, int, QString);
 

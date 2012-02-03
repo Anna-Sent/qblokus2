@@ -17,7 +17,6 @@ LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime
     connect(_messageReceiver, SIGNAL(playersListMessageReceived(PlayersListMessage)), this, SLOT(playersListMessageReceived(PlayersListMessage)));
     connect(_messageReceiver, SIGNAL(restartGameMessageReceived(RestartGameMessage)), this, SLOT(restartGameMessageReceived(RestartGameMessage)));
     connect(_messageReceiver, SIGNAL(serverReadyMessageReceived(ServerReadyMessage)), this, SLOT(serverReadyMessageReceived(ServerReadyMessage)));
-    connect(_messageReceiver, SIGNAL(startGameMessageReceived(StartGameMessage)), this, SLOT(startGameMessageReceived(StartGameMessage)));
     connect(_messageReceiver, SIGNAL(surrenderMessageReceived(SurrenderMessage)), this, SLOT(surrenderMessageReceived(SurrenderMessage)));
     connect(_messageReceiver, SIGNAL(turnMessageReceived(TurnMessage)), this, SLOT(turnMessageReceived(TurnMessage)));
     connect(_socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()), Qt::QueuedConnection);
@@ -110,11 +109,6 @@ void LocalClient::serverReadyMessageReceived(ServerReadyMessage)
 {
     TryToConnectMessage msg(_info);
     msg.send(_socket);
-}
-
-void LocalClient::startGameMessageReceived(StartGameMessage)
-{
-    emit startGameMessageReceived();
 }
 
 void LocalClient::surrenderMessageReceived(SurrenderMessage msg)

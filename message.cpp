@@ -33,7 +33,6 @@ Message *MessageHeader::next() const
     case mtPing :                   return new PingMessage(*this);
     case mtPlayersList :            return new PlayersListMessage(*this);
     case mtRestartGame :            return new RestartGameMessage(*this);
-    case mtStartGame :              return new StartGameMessage(*this);
     case mtTryToConnect :           return new TryToConnectMessage(*this);
     case mtTurn :                   return new TurnMessage(*this);
     default :                       return NULL;

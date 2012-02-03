@@ -43,7 +43,6 @@ void TcpMessageReceiver::processData()
         case mtPlayersList:         DISPATCH_MESSAGE(playersListMessageReceived, PlayersListMessage); break;
         case mtRestartGame:         DISPATCH_MESSAGE(restartGameMessageReceived, RestartGameMessage); break;
         case mtServerReady:         DISPATCH_MESSAGE(serverReadyMessageReceived, ServerReadyMessage); break;
-        case mtStartGame:           DISPATCH_MESSAGE(startGameMessageReceived, StartGameMessage); break;
         case mtSurrender:           DISPATCH_MESSAGE(surrenderMessageReceived, SurrenderMessage); break;
         case mtTurn:                DISPATCH_MESSAGE(turnMessageReceived, TurnMessage); break;
         case mtTryToConnect:        DISPATCH_MESSAGE(tryToConnectMessageReceived, TryToConnectMessage); break;

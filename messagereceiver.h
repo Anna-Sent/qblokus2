@@ -31,7 +31,6 @@ signals:
     void playersListMessageReceived(PlayersListMessage);
     void restartGameMessageReceived(RestartGameMessage);
     void serverReadyMessageReceived(ServerReadyMessage);
-    void startGameMessageReceived(StartGameMessage);
     void surrenderMessageReceived(SurrenderMessage);
     void tryToConnectMessageReceived(TryToConnectMessage);
     void turnMessageReceived(TurnMessage);
