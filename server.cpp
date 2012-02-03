@@ -13,10 +13,12 @@ Server::Server() : _isGameStarted(false)
 
     _timer.setInterval(PING_INTERVAL);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(ping()));
-    connect(this, SIGNAL(finished()), &_timer, SLOT(stop()));
-    connect(this, SIGNAL(terminated()), &_timer, SLOT(stop()));
 
+    connect(this, SIGNAL(finished()), &_timer, SLOT(stop()));
+    connect(this, SIGNAL(finished()), this, SLOT(finishGame()));
     connect(this, SIGNAL(finished()), this, SLOT(clear()));
+    connect(this, SIGNAL(terminated()), &_timer, SLOT(stop()));
+    connect(this, SIGNAL(terminated()), this, SLOT(finishGame()));
     connect(this, SIGNAL(terminated()), this, SLOT(clear()));
 }
 
@@ -85,14 +87,20 @@ void Server::sendToAll(const Message &msg)
 
 void Server::startGame(QList<ClientInfo> list)
 {
-    _isGameStarted = true;
-    StartGameMessage msg(list);
-    sendToAll(msg);
+    if (!_isGameStarted)
+    {
+        _isGameStarted = true;
+        StartGameMessage msg(list);
+        sendToAll(msg);
+    }
 }
 
-void Server::gameOver()
+void Server::finishGame()
 {
-    _isGameStarted = false;
+    if (_isGameStarted)
+    {
+        _isGameStarted = false;
+    }
 }
 
 void Server::start(int maxClientsCount, quint16 port)

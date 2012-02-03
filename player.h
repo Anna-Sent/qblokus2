@@ -1,6 +1,7 @@
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
+#include "clientinfo.h"
 #include "coloritem.h"
 
 class Player : public QObject, public QGraphicsItem
@@ -30,6 +31,7 @@ public:
     QRectF boundingRect() const;
     QColor getColor() const { return color; }
     const QString &getName() const;
+    const ClientInfo &info() { ClientInfo info; info.setName(name); info.setColor(color); return info; }
     int getScore() const { return score; }
     bool getSurrendered() const;
     ColorItem *getTile(int i) const { return items[i]; }

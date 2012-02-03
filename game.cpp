@@ -234,37 +234,17 @@ void Game::start()
 
 void Game::winner(Player *winner)
 {
-    QStringList winners;
+    QList<ClientInfo> clients;
     for (int i = 0; i < players.size(); ++i)
     {
         if (players[i]->getScore() == winner->getScore())
         {
-            winners << players[i]->getName();
+            clients.append(players[i]->info());
         }
     }
 
-    winners.sort();
-    int count = winners.count();
-    QMessageBox msgBox;
-    if (count == 1)
-    {
-        msgBox.setText(QString::fromUtf8("The winner is ") + winners[0]);
-    }
-    else
-    {
-        QString str;
-        for (int i = 0; i < count - 1; ++i)
-        {
-            str += winners[i] + ", ";
-        }
-
-        str += winners[count - 1];
-        msgBox.setText(QString::fromUtf8("The winners are ") + str);
-    }
-
-    msgBox.exec();
     running = false;
-    emit gameOver(winner->getName(), winner->getScore(), winner->getColor());
+    emit gameOver(clients, winner->getScore());
 }
 
 bool operator==(const ClientInfo &a1,const ClientInfo &a2)

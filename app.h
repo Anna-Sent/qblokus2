@@ -51,17 +51,7 @@ private slots:
     void serverInfoMessageReceive(const QHostAddress &, QList<ClientInfo>);
 
     // from game
-    void gameOver(QString, int, QColor);
-
-signals:
-    // to server
-    void gameStarted();
-    void gameRestarted(QList<ClientInfo>);
-
-    // to client
-    void messageSent(QString);
-    void playerSurrendered(QString name, QColor color);
-    void turnDone(QString name, QColor color, QString tile, int id, int x, int y);
+    void finishGame(QList<ClientInfo>, int);
 };
 
 #endif

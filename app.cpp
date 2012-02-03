@@ -44,9 +44,6 @@ App::App(QWidget *parent)
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiCreateServerToggled(bool)));
     connect(sbPort, SIGNAL(valueChanged(int)), this, SLOT(guiPortValueChanged(int)));
 
-    connect(this, SIGNAL(gameRestarted(QList<ClientInfo>)), &_server, SLOT(startGame(QList<ClientInfo>)));
-    connect(this, SIGNAL(messageSent(QString)), &_localClient, SLOT(sendMessage(QString)));
-
     // from servers searcher
     connect(&_serversSearcher, SIGNAL(serverInfoMessageReceived(const QHostAddress &,QList<ClientInfo>)), this, SLOT(serverInfoMessageReceive(const QHostAddress &,QList<ClientInfo>)));
 
@@ -58,7 +55,7 @@ App::App(QWidget *parent)
             &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
     connect(_game, SIGNAL(playerRetired(QString,QColor)),
             &_localClient, SLOT(surrender(QString,QColor)));
-    connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
+    connect(_game, SIGNAL(gameOver(QList<ClientInfo>, int)), this, SLOT(finishGame(QList<ClientInfo>, int)));
 
     connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), &_localClient, SLOT(stop()));
@@ -131,7 +128,7 @@ void App::userSendMessage()
     QString text = lineEdit->text();
     if (text != "")
     {
-        emit messageSent(text);
+        _localClient.sendMessage(text);
     }
 }
 
@@ -157,7 +154,7 @@ void App::userStartGame()
                 }
             }
 
-            emit gameRestarted(_server.clients());
+            _server.startGame(_server.clients());
         }
         else
         {
@@ -350,12 +347,45 @@ void App::serverInfoMessageReceive(const QHostAddress &host, QList<ClientInfo> c
     }
 }
 
-void App::gameOver(QString, int, QColor)
+void App::finishGame(QList<ClientInfo> winners, int score)
 {
     if (_server.isRunning())
     {
-        _server.gameOver();
+        _server.finishGame();
     }
+
+    int count = winners.count();
+    QMessageBox msgBox;
+    if (count == 1)
+    {
+        msgBox.setText(QString::fromUtf8("The winner is ") + winners[0].name()
+                       + QString::fromUtf8(" with score ") + QString::number(score));
+    }
+    else if (count > 1)
+    {
+        QStringList names;
+        for (int i = 0; i < count; ++i)
+        {
+            names << winners[i].name();
+        }
+
+        names.sort();
+        QString str;
+        for (int i = 0; i < count - 1; ++i)
+        {
+            str += names[i] + ", ";
+        }
+
+        str += winners[count - 1];
+        msgBox.setText(QString::fromUtf8("The winners are ") + str
+                       + QString::fromUtf8(" with score ") + QString::number(score));
+    }
+    else
+    {
+        msgBox.setText(QString::fromUtf8("There is no winner"));
+    }
+
+    msgBox.exec();
 }
 
 void App::surrenderMessageReceived(QString name, QColor color)

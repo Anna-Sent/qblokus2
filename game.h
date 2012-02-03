@@ -45,7 +45,7 @@ private slots:
     void winner(Player*);
 
 signals:
-    void gameOver(QString winner, int score, QColor color);
+    void gameOver(QList<ClientInfo>, int);
     void playerRetired(QString name, QColor color);
     void turnDone(QString name, QColor color, QString mask, int id, int x, int y);
 };
