@@ -234,15 +234,16 @@ void Game::start()
 
 void Game::winner(Player *winner)
 {
-    QList<QString> winners;
+    QStringList winners;
     for (int i = 0; i < players.size(); ++i)
     {
         if (players[i]->getScore() == winner->getScore())
         {
-            winners.append(players[i]->getName());
+            winners << players[i]->getName();
         }
     }
 
+    winners.sort();
     int count = winners.count();
     QMessageBox msgBox;
     if (count == 1)
