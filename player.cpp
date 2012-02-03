@@ -3,7 +3,7 @@
 #include <QPainter>
 
 Player::Player(const QColor &color, const QString &name, int wid, int hei, QGraphicsItem *parent, QGraphicsScene *scene)
-    : QGraphicsItem(parent, scene), active(false), lastactive(true), height(wid), width(hei), _score(0), surrendered(false)
+    : QGraphicsItem(parent, scene), active(false), lastactive(false), height(wid), width(hei), _score(0), surrendered(false)
 {
     _info.setColor(color);
     _info.setName(name);
