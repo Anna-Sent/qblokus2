@@ -8,8 +8,7 @@ class LocalPlayer : public Player
     Q_OBJECT
 
 public:
-    LocalPlayer(const QColor &color,
-                const QString &name,
+    LocalPlayer(const ClientInfo &info,
                 int wid = 200,
                 int hei = 200,
                 QGraphicsItem *parent = 0,

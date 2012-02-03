@@ -2,11 +2,10 @@
 #include <QGraphicsScene>
 #include <QPainter>
 
-Player::Player(const QColor &color, const QString &name, int wid, int hei, QGraphicsItem *parent, QGraphicsScene *scene)
+Player::Player(const ClientInfo &info, int wid, int hei, QGraphicsItem *parent, QGraphicsScene *scene)
     : QGraphicsItem(parent, scene), active(false), lastactive(false), height(wid), width(hei), _score(0), surrendered(false)
 {
-    _info.setColor(color);
-    _info.setName(name);
+    _info = info;
     char const *cTiles[] = { "1", "11", "11|01", "111", "11|11", "010|111", "1111", "001|111", "011|110", "1000|1111", "010|010|111", "100|100|111", "0111|1100", "001|111|100", "1|1|1|1|1", "10|11|11", "011|110|100", "11|10|11", "011|110|010", "010|111|010", "0100|1111" };
 
     vector<string> tiles(cTiles, cTiles + 21);

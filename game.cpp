@@ -26,16 +26,16 @@ Game::Game(QWidget* widget)
     connect(this, SIGNAL(destroyed()), table, SLOT(deleteLater()));
 }
 
-void Game::addPlayer(QString name, QColor color, PlayerType type)
+void Game::addPlayer(ClientInfo info, PlayerType type)
 {
     Player *player;
     switch (type)
     {
     case(ptLocal):
-        player = new LocalPlayer(color, name);
+        player = new LocalPlayer(info);
         break;
     case(ptNetwork):
-        player = new NetworkPlayer(color, name, table);
+        player = new NetworkPlayer(info, table);
         break;
     default:
         return;
@@ -57,7 +57,7 @@ void Game::addPlayer(QString name, QColor color, PlayerType type)
     gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    lcd->setPalette(QPalette(color));
+    lcd->setPalette(QPalette(info.color()));
     connect(player, SIGNAL(scoreChanged(int)), lcd, SLOT(display(int)));
     connect(player, SIGNAL(won(Player *)), this, SLOT(winner(Player *)));
     lcd->display(0);
@@ -295,7 +295,7 @@ void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
         clear();
         for (int i = 0; i < clients.size(); ++i)
         {
-            addPlayer(clients[i].name(), clients[i].color(), local[i] ? ptLocal : ptNetwork);
+            addPlayer(clients[i], local[i] ? ptLocal : ptNetwork);
         }
     }
     else
@@ -308,7 +308,7 @@ void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
             {
                 if (pl == players.size())
                 {
-                    addPlayer(clients[cl].name(), clients[cl].color(), local[cl] ? ptLocal : ptNetwork);
+                    addPlayer(clients[cl], local[cl] ? ptLocal : ptNetwork);
                 }
 
                 if (cl == clients.size())

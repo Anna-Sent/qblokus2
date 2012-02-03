@@ -38,7 +38,7 @@ public:
     void updatePlayers(QList<ClientInfo>, QList<bool>);
 
 public slots:
-    void addPlayer(QString name, QColor color, PlayerType type);
+    void addPlayer(ClientInfo info, PlayerType type);
     void clear();
     void playerRetired(); // ?
     void start();

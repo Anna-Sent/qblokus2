@@ -25,8 +25,7 @@ private:
     int tilesleft;
 
 public:
-    Player(const QColor &color,
-           const QString &name,
+    Player(const ClientInfo &info,
            int width = 300,
            int height = 200,
            QGraphicsItem *parent = 0,

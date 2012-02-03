@@ -16,8 +16,7 @@ private:
     Table *_table;
 
 public:
-    NetworkPlayer(const QColor &color,
-                  const QString &name,
+    NetworkPlayer(const ClientInfo &info,
                   Table *table,
                   int width = 200,
                   int height = 200,

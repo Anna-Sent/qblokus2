@@ -1,13 +1,12 @@
 #include "networkplayer.h"
 
-NetworkPlayer::NetworkPlayer(const QColor &color,
-                             const QString &name,
+NetworkPlayer::NetworkPlayer(const ClientInfo &info,
                              Table *table,
                              int width,
                              int height,
                              QGraphicsItem *parent,
                              QGraphicsScene *scene)
-    : Player(color, name, width, height, parent, scene), _table(table)
+    : Player(info, width, height, parent, scene), _table(table)
 {
 }
 
