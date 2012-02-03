@@ -87,20 +87,14 @@ void Server::sendToAll(const Message &msg)
 
 void Server::startGame(QList<ClientInfo> list)
 {
-    if (!_isGameStarted)
-    {
-        _isGameStarted = true;
-        StartGameMessage msg(list);
-        sendToAll(msg);
-    }
+    _isGameStarted = true;
+    StartGameMessage msg(list);
+    sendToAll(msg);
 }
 
 void Server::finishGame()
 {
-    if (_isGameStarted)
-    {
-        _isGameStarted = false;
-    }
+    _isGameStarted = false;
 }
 
 void Server::start(int maxClientsCount, quint16 port)
