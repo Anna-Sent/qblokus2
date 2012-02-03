@@ -246,7 +246,7 @@ bool Table::accept(int x, int y, const Tile &what, int id, bool really, bool loc
 
     if (really && local)
     {
-        emit turnComplete(color, what.getAsQString(), id, x, y);
+        emit turnCompleted(color, what.getAsQString(), id, x, y);
     }
 
     if (inAngle || touchAngles)

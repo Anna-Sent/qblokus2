@@ -47,7 +47,7 @@ public:
     void clear();
 
 signals:
-    void turnComplete(QColor color, QString mask, int id, int x, int y);
+    void turnCompleted(QColor color, QString mask, int id, int x, int y);
 };
 
 #endif

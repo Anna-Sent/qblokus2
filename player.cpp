@@ -2,9 +2,11 @@
 #include <QGraphicsScene>
 #include <QPainter>
 
-Player::Player(QColor clr, int wid, int hei, QGraphicsItem *parent, QGraphicsScene *scene)
-    : QGraphicsItem(parent, scene), lastactive(true), height(wid), width(hei), active(false), color(clr), name(""), score(0), surrendered(false)
+Player::Player(const QColor &color, const QString &name, int wid, int hei, QGraphicsItem *parent, QGraphicsScene *scene)
+    : QGraphicsItem(parent, scene), active(false), lastactive(true), height(wid), width(hei), _score(0), surrendered(false)
 {
+    _info.setColor(color);
+    _info.setName(name);
     char const *cTiles[] = { "1", "11", "11|01", "111", "11|11", "010|111", "1111", "001|111", "011|110", "1000|1111", "010|010|111", "100|100|111", "0111|1100", "001|111|100", "1|1|1|1|1", "10|11|11", "011|110|100", "11|10|11", "011|110|010", "010|111|010", "0100|1111" };
 
     vector<string> tiles(cTiles, cTiles + 21);
@@ -19,7 +21,7 @@ Player::Player(QColor clr, int wid, int hei, QGraphicsItem *parent, QGraphicsSce
 
     for (size_t i = 0; i < tiles.size(); ++i)
     {
-        ColorItem *item = new ColorItem(tiles[i], color, i);
+        ColorItem *item = new ColorItem(tiles[i], _info.color(), i);
         items.append(item);
         item->setParentItem(this);
         item->setPos(xs, ys);
@@ -60,7 +62,7 @@ QRectF Player::boundingRect() const
     return QRectF(0, 0, width, height);
 }
 
-bool Player::getSurrendered() const
+bool Player::isSurrendered() const
 {
     return surrendered;
 }
@@ -69,7 +71,7 @@ void Player::startTurn()
 {
     if (surrendered || tilesleft == 0)
     {
-        emit turnComplete();
+        emit turnCompleted();
         return;
     }
 
@@ -106,7 +108,7 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *style, QWi
     {
         if (active)
         {
-            scene()->setBackgroundBrush(QBrush(color.light(180)));
+            scene()->setBackgroundBrush(QBrush(_info.color().light(180)));
         }
         else
         {
@@ -127,21 +129,11 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *style, QWi
     }
 }
 
-const QString& Player::getName() const
-{
-    return name;
-}
-
-void Player::setName(const QString &newname)
-{
-    name = newname;
-}
-
 void Player::turnComplete(QColor color, QString, int item, int x, int y)
 {
     Q_UNUSED(x);
     Q_UNUSED(y);
-    if (color != this->color)
+    if (color != _info.color())
     {
         return;
     }
@@ -149,13 +141,13 @@ void Player::turnComplete(QColor color, QString, int item, int x, int y)
     --tilesleft;
     items[item]->hide();
     Tile *tile = items[item];
-    score += tile->score();
-    emit scoreChanged(score);
-    emit turnComplete();
+    _score += tile->score();
+    emit scoreChanged(_score);
+    emit turnCompleted();
     deactivateAll();
     if (tilesleft == 0)
     {
-        emit iWin(this);
+        emit won(this);
     }
 }
 
@@ -165,6 +157,6 @@ void Player::surrender()
     {
         surrendered = true;
         deactivateAll();
-        emit turnComplete();
+        emit turnCompleted();
     }
 }

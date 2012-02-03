@@ -26,28 +26,28 @@ private:
     bool isserver;
     int playersleft;
     bool running;
-    void retirePlayer(int);
+    void retirePlayer(int); // ?
+
+private slots:
+    void winner(Player*); // ?
 
 public:
     Game(QWidget *widget);
     bool isStarted() const;
-    void remotePlayerRetired(QString name, QColor color);
+    void remotePlayerRetired(QString name, QColor color); // ?
     void updatePlayers(QList<ClientInfo>, QList<bool>);
 
 public slots:
     void addPlayer(QString name, QColor color, PlayerType type);
     void clear();
-    void playerRetired();
+    void playerRetired(); // ?
     void start();
-    void turnDone(QColor color, QString tile, int id, int x, int y);
-
-private slots:
-    void winner(Player*);
+    void turnComplete(QColor color, QString tile, int id, int x, int y);
 
 signals:
     void gameOver(QList<ClientInfo>, int);
     void playerRetired(QString name, QColor color);
-    void turnDone(QString name, QColor color, QString mask, int id, int x, int y);
+    void turnCompleted(QString name, QColor color, QString mask, int id, int x, int y);
 };
 
 #endif

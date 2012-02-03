@@ -51,7 +51,7 @@ App::App(QWidget *parent)
     _serversSearcher.start();
 
     _game = new Game(this);
-    connect(_game, SIGNAL(turnDone(QString,QColor,QString,int,int,int)),
+    connect(_game, SIGNAL(turnCompleted(QString,QColor,QString,int,int,int)),
             &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
     connect(_game, SIGNAL(playerRetired(QString,QColor)),
             &_localClient, SLOT(surrender(QString,QColor)));
@@ -395,7 +395,7 @@ void App::surrenderMessageReceived(QString name, QColor color)
 
 void App::turnMessageReceived(QColor color, int x, int y, int id, QString mask)
 {
-    _game->turnDone(color, mask, id, x, y);
+    _game->turnComplete(color, mask, id, x, y);
 }
 
 void App::guiCreateServerToggled(bool value)

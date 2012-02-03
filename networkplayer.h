@@ -8,15 +8,21 @@ class NetworkPlayer : public Player
 {
     Q_OBJECT
 
+protected:
+    void activateAll();
+    void deactivateAll();
+
 private:
     Table *tbl;
 
-protected:
-    void activateAll() { active = true; update(); }
-    void deactivateAll() { active = false; update(); }
-
 public:
-    NetworkPlayer(QColor clr, Table *table, int wid = 200, int hei = 200, QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
+    NetworkPlayer(const QColor &color,
+                  const QString &name,
+                  Table *table,
+                  int width = 200,
+                  int height = 200,
+                  QGraphicsItem *parent = 0,
+                  QGraphicsScene *scene = 0);
 
 public slots:
     void turnComplete(QColor color, QString tile, int item, int x, int y);

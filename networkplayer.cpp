@@ -1,13 +1,31 @@
 #include "networkplayer.h"
 
-NetworkPlayer::NetworkPlayer(QColor clr, Table *table, int wid, int hei, QGraphicsItem *parent, QGraphicsScene *scene)
-    : Player(clr, wid, hei, parent, scene), tbl(table)
+NetworkPlayer::NetworkPlayer(const QColor &color,
+                             const QString &name,
+                             Table *table,
+                             int wid,
+                             int hei,
+                             QGraphicsItem *parent,
+                             QGraphicsScene *scene)
+    : Player(color, name, wid, hei, parent, scene), tbl(table)
 {
+}
+
+void NetworkPlayer::activateAll()
+{
+    active = true;
+    update();
+}
+
+void NetworkPlayer::deactivateAll()
+{
+    active = false;
+    update();
 }
 
 void NetworkPlayer::turnComplete(QColor color, QString tile, int item, int x, int y)
 {
-    if (color != this->color)
+    if (color != _info.color())
     {
         return;
     }
