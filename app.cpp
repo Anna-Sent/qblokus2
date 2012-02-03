@@ -61,21 +61,11 @@ App::App(QWidget *parent)
     connect(_game, SIGNAL(playerRetired(QString,QColor)),
             &_localClient, SLOT(surrender(QString,QColor)));
     connect(_game, SIGNAL(gameOver(QString,int,QColor)), this, SLOT(gameOver(QString,int,QColor)));
-}
 
-App::~App()
-{
-    if (_game)
-    {
-        _game->deleteLater();
-    }
-
-    _localClient.stop();
-    _serversSearcher.stop();
-    if (_server.isRunning())
-    {
-        _server.quit();
-    }
+    connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
+    connect(this, SIGNAL(destroyed()), &_localClient, SLOT(stop()));
+    connect(this, SIGNAL(destroyed()), &_serversSearcher, SLOT(stop()));
+    connect(this, SIGNAL(destroyed()), &_server, SLOT(stop()));
 }
 
 void App::perror(const QString &text)
@@ -129,10 +119,7 @@ void App::userDisconnectFromServer()
         }
 
         _localClient.stop();
-        if (_server.isRunning())
-        {
-            _server.quit();
-        }
+        _server.stop();
     }
 }
 
@@ -156,7 +143,7 @@ void App::userStartGame()
     {
         if (_server.playersCount() == _server.maxClientsCount())
         {
-            if (_game && _game->isStarted())
+            if (_game->isStarted())
             {
                 QMessageBox msgBox;
                 msgBox.setText(QString::fromUtf8("New game"));

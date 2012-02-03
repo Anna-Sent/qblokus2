@@ -30,14 +30,13 @@ private:
 
 public:
     Game(QWidget *widget);
-    ~Game();
-    void clear();
+    bool isStarted() const;
     void remotePlayerRetired(QString name, QColor color);
     void updatePlayers(QList<ClientInfo>, QList<bool>);
-    bool isStarted() const;
 
 public slots:
     void addPlayer(QString name, QColor color, PlayerType type);
+    void clear();
     void playerRetired();
     void start();
     void turnDone(QColor color, QString tile, int id, int x, int y);

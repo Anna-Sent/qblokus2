@@ -17,21 +17,11 @@ private:
     UdpMessageReceiver *_messageReceiver;
     QTcpServer _tcpServer;
     QTimer _timer;
-
-public:
-    Server();
-    QList<ClientInfo> clients() const;
-    QString errorString() const { return _tcpServer.errorString(); }
-    int maxClientsCount() const { return _maxClientsCount; }
-    int playersCount() const;
-    void start(int maxClientsCount, quint16 port);
-
-private:
     void sendPlayersList();
     void sendToAll(const Message &);
 
 private slots:
-    void stop();
+    void clear();
     void removeClient(RemoteClient *);
 
     //from timer
@@ -51,7 +41,17 @@ private slots:
     void remoteTryToConnectMessageReceive(TryToConnectMessage, RemoteClient *);
     void remoteTurnMessageReceive(TurnMessage, RemoteClient *);
 
+public:
+    Server();
+    QList<ClientInfo> clients() const;
+    QString errorString() const { return _tcpServer.errorString(); }
+    int maxClientsCount() const { return _maxClientsCount; }
+    int playersCount() const;
+    void start(int maxClientsCount, quint16 port);
+
 public slots:
+    void stop();
+
     //from app
     void startGame();
     void restartGame(QList<ClientInfo>);

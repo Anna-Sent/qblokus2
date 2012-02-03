@@ -16,8 +16,8 @@ Server::Server() : _isGameStarted(false)
     connect(this, SIGNAL(finished()), &_timer, SLOT(stop()));
     connect(this, SIGNAL(terminated()), &_timer, SLOT(stop()));
 
-    connect(this, SIGNAL(finished()), this, SLOT(stop()));
-    connect(this, SIGNAL(terminated()), this, SLOT(stop()));
+    connect(this, SIGNAL(finished()), this, SLOT(clear()));
+    connect(this, SIGNAL(terminated()), this, SLOT(clear()));
 }
 
 QList<ClientInfo> Server::clients() const
@@ -118,6 +118,14 @@ void Server::start(int maxClientsCount, quint16 port)
 }
 
 void Server::stop()
+{
+    if (isRunning())
+    {
+        quit();
+    }
+}
+
+void Server::clear()
 {
     _clients.clear();
     _tcpServer.close();

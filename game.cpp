@@ -20,6 +20,10 @@ Game::Game(QWidget* widget)
 
     this->widget = widget;
     clear();
+
+    connect(this, SIGNAL(destroyed()), this, SLOT(clear()));
+    connect(this, SIGNAL(destroyed()), tablescene, SLOT(deleteLater()));
+    connect(this, SIGNAL(destroyed()), table, SLOT(deleteLater()));
 }
 
 void Game::addPlayer(QString name, QColor color, PlayerType type)
@@ -167,13 +171,6 @@ void Game::playerRetired()
     {
         surrender->setEnabled(false);
     }
-}
-
-Game::~Game()
-{
-    clear();
-    tablescene->deleteLater();
-    table->deleteLater();
 }
 
 void Game::clear()

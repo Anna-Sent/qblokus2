@@ -12,7 +12,6 @@ class App : public QMainWindow, public Ui::MainWindow {
 
 public:
     App(QWidget *parent = 0);
-    ~App();
 
 private:
     Game *_game;
