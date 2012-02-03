@@ -376,7 +376,7 @@ void App::finishGame(QList<ClientInfo> winners, int score)
             str += names[i] + ", ";
         }
 
-        str += winners[count - 1];
+        str += names[count - 1];
         msgBox.setText(QString::fromUtf8("The winners are ") + str
                        + QString::fromUtf8(" with score ") + QString::number(score));
     }
