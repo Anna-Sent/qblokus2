@@ -13,7 +13,7 @@ protected:
     void deactivateAll();
 
 private:
-    Table *tbl;
+    Table *_table;
 
 public:
     NetworkPlayer(const QColor &color,

@@ -3,11 +3,11 @@
 NetworkPlayer::NetworkPlayer(const QColor &color,
                              const QString &name,
                              Table *table,
-                             int wid,
-                             int hei,
+                             int width,
+                             int height,
                              QGraphicsItem *parent,
                              QGraphicsScene *scene)
-    : Player(color, name, wid, hei, parent, scene), tbl(table)
+    : Player(color, name, width, height, parent, scene), _table(table)
 {
 }
 
@@ -30,7 +30,7 @@ void NetworkPlayer::turnComplete(QColor color, QString tile, int item, int x, in
         return;
     }
 
-    Tile til(tile.toStdString());
-    Player::turnComplete(color, tile, item, x, y);
-    tbl->accept(x, y, til, item, true, false, color);
+    turnComplete(color, tile, item, x, y);
+    Tile t(tile.toStdString());
+    _table->accept(x, y, t, item, true, false, color);
 }

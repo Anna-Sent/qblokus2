@@ -2,10 +2,10 @@
 
 LocalPlayer::LocalPlayer(const QColor &color,
                          const QString &name,
-                         int wid,
-                         int hei,
+                         int width,
+                         int height,
                          QGraphicsItem *parent,
                          QGraphicsScene *scene)
-    : Player(color, name, wid, hei, parent, scene)
+    : Player(color, name, width, height, parent, scene)
 {
 }
