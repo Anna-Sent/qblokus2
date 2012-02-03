@@ -300,7 +300,7 @@ void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
     }
     else
     {
-        //merge
+        // merge
         int pl = 0, cl = 0;
         while(pl < players.size() || cl < clients.size())
         {
