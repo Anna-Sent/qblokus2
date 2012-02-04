@@ -25,6 +25,11 @@ void ClientInfo::fill(const char *data)
     ::memmove(&_color, data, sizeof(QColor));
 }
 
+bool operator==(const ClientInfo &a1,const ClientInfo &a2)
+{
+    return a1.name() == a2.name() && a1.color() == a2.color();
+}
+
 QDataStream &operator<<(QDataStream &out, const ClientInfo &ci)
 {
     out << ci.name() << ci.color();

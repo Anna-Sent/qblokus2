@@ -26,7 +26,8 @@ public:
 Q_DECLARE_METATYPE(ClientInfo)
 Q_DECLARE_METATYPE(QList<ClientInfo>)
 
-QDataStream &operator<<(QDataStream &out, const ClientInfo& ci);
-QDataStream &operator>>(QDataStream &in, ClientInfo& ci);
+bool operator==(const ClientInfo &, const ClientInfo &);
+QDataStream &operator<<(QDataStream &, const ClientInfo &);
+QDataStream &operator>>(QDataStream &, ClientInfo &);
 
 #endif

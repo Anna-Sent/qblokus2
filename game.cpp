@@ -246,11 +246,6 @@ void Game::winner(Player *winner)
     emit gameOver(clients, winner->score());
 }
 
-bool operator==(const ClientInfo &a1,const ClientInfo &a2)
-{
-    return a1.name() == a2.name() && a1.color() == a2.color();
-}
-
 void Game::retirePlayer(int i)
 {
     if (players[i]->isSurrendered())
