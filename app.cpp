@@ -351,7 +351,7 @@ void App::finishGame(QList<ClientInfo> winners, int score)
 {
     if (_server.isRunning())
     {
-        _server.finishGame();
+        _server.stopGame();
     }
 
     int count = winners.count();
