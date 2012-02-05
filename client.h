@@ -24,9 +24,9 @@ public:
     QString name() const        { return _info.name(); }
 
 public slots:
-    void sendTurnMessage(QString name, QColor color, QString tile, int id, int x, int y);
     void sendChatMessage(QString text);
     void sendSurrenderMessage(QString name, QColor color);
+    void sendTurnMessage(QString name, QColor color, QString tile, int id, int x, int y);
 
     void start(const QColor &color, const QString &name, const QString &hostname, quint16 port);
     void stop();
@@ -77,30 +77,30 @@ private:
 
 public:
     RemoteClient(QTcpSocket *);
-    QColor  color() const                   { return _info.color(); }
-    int     elapsedSinceLastPing() const    { return _lastPingTime.elapsed(); }
-    const   ClientInfo &info() const        { return _info; }
-    bool    isConnectedToGame() const       { return _state == 2; }
-    QString name() const                    { return _info.name(); }
+    QColor              color() const                   { return _info.color(); }
+    int                 elapsedSinceLastPing() const    { return _lastPingTime.elapsed(); }
+    const ClientInfo   &info() const                    { return _info; }
+    bool                isConnectedToGame() const       { return _state == 2; }
+    QString             name() const                    { return _info.name(); }
 
 public slots:
+    void sendMessage(const Message &msg);
     void setConnectedToGame(const QString &name, const QColor &color);
     void setDisconnectedFromGame();
-    void sendMessage(const Message &msg);
 
 private slots:
-    void receiveChatMessage(ChatMessage);
     void processDisconnectedSocket();
     void processSocketError(QAbstractSocket::SocketError);
+    void receiveChatMessage(ChatMessage);
     void receivePingMessage(PingMessage);
     void receiveSurrenderMessage(SurrenderMessage);
     void receiveTryToConnectMessage(TryToConnectMessage);
     void receiveTurnMessage(TurnMessage);
 
 signals:
-    void chatMessageReceived(ChatMessage,RemoteClient*);
-    void disconnected(RemoteClient*);
-    void errorOccurred(RemoteClient*);
+    void chatMessageReceived(ChatMessage, RemoteClient *);
+    void disconnected(RemoteClient *);
+    void errorOccurred(RemoteClient *);
     void surrenderMessageReceived(SurrenderMessage, RemoteClient *);
     void tryToConnectMessageReceived(TryToConnectMessage, RemoteClient *);
     void turnMessageReceived(TurnMessage, RemoteClient *);
