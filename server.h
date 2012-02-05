@@ -32,7 +32,7 @@ private slots:
     void receiveServerRequestMessage(ServerRequestMessage, const QHostAddress &, quint16);
 
     // from tcpserver
-    void newConnection();
+    void processNewConnection();
 
     // from remote client
     void processClientDisconnected(RemoteClient *);

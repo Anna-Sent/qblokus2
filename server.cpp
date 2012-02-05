@@ -5,7 +5,7 @@
 
 Server::Server() : _isGameStarted(false)
 {
-    connect(&_tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
+    connect(&_tcpServer, SIGNAL(newConnection()), this, SLOT(processNewConnection()));
 
     _messageReceiver = new UdpMessageReceiver(&_listener);
     connect(_messageReceiver, SIGNAL(serverRequestMessageReceived(ServerRequestMessage, const QHostAddress &, quint16)), this, SLOT(receiveServerRequestMessage(ServerRequestMessage, const QHostAddress &, quint16)));
@@ -223,7 +223,7 @@ void Server::receiveTurnMessage(TurnMessage msg, RemoteClient *)
     sendToAll(msg);
 }
 
-void Server::newConnection()
+void Server::processNewConnection()
 {
     if (_tcpServer.hasPendingConnections())
     {
