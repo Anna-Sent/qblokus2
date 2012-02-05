@@ -32,7 +32,7 @@ public slots:
     void stop();
 
 private slots:
-    void processDisconnectedSocket();
+    void processSocketDisconnected();
     void processSocketError(QAbstractSocket::SocketError);
 
     void receiveChatMessage(ChatMessage);
@@ -89,7 +89,7 @@ public slots:
     void setDisconnectedFromGame();
 
 private slots:
-    void processDisconnectedSocket();
+    void processSocketDisconnected();
     void processSocketError(QAbstractSocket::SocketError);
     void receiveChatMessage(ChatMessage);
     void receivePingMessage(PingMessage);

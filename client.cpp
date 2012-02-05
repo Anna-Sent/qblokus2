@@ -19,7 +19,7 @@ LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime
     connect(_messageReceiver, SIGNAL(serverReadyMessageReceived(ServerReadyMessage)), this, SLOT(receiveServerReadyMessage(ServerReadyMessage)));
     connect(_messageReceiver, SIGNAL(surrenderMessageReceived(SurrenderMessage)), this, SLOT(receiveSurrenderMessage(SurrenderMessage)));
     connect(_messageReceiver, SIGNAL(turnMessageReceived(TurnMessage)), this, SLOT(receiveTurnMessage(TurnMessage)));
-    connect(_socket, SIGNAL(disconnected()), this, SLOT(processDisconnectedSocket()), Qt::QueuedConnection);
+    connect(_socket, SIGNAL(disconnected()), this, SLOT(processSocketDisconnected()), Qt::QueuedConnection);
     connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(processSocketError(QAbstractSocket::SocketError)));
 
     connect(this, SIGNAL(destroyed()), this, SLOT(stop()));
@@ -123,7 +123,7 @@ void LocalClient::receiveTurnMessage(TurnMessage msg)
     emit turnMessageReceived(msg.color(), msg.x(), msg.y(), msg.id(), msg.mask());
 }
 
-void LocalClient::processDisconnectedSocket()
+void LocalClient::processSocketDisconnected()
 {
     if (_isStarted)
     {
@@ -179,7 +179,7 @@ RemoteClient::RemoteClient(QTcpSocket *s) : _lastPingTime(QTime::currentTime()),
     connect(_messageReceiver, SIGNAL(surrenderMessageReceived(SurrenderMessage)), this, SLOT(receiveSurrenderMessage(SurrenderMessage)));
     connect(_messageReceiver, SIGNAL(tryToConnectMessageReceived(TryToConnectMessage)), this, SLOT(receiveTryToConnectMessage(TryToConnectMessage)));
     connect(_messageReceiver, SIGNAL(turnMessageReceived(TurnMessage)), this, SLOT(receiveTurnMessage(TurnMessage)));
-    connect(_socket, SIGNAL(disconnected()), this, SLOT(processDisconnectedSocket()), Qt::QueuedConnection);
+    connect(_socket, SIGNAL(disconnected()), this, SLOT(processSocketDisconnected()), Qt::QueuedConnection);
     connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(processSocketError(QAbstractSocket::SocketError)));
     connect(this, SIGNAL(destroyed()), this, SLOT(setDisconnectedFromGame()));
     connect(this, SIGNAL(destroyed()), _messageReceiver, SLOT(deleteLater()));
@@ -210,7 +210,7 @@ void RemoteClient::sendMessage(const Message &msg)
     msg.send(_socket);
 }
 
-void RemoteClient::processDisconnectedSocket()
+void RemoteClient::processSocketDisconnected()
 {
     if (_state != STATE_DISCONNECTED_FROM_SERVER)
     {
