@@ -52,9 +52,9 @@ App::App(QWidget *parent)
 
     _game = new Game(this);
     connect(_game, SIGNAL(turnCompleted(QString,QColor,QString,int,int,int)),
-            &_localClient, SLOT(doTurn(QString,QColor,QString,int,int,int)));
+            &_localClient, SLOT(sendTurnMessage(QString,QColor,QString,int,int,int)));
     connect(_game, SIGNAL(playerRetired(QString,QColor)),
-            &_localClient, SLOT(surrender(QString,QColor)));
+            &_localClient, SLOT(sendSurrenderMessage(QString,QColor)));
     connect(_game, SIGNAL(gameOver(QList<ClientInfo>, int)), this, SLOT(finishGame(QList<ClientInfo>, int)));
 
     connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
@@ -128,7 +128,7 @@ void App::userSendMessage()
     QString text = lineEdit->text();
     if (text != "")
     {
-        _localClient.sendMessage(text);
+        _localClient.sendChatMessage(text);
     }
 }
 
@@ -178,12 +178,13 @@ void App::userTryToConnect()
     }
     else
     {
+        QColor color;
         switch (cbColor->currentIndex())
         {
-        case 0:     _localClient.setColor(Qt::red); break;
-        case 1:     _localClient.setColor(Qt::darkYellow); break;
-        case 2:     _localClient.setColor(Qt::green); break;
-        case 3:     _localClient.setColor(Qt::blue); break;
+        case 0:     color = Qt::red; break;
+        case 1:     color = Qt::darkYellow; break;
+        case 2:     color = Qt::green; break;
+        case 3:     color = Qt::blue; break;
         default:    QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
                     "Incorrect color")); return;
         }
@@ -228,8 +229,7 @@ void App::userTryToConnect()
             }
         }
 
-        _localClient.setNickname(leNickname->text());
-        _localClient.start(hostname, port);
+        _localClient.start(color, leNickname->text(), hostname, port);
     }
 }
 
@@ -304,7 +304,7 @@ void App::playersListMessageReceived(QList<ClientInfo> list)
         item->setForeground(brush);
         item->setText(list[i].name());
         lwPlayersList->addItem(item);
-        isLocal.append(list[i].name() == _localClient.nickname()
+        isLocal.append(list[i].name() == _localClient.name()
                        && list[i].color() == _localClient.color());
     }
 
@@ -317,7 +317,7 @@ void App::startGameMessageReceived(QList<ClientInfo> list)
     QList<bool> isLocal;
     for (int i = 0; i < list.size(); ++i)
     {
-        isLocal.append(list[i].name() == _localClient.nickname()
+        isLocal.append(list[i].name() == _localClient.name()
                        && list[i].color() == _localClient.color());
     }
 
