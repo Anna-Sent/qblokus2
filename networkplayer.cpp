@@ -29,7 +29,7 @@ void NetworkPlayer::turnComplete(QColor color, QString tile, int item, int x, in
         return;
     }
 
-    turnComplete(color, tile, item, x, y);
+    Player::turnComplete(color, tile, item, x, y);
     Tile t(tile.toStdString());
     _table->accept(x, y, t, item, true, false, color);
 }
