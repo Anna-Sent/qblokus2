@@ -7,10 +7,6 @@ TcpMessageReceiver::TcpMessageReceiver(QTcpSocket *socket)
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 }
 
-TcpMessageReceiver::~TcpMessageReceiver()
-{
-}
-
 void TcpMessageReceiver::readyRead()
 {
     int avail = socket->bytesAvailable();
@@ -60,10 +56,6 @@ UdpMessageReceiver::UdpMessageReceiver(QUdpSocket *socket)
 {
     this->socket = socket;
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
-}
-
-UdpMessageReceiver::~UdpMessageReceiver()
-{
 }
 
 void UdpMessageReceiver::readyRead()

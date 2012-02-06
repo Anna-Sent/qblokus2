@@ -15,25 +15,24 @@ private:
     QTcpSocket *socket;
     void processData();
 
-public:
-    TcpMessageReceiver(QTcpSocket *);
-    ~TcpMessageReceiver();
-
 private slots:
     void readyRead();
 
+public:
+    TcpMessageReceiver(QTcpSocket *);
+
 signals:
-    void chatMessageReceived(ChatMessage);
-    void clientConnectMessageReceived(ClientConnectMessage);
-    void clientDisconnectMessageReceived(ClientDisconnectMessage);
-    void connectionAcceptedMessageReceived(ConnectionAcceptedMessage);
-    void pingMessageReceived(PingMessage);
-    void playersListMessageReceived(PlayersListMessage);
-    void startGameMessageReceived(StartGameMessage);
-    void serverReadyMessageReceived(ServerReadyMessage);
-    void surrenderMessageReceived(SurrenderMessage);
-    void tryToConnectMessageReceived(TryToConnectMessage);
-    void turnMessageReceived(TurnMessage);
+    void chatMessageReceived(const ChatMessage &);
+    void clientConnectMessageReceived(const ClientConnectMessage &);
+    void clientDisconnectMessageReceived(const ClientDisconnectMessage &);
+    void connectionAcceptedMessageReceived(const ConnectionAcceptedMessage &);
+    void pingMessageReceived(const PingMessage &);
+    void playersListMessageReceived(const PlayersListMessage &);
+    void startGameMessageReceived(const StartGameMessage &);
+    void serverReadyMessageReceived(const ServerReadyMessage &);
+    void surrenderMessageReceived(const SurrenderMessage &);
+    void tryToConnectMessageReceived(const TryToConnectMessage &);
+    void turnMessageReceived(const TurnMessage &);
 };
 
 class UdpMessageReceiver : public QObject
@@ -44,16 +43,15 @@ private:
     QUdpSocket *socket;
     void processData(QByteArray &, const QHostAddress &, quint16);
 
-public:
-    UdpMessageReceiver(QUdpSocket *);
-    ~UdpMessageReceiver();
-
 private slots:
     void readyRead();
 
+public:
+    UdpMessageReceiver(QUdpSocket *);
+
 signals:
-    void serverInfoMessageReceived(ServerInfoMessage, const QHostAddress &, quint16);
-    void serverRequestMessageReceived(ServerRequestMessage, const QHostAddress &, quint16);
+    void serverInfoMessageReceived(const ServerInfoMessage &, const QHostAddress &, quint16);
+    void serverRequestMessageReceived(const ServerRequestMessage &, const QHostAddress &, quint16);
 };
 
 #endif

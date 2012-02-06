@@ -8,7 +8,7 @@ Server::Server() : _isGameStarted(false)
     connect(&_tcpServer, SIGNAL(newConnection()), this, SLOT(processNewConnection()));
 
     _messageReceiver = new UdpMessageReceiver(&_listener);
-    connect(_messageReceiver, SIGNAL(serverRequestMessageReceived(ServerRequestMessage, const QHostAddress &, quint16)), this, SLOT(receiveServerRequestMessage(ServerRequestMessage, const QHostAddress &, quint16)));
+    connect(_messageReceiver, SIGNAL(serverRequestMessageReceived(const ServerRequestMessage &, const QHostAddress &, quint16)), this, SLOT(receiveServerRequestMessage(const ServerRequestMessage &, const QHostAddress &, quint16)));
     connect(this, SIGNAL(destroyed()), _messageReceiver, SLOT(deleteLater()));
 
     _timer.setInterval(PING_INTERVAL);
@@ -154,17 +154,17 @@ void Server::processClientError(RemoteClient *)
 {
 }
 
-void Server::receiveChatMessage(ChatMessage msg, RemoteClient *)
+void Server::receiveChatMessage(const ChatMessage &msg, RemoteClient *)
 {
     sendToAll(msg);
 }
 
-void Server::receiveSurrenderMessage(SurrenderMessage msg, RemoteClient *)
+void Server::receiveSurrenderMessage(const SurrenderMessage &msg, RemoteClient *)
 {
     sendToAll(msg);
 }
 
-void Server::receiveTryToConnectMessage(TryToConnectMessage msg, RemoteClient *client)
+void Server::receiveTryToConnectMessage(const TryToConnectMessage &msg, RemoteClient *client)
 {
     int i, error = 0;
     if (_clients.size() >= MAX_CONNECTIONS_COUNT)
@@ -206,11 +206,11 @@ void Server::receiveTryToConnectMessage(TryToConnectMessage msg, RemoteClient *c
     }
     else
     {
-        connect(client, SIGNAL(chatMessageReceived(ChatMessage, RemoteClient *)), this, SLOT(receiveChatMessage(ChatMessage, RemoteClient *)));
+        connect(client, SIGNAL(chatMessageReceived(const ChatMessage &, RemoteClient *)), this, SLOT(receiveChatMessage(const ChatMessage &, RemoteClient *)));
         connect(client, SIGNAL(disconnected(RemoteClient *)), this, SLOT(processClientDisconnected(RemoteClient *)));
         connect(client, SIGNAL(errorOccurred(RemoteClient *)), this, SLOT(processClientError(RemoteClient *)));
-        connect(client, SIGNAL(surrenderMessageReceived(SurrenderMessage, RemoteClient *)), this, SLOT(receiveSurrenderMessage(SurrenderMessage, RemoteClient *)));
-        connect(client, SIGNAL(turnMessageReceived(TurnMessage, RemoteClient *)), this, SLOT(receiveTurnMessage(TurnMessage, RemoteClient *)));
+        connect(client, SIGNAL(surrenderMessageReceived(const SurrenderMessage &, RemoteClient *)), this, SLOT(receiveSurrenderMessage(const SurrenderMessage &, RemoteClient *)));
+        connect(client, SIGNAL(turnMessageReceived(const TurnMessage &, RemoteClient *)), this, SLOT(receiveTurnMessage(const TurnMessage &, RemoteClient *)));
         client->setConnectedToGame(msg.name(), msg.color());
         ClientConnectMessage msg1(msg.name(), msg.color());
         sendToAll(msg1);
@@ -218,7 +218,7 @@ void Server::receiveTryToConnectMessage(TryToConnectMessage msg, RemoteClient *c
     }
 }
 
-void Server::receiveTurnMessage(TurnMessage msg, RemoteClient *)
+void Server::receiveTurnMessage(const TurnMessage &msg, RemoteClient *)
 {
     sendToAll(msg);
 }
@@ -237,7 +237,7 @@ void Server::processNewConnection()
 
         RemoteClient *client = new RemoteClient(s);
         connect(client, SIGNAL(disconnected(RemoteClient *)), this, SLOT(removeClient(RemoteClient *)));
-        connect(client, SIGNAL(tryToConnectMessageReceived(TryToConnectMessage, RemoteClient *)), this, SLOT(receiveTryToConnectMessage(TryToConnectMessage, RemoteClient *)));
+        connect(client, SIGNAL(tryToConnectMessageReceived(const TryToConnectMessage &, RemoteClient *)), this, SLOT(receiveTryToConnectMessage(const TryToConnectMessage &, RemoteClient *)));
         connect(this, SIGNAL(finished()), client, SLOT(setDisconnectedFromGame()));
         connect(this, SIGNAL(finished()), client, SLOT(deleteLater()));
         connect(this, SIGNAL(terminated()), client, SLOT(setDisconnectedFromGame()));
@@ -248,7 +248,7 @@ void Server::processNewConnection()
     }
 }
 
-void Server::receiveServerRequestMessage(ServerRequestMessage, const QHostAddress &host, quint16 port)
+void Server::receiveServerRequestMessage(const ServerRequestMessage &, const QHostAddress &host, quint16 port)
 {
     ServerInfoMessage msg(clients());
     msg.send(&_listener, host, port);

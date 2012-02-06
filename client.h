@@ -35,16 +35,16 @@ private slots:
     void processSocketDisconnected();
     void processSocketError(QAbstractSocket::SocketError);
 
-    void receiveChatMessage(ChatMessage);
-    void receiveClientConnectMessage(ClientConnectMessage);
-    void receiveClientDisconnectMessage(ClientDisconnectMessage);
-    void receiveConnectionAcceptedMessage(ConnectionAcceptedMessage);
-    void receivePingMessage(PingMessage);
-    void receivePlayersListMessage(PlayersListMessage);
-    void receiveStartGameMessage(StartGameMessage);
-    void receiveServerReadyMessage(ServerReadyMessage);
-    void receiveSurrenderMessage(SurrenderMessage);
-    void receiveTurnMessage(TurnMessage);
+    void receiveChatMessage(const ChatMessage &);
+    void receiveClientConnectMessage(const ClientConnectMessage &);
+    void receiveClientDisconnectMessage(const ClientDisconnectMessage &);
+    void receiveConnectionAcceptedMessage(const ConnectionAcceptedMessage &);
+    void receivePingMessage(const PingMessage &);
+    void receivePlayersListMessage(const PlayersListMessage &);
+    void receiveStartGameMessage(const StartGameMessage &);
+    void receiveServerReadyMessage(const ServerReadyMessage &);
+    void receiveSurrenderMessage(const SurrenderMessage &);
+    void receiveTurnMessage(const TurnMessage &);
 
     void timeout();
 
@@ -90,19 +90,19 @@ public slots:
 private slots:
     void processSocketDisconnected();
     void processSocketError(QAbstractSocket::SocketError);
-    void receiveChatMessage(ChatMessage);
-    void receivePingMessage(PingMessage);
-    void receiveSurrenderMessage(SurrenderMessage);
-    void receiveTryToConnectMessage(TryToConnectMessage);
-    void receiveTurnMessage(TurnMessage);
+    void receiveChatMessage(const ChatMessage &);
+    void receivePingMessage(const PingMessage &);
+    void receiveSurrenderMessage(const SurrenderMessage &);
+    void receiveTryToConnectMessage(const TryToConnectMessage &);
+    void receiveTurnMessage(const TurnMessage &);
 
 signals:
-    void chatMessageReceived(ChatMessage, RemoteClient *);
+    void chatMessageReceived(const ChatMessage &, RemoteClient *);
     void disconnected(RemoteClient *);
     void errorOccurred(RemoteClient *);
-    void surrenderMessageReceived(SurrenderMessage, RemoteClient *);
-    void tryToConnectMessageReceived(TryToConnectMessage, RemoteClient *);
-    void turnMessageReceived(TurnMessage, RemoteClient *);
+    void surrenderMessageReceived(const SurrenderMessage &, RemoteClient *);
+    void tryToConnectMessageReceived(const TryToConnectMessage &, RemoteClient *);
+    void turnMessageReceived(const TurnMessage &, RemoteClient *);
 };
 
 #endif

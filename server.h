@@ -29,7 +29,7 @@ private slots:
     void ping();
 
     // from message receiver
-    void receiveServerRequestMessage(ServerRequestMessage, const QHostAddress &, quint16);
+    void receiveServerRequestMessage(const ServerRequestMessage &, const QHostAddress &, quint16);
 
     // from tcpserver
     void processNewConnection();
@@ -37,10 +37,10 @@ private slots:
     // from remote client
     void processClientDisconnected(RemoteClient *);
     void processClientError(RemoteClient *);
-    void receiveChatMessage(ChatMessage, RemoteClient *);
-    void receiveSurrenderMessage(SurrenderMessage, RemoteClient *);
-    void receiveTryToConnectMessage(TryToConnectMessage, RemoteClient *);
-    void receiveTurnMessage(TurnMessage, RemoteClient *);
+    void receiveChatMessage(const ChatMessage &, RemoteClient *);
+    void receiveSurrenderMessage(const SurrenderMessage &, RemoteClient *);
+    void receiveTryToConnectMessage(const TryToConnectMessage &, RemoteClient *);
+    void receiveTurnMessage(const TurnMessage &, RemoteClient *);
 
 public:
     Server();

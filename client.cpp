@@ -9,7 +9,7 @@ LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime
 {
     _socket = new QTcpSocket;
     _messageReceiver = new TcpMessageReceiver(_socket);
-    connect(_messageReceiver, SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(receiveChatMessage(ChatMessage)));
+    connect(_messageReceiver, SIGNAL(chatMessageReceived(const ChatMessage &)), this, SLOT(receiveChatMessage(const ChatMessage &)));
     connect(_messageReceiver, SIGNAL(clientConnectMessageReceived(ClientConnectMessage)), this, SLOT(receiveClientConnectMessage(ClientConnectMessage)));
     connect(_messageReceiver, SIGNAL(clientDisconnectMessageReceived(ClientDisconnectMessage)), this, SLOT(receiveClientDisconnectMessage(ClientDisconnectMessage)));
     connect(_messageReceiver, SIGNAL(connectionAcceptedMessageReceived(ConnectionAcceptedMessage)), this, SLOT(receiveConnectionAcceptedMessage(ConnectionAcceptedMessage)));
@@ -53,22 +53,22 @@ void LocalClient::stop()
     }
 }
 
-void LocalClient::receiveChatMessage(ChatMessage msg)
+void LocalClient::receiveChatMessage(const ChatMessage &msg)
 {
     emit chatMessageReceived(msg.name(), msg.color(), msg.text());
 }
 
-void LocalClient::receiveClientConnectMessage(ClientConnectMessage msg)
+void LocalClient::receiveClientConnectMessage(const ClientConnectMessage &msg)
 {
     emit clientConnectMessageReceived(msg.name(), msg.color());
 }
 
-void LocalClient::receiveClientDisconnectMessage(ClientDisconnectMessage msg)
+void LocalClient::receiveClientDisconnectMessage(const ClientDisconnectMessage &msg)
 {
     emit clientDisconnectMessageReceived(msg.name(), msg.color());
 }
 
-void LocalClient::receiveConnectionAcceptedMessage(ConnectionAcceptedMessage msg)
+void LocalClient::receiveConnectionAcceptedMessage(const ConnectionAcceptedMessage &msg)
 {
     if (msg.errorCode() == 0)
     {
@@ -92,34 +92,34 @@ void LocalClient::receiveConnectionAcceptedMessage(ConnectionAcceptedMessage msg
     }
 }
 
-void LocalClient::receivePingMessage(PingMessage msg)
+void LocalClient::receivePingMessage(const PingMessage &msg)
 {
     msg.send(_socket);
     _lastPingTime.start();
 }
 
-void LocalClient::receivePlayersListMessage(PlayersListMessage msg)
+void LocalClient::receivePlayersListMessage(const PlayersListMessage &msg)
 {
     emit playersListMessageReceived(msg.list());
 }
 
-void LocalClient::receiveStartGameMessage(StartGameMessage msg)
+void LocalClient::receiveStartGameMessage(const StartGameMessage &msg)
 {
     emit startGameMessageReceived(msg.list());
 }
 
-void LocalClient::receiveServerReadyMessage(ServerReadyMessage)
+void LocalClient::receiveServerReadyMessage(const ServerReadyMessage &)
 {
     TryToConnectMessage msg(_info);
     msg.send(_socket);
 }
 
-void LocalClient::receiveSurrenderMessage(SurrenderMessage msg)
+void LocalClient::receiveSurrenderMessage(const SurrenderMessage &msg)
 {
     emit surrenderMessageReceived(msg.name(), msg.color());
 }
 
-void LocalClient::receiveTurnMessage(TurnMessage msg)
+void LocalClient::receiveTurnMessage(const TurnMessage &msg)
 {
     emit turnMessageReceived(msg.color(), msg.x(), msg.y(), msg.id(), msg.mask());
 }
@@ -173,7 +173,7 @@ RemoteClient::RemoteClient(QTcpSocket *s) : _lastPingTime(QTime::currentTime()),
 {
     _socket = s;
     _messageReceiver = new TcpMessageReceiver(s);
-    connect(_messageReceiver, SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(receiveChatMessage(ChatMessage)));
+    connect(_messageReceiver, SIGNAL(chatMessageReceived(const ChatMessage &)), this, SLOT(receiveChatMessage(const ChatMessage &)));
     connect(_messageReceiver, SIGNAL(pingMessageReceived(PingMessage)), this, SLOT(receivePingMessage(PingMessage)));
     connect(_messageReceiver, SIGNAL(surrenderMessageReceived(SurrenderMessage)), this, SLOT(receiveSurrenderMessage(SurrenderMessage)));
     connect(_messageReceiver, SIGNAL(tryToConnectMessageReceived(TryToConnectMessage)), this, SLOT(receiveTryToConnectMessage(TryToConnectMessage)));
@@ -226,27 +226,27 @@ void RemoteClient::processSocketError(QAbstractSocket::SocketError)
     emit errorOccurred(this);
 }
 
-void RemoteClient::receiveChatMessage(ChatMessage msg)
+void RemoteClient::receiveChatMessage(const ChatMessage &msg)
 {
     emit chatMessageReceived(msg, this);
 }
 
-void RemoteClient::receivePingMessage(PingMessage)
+void RemoteClient::receivePingMessage(const PingMessage &)
 {
     _lastPingTime.start();
 }
 
-void RemoteClient::receiveSurrenderMessage(SurrenderMessage msg)
+void RemoteClient::receiveSurrenderMessage(const SurrenderMessage &msg)
 {
     emit surrenderMessageReceived(msg, this);
 }
 
-void RemoteClient::receiveTurnMessage(TurnMessage msg)
+void RemoteClient::receiveTurnMessage(const TurnMessage &msg)
 {
     emit turnMessageReceived(msg, this);
 }
 
-void RemoteClient::receiveTryToConnectMessage(TryToConnectMessage msg)
+void RemoteClient::receiveTryToConnectMessage(const TryToConnectMessage &msg)
 {
     emit tryToConnectMessageReceived(msg, this);
 }
