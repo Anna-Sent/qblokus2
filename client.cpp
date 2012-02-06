@@ -39,6 +39,7 @@ void LocalClient::start(const QColor &color, const QString &name, const QString 
         _isStarted = true;
         _socket->connectToHost(hostname, port);
         _localTimer.start();
+        _lastPingTime.start();
     }
 }
 
@@ -138,7 +139,6 @@ void LocalClient::processSocketError(QAbstractSocket::SocketError)
 {
     stop();
     emit errorOccurred(_socket->errorString());
-    emit errorOccurred();
 }
 
 void LocalClient::sendChatMessage(QString text)
@@ -166,7 +166,6 @@ void LocalClient::timeout()
     {
         stop();
         emit errorOccurred(QString::fromUtf8("Ping timeout"));
-        emit errorOccurred();
     }
 }
 
@@ -184,6 +183,7 @@ RemoteClient::RemoteClient(QTcpSocket *s) : _lastPingTime(QTime::currentTime()),
     connect(this, SIGNAL(destroyed()), this, SLOT(setDisconnectedFromGame()));
     connect(this, SIGNAL(destroyed()), _messageReceiver, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), _socket, SLOT(deleteLater()));
+    _lastPingTime.start();
 }
 
 void RemoteClient::setConnectedToGame(const QString &name, const QColor &color)

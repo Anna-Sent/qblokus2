@@ -52,7 +52,6 @@ signals:
     void connectionAccepted();
     void connectionRejected(const QString &);
     void disconnected();
-    void errorOccurred();
     void errorOccurred(QString);
 
     void chatMessageReceived(QString, QColor, QString);
