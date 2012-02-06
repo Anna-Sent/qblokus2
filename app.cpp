@@ -11,41 +11,41 @@ App::App(QWidget *parent)
     setTabOrder();
 
     // from local client
-    connect(&_localClient, SIGNAL(errorOccurred(QString)), this, SLOT(perror(QString)));
-    connect(&_localClient, SIGNAL(errorOccurred()), &_serversSearcher, SLOT(start()));
     connect(&_localClient, SIGNAL(connectionAccepted()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(connectionAccepted()), lwServersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(connectionAccepted()), &_serversSearcher, SLOT(stop()));
-    connect(&_localClient, SIGNAL(connectionAccepted()), this, SLOT(connectionAccepted()));
+    connect(&_localClient, SIGNAL(connectionAccepted()), this, SLOT(acceptConnection()));
     connect(&_localClient, SIGNAL(connectionRejected(const QString &)), this, SLOT(perror(const QString &)));
-    connect(&_localClient, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
-    connect(&_localClient, SIGNAL(disconnected()), lwServersList, SLOT(clear()));
+    connect(&_localClient, SIGNAL(disconnected()), this, SLOT(processClientDisconnected()));
     connect(&_localClient, SIGNAL(disconnected()), lwPlayersList, SLOT(clear()));
+    connect(&_localClient, SIGNAL(disconnected()), lwServersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(disconnected()), &_serversSearcher, SLOT(start()));
-    connect(&_localClient, SIGNAL(chatMessageReceived(QString, QColor, QString)), this, SLOT(chatMessageReceived(QString, QColor, QString)));
-    connect(&_localClient, SIGNAL(clientConnectMessageReceived(QString, QColor)), this, SLOT(clientConnectMessageReceived(QString, QColor)));
-    connect(&_localClient, SIGNAL(clientDisconnectMessageReceived(QString, QColor)), this, SLOT(clientDisconnectMessageReceived(QString, QColor)));
-    connect(&_localClient, SIGNAL(turnMessageReceived(QColor, int, int, int, QString)), this, SLOT(turnMessageReceived(QColor, int, int, int, QString)));
-    connect(&_localClient, SIGNAL(playersListMessageReceived(QList<ClientInfo>)), this, SLOT(playersListMessageReceived(QList<ClientInfo>)));
-    connect(&_localClient, SIGNAL(startGameMessageReceived(QList<ClientInfo>)), this, SLOT(startGameMessageReceived(QList<ClientInfo>)));
-    connect(&_localClient, SIGNAL(surrenderMessageReceived(QString, QColor)), this, SLOT(surrenderMessageReceived(QString, QColor)));
+    connect(&_localClient, SIGNAL(errorOccurred()), &_serversSearcher, SLOT(start()));
+    connect(&_localClient, SIGNAL(errorOccurred(QString)), this, SLOT(perror(QString)));
+    connect(&_localClient, SIGNAL(chatMessageReceived(QString, QColor, QString)), this, SLOT(receiveChatMessage(QString, QColor, QString)));
+    connect(&_localClient, SIGNAL(clientConnectMessageReceived(QString, QColor)), this, SLOT(receiveClientConnectMessage(QString, QColor)));
+    connect(&_localClient, SIGNAL(clientDisconnectMessageReceived(QString, QColor)), this, SLOT(receiveClientDisconnectMessage(QString, QColor)));
+    connect(&_localClient, SIGNAL(turnMessageReceived(QColor, int, int, int, QString)), this, SLOT(receiveTurnMessage(QColor, int, int, int, QString)));
+    connect(&_localClient, SIGNAL(playersListMessageReceived(QList<ClientInfo>)), this, SLOT(receivePlayersListMessage(QList<ClientInfo>)));
+    connect(&_localClient, SIGNAL(startGameMessageReceived(QList<ClientInfo>)), this, SLOT(receiveStartGameMessage(QList<ClientInfo>)));
+    connect(&_localClient, SIGNAL(surrenderMessageReceived(QString, QColor)), this, SLOT(receiveSurrenderMessage(QString, QColor)));
 
     // from user
     connect(actionStartGame, SIGNAL(activated()), this, SLOT(userStartGame()));
     connect(actionQuit, SIGNAL(activated()), this, SLOT(userQuit()));
     connect(actionDisconnectFromServer, SIGNAL(activated()), this, SLOT(userDisconnectFromServer()));
-    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendMessage()));
-    connect(lineEdit, SIGNAL(returnPressed()), lineEdit, SLOT(clear()));
+    connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
     connect(leNickname, SIGNAL(returnPressed()), pbConnect, SLOT(animateClick()));
     connect(leNickname, SIGNAL(returnPressed()), pbConnect, SLOT(setFocus()));
+    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendMessage()));
+    connect(lineEdit, SIGNAL(returnPressed()), lineEdit, SLOT(clear()));
+    connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(guiClickServersListItem(QListWidgetItem*)));
+    connect(lwServersList, SIGNAL(currentTextChanged(QString)), this, SLOT(guiChangeServersListCurrentText(QString)));
     connect(pbConnect, SIGNAL(clicked()), this, SLOT(userTryToConnect()));
-    connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(guiServersListItemClicked(QListWidgetItem*)));
-    connect(lwServersList, SIGNAL(currentTextChanged(QString)), this, SLOT(guiServersListCurrentTextChanged(QString)));
-    connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiCreateServerToggled(bool)));
-    connect(sbPort, SIGNAL(valueChanged(int)), this, SLOT(guiPortValueChanged(int)));
+    connect(sbPort, SIGNAL(valueChanged(int)), this, SLOT(guiChangePortValue(int)));
 
     // from servers searcher
-    connect(&_serversSearcher, SIGNAL(serverInfoMessageReceived(const QHostAddress &,QList<ClientInfo>)), this, SLOT(serverInfoMessageReceive(const QHostAddress &,QList<ClientInfo>)));
+    connect(&_serversSearcher, SIGNAL(serverInfoMessageReceived(const QHostAddress &,QList<ClientInfo>)), this, SLOT(receiveServerInfoMessage(const QHostAddress &,QList<ClientInfo>)));
 
     _serversSearcher.setPort(sbPort->value());
     _serversSearcher.start();
@@ -58,21 +58,9 @@ App::App(QWidget *parent)
     connect(_game, SIGNAL(gameOver(QList<ClientInfo>, int)), this, SLOT(finishGame(QList<ClientInfo>, int)));
 
     connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
-    connect(this, SIGNAL(destroyed()), &_localClient, SLOT(stop()));
     connect(this, SIGNAL(destroyed()), &_serversSearcher, SLOT(stop()));
+    connect(this, SIGNAL(destroyed()), &_localClient, SLOT(stop()));
     connect(this, SIGNAL(destroyed()), &_server, SLOT(stop()));
-}
-
-void App::perror(const QString &text)
-{
-    textEdit->setTextColor(Qt::darkRed);
-    textEdit->append(text);
-}
-
-void App::pinfo(const QString &text)
-{
-    textEdit->setTextColor(Qt::darkBlue);
-    textEdit->append(text);
 }
 
 void App::setTabOrder()
@@ -95,6 +83,18 @@ void App::setTabOrder()
     QWidget::setTabOrder(pbConnect, textEdit);
     QWidget::setTabOrder(textEdit, lineEdit);
     QWidget::setTabOrder(lineEdit, lwServersList);
+}
+
+void App::perror(const QString &text)
+{
+    textEdit->setTextColor(Qt::darkRed);
+    textEdit->append(text);
+}
+
+void App::pinfo(const QString &text)
+{
+    textEdit->setTextColor(Qt::darkBlue);
+    textEdit->append(text);
 }
 
 void App::userDisconnectFromServer()
@@ -233,21 +233,26 @@ void App::userTryToConnect()
     }
 }
 
-void App::chatMessageReceived(QString name, QColor color, QString text)
+void App::acceptConnection()
 {
-    textEdit->setTextColor(color);
-    textEdit->append("(" + QTime::currentTime().toString("hh:mm:ss") + ") " + name + ":");
-    textEdit->setTextColor(Qt::black);
-    textEdit->append(text);
+    pinfo(QString::fromUtf8("Connected"));
+    lServersList->setDisabled(true);
+    lwServersList->setDisabled(true);
+    lServerAddress->setDisabled(true);
+    leServerAddress->setDisabled(true);
+    cbCreateServer->setDisabled(true);
+    lPlayersCount->setDisabled(true);
+    sbPlayersCount->setDisabled(true);
+    lPort->setDisabled(true);
+    sbPort->setDisabled(true);
+    lNickname->setDisabled(true);
+    leNickname->setDisabled(true);
+    lColor->setDisabled(true);
+    cbColor->setDisabled(true);
+    pbConnect->setText(QString::fromUtf8("Disconnect from the server"));
 }
 
-void App::clientConnectMessageReceived(QString name, QColor color)
-{
-    textEdit->setTextColor(color);
-    textEdit->append(name + QString::fromUtf8(" connected"));
-}
-
-void App::clientDisconnected()
+void App::processClientDisconnected()
 {
     pinfo(QString::fromUtf8("Disconnected"));
     lServersList->setDisabled(cbCreateServer->isChecked());
@@ -267,32 +272,27 @@ void App::clientDisconnected()
     _game->clear();
 }
 
-void App::clientDisconnectMessageReceived(QString name, QColor color)
+void App::receiveChatMessage(QString name, QColor color, QString text)
+{
+    textEdit->setTextColor(color);
+    textEdit->append("(" + QTime::currentTime().toString("hh:mm:ss") + ") " + name + ":");
+    textEdit->setTextColor(Qt::black);
+    textEdit->append(text);
+}
+
+void App::receiveClientConnectMessage(QString name, QColor color)
+{
+    textEdit->setTextColor(color);
+    textEdit->append(name + QString::fromUtf8(" connected"));
+}
+
+void App::receiveClientDisconnectMessage(QString name, QColor color)
 {
     textEdit->setTextColor(color);
     textEdit->append(name + QString::fromUtf8(" disconnected"));
 }
 
-void App::connectionAccepted()
-{
-    pinfo(QString::fromUtf8("Connected"));
-    lServersList->setDisabled(true);
-    lwServersList->setDisabled(true);
-    lServerAddress->setDisabled(true);
-    leServerAddress->setDisabled(true);
-    cbCreateServer->setDisabled(true);
-    lPlayersCount->setDisabled(true);
-    sbPlayersCount->setDisabled(true);
-    lPort->setDisabled(true);
-    sbPort->setDisabled(true);
-    lNickname->setDisabled(true);
-    leNickname->setDisabled(true);
-    lColor->setDisabled(true);
-    cbColor->setDisabled(true);
-    pbConnect->setText(QString::fromUtf8("Disconnect from the server"));
-}
-
-void App::playersListMessageReceived(QList<ClientInfo> list)
+void App::receivePlayersListMessage(QList<ClientInfo> list)
 {
     lwPlayersList->clear();
     QList<bool> isLocal;
@@ -312,21 +312,7 @@ void App::playersListMessageReceived(QList<ClientInfo> list)
     _game->updatePlayers(list, isLocal);
 }
 
-void App::startGameMessageReceived(QList<ClientInfo> list)
-{
-    QList<bool> isLocal;
-    for (int i = 0; i < list.size(); ++i)
-    {
-        isLocal.append(list[i].name() == _localClient.name()
-                       && list[i].color() == _localClient.color());
-    }
-
-    _game->clear();
-    _game->updatePlayers(list, isLocal);
-    _game->start();
-}
-
-void App::serverInfoMessageReceive(const QHostAddress &host, QList<ClientInfo> clients)
+void App::receiveServerInfoMessage(const QHostAddress &host, QList<ClientInfo> clients)
 {
     QString address = host.toString();
     QList<QListWidgetItem *> items = lwServersList->findItems(address, Qt::MatchExactly);
@@ -345,6 +331,30 @@ void App::serverInfoMessageReceive(const QHostAddress &host, QList<ClientInfo> c
             item->setData(Qt::UserRole, qVariantFromValue(clients));
         }
     }
+}
+
+void App::receiveStartGameMessage(QList<ClientInfo> list)
+{
+    QList<bool> isLocal;
+    for (int i = 0; i < list.size(); ++i)
+    {
+        isLocal.append(list[i].name() == _localClient.name()
+                       && list[i].color() == _localClient.color());
+    }
+
+    _game->clear();
+    _game->updatePlayers(list, isLocal);
+    _game->start();
+}
+
+void App::receiveSurrenderMessage(QString name, QColor color)
+{
+    _game->remotePlayerRetired(name, color);
+}
+
+void App::receiveTurnMessage(QColor color, int x, int y, int id, QString mask)
+{
+    _game->turnComplete(color, mask, id, x, y);
 }
 
 void App::finishGame(QList<ClientInfo> winners, int score)
@@ -388,17 +398,37 @@ void App::finishGame(QList<ClientInfo> winners, int score)
     msgBox.exec();
 }
 
-void App::surrenderMessageReceived(QString name, QColor color)
+void App::guiChangePortValue(int value)
 {
-    _game->remotePlayerRetired(name, color);
+    _serversSearcher.setPort(value);
+    lwServersList->clear();
+    lwPlayersList->clear();
 }
 
-void App::turnMessageReceived(QColor color, int x, int y, int id, QString mask)
+void App::guiChangeServersListCurrentText(QString text)
 {
-    _game->turnComplete(color, mask, id, x, y);
+    if (text != "")
+    {
+        leServerAddress->setText(text);
+    }
 }
 
-void App::guiCreateServerToggled(bool value)
+void App::guiClickServersListItem(QListWidgetItem *item)
+{
+    lwPlayersList->clear();
+    QList<ClientInfo> clients = item->data(Qt::UserRole).value<QList<ClientInfo> >();
+    for (int i = 0; i < clients.size(); ++i)
+    {
+        QListWidgetItem *item = new QListWidgetItem();
+        QBrush brush = item->foreground();
+        brush.setColor(clients[i].color());
+        item->setForeground(brush);
+        item->setText(clients[i].name());
+        lwPlayersList->addItem(item);
+    }
+}
+
+void App::guiToggleCreateServer(bool value)
 {
     if (value)
     {
@@ -412,35 +442,5 @@ void App::guiCreateServerToggled(bool value)
         lwPlayersList->clear();
         lwServersList->clear();
         _serversSearcher.start();
-    }
-}
-
-void App::guiPortValueChanged(int value)
-{
-    _serversSearcher.setPort(value);
-    lwServersList->clear();
-    lwPlayersList->clear();
-}
-
-void App::guiServersListCurrentTextChanged(QString text)
-{
-    if (text != "")
-    {
-        leServerAddress->setText(text);
-    }
-}
-
-void App::guiServersListItemClicked(QListWidgetItem *item)
-{
-    lwPlayersList->clear();
-    QList<ClientInfo> clients = item->data(Qt::UserRole).value<QList<ClientInfo> >();
-    for (int i = 0; i < clients.size(); ++i)
-    {
-        QListWidgetItem *item = new QListWidgetItem();
-        QBrush brush = item->foreground();
-        brush.setColor(clients[i].color());
-        item->setForeground(brush);
-        item->setText(clients[i].name());
-        lwPlayersList->addItem(item);
     }
 }

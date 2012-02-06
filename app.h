@@ -7,11 +7,9 @@
 #include "serverssearcher.h"
 #include "ui_racingForm.h"
 
-class App : public QMainWindow, public Ui::MainWindow {
+class App : public QMainWindow, public Ui::MainWindow
+{
     Q_OBJECT
-
-public:
-    App(QWidget *parent = 0);
 
 private:
     Game *_game;
@@ -31,27 +29,30 @@ private slots:
     void userStartGame();
     void userTryToConnect();
 
-    void guiCreateServerToggled(bool);
-    void guiPortValueChanged(int);
-    void guiServersListItemClicked(QListWidgetItem *item);
-    void guiServersListCurrentTextChanged(QString);
+    void guiChangePortValue(int);
+    void guiChangeServersListCurrentText(QString);
+    void guiClickServersListItem(QListWidgetItem *item);
+    void guiToggleCreateServer(bool);
 
     // from local client
-    void chatMessageReceived(QString, QColor, QString);
-    void clientConnectMessageReceived(QString, QColor);
-    void clientDisconnected();
-    void clientDisconnectMessageReceived(QString, QColor);
-    void connectionAccepted();
-    void playersListMessageReceived(QList<ClientInfo>);
-    void startGameMessageReceived(QList<ClientInfo>);
-    void surrenderMessageReceived(QString, QColor);
-    void turnMessageReceived(QColor, int, int, int, QString);
+    void acceptConnection();
+    void processClientDisconnected();
+    void receiveChatMessage(QString, QColor, QString);
+    void receiveClientConnectMessage(QString, QColor);
+    void receiveClientDisconnectMessage(QString, QColor);
+    void receivePlayersListMessage(QList<ClientInfo>);
+    void receiveStartGameMessage(QList<ClientInfo>);
+    void receiveSurrenderMessage(QString, QColor);
+    void receiveTurnMessage(QColor, int, int, int, QString);
 
     // from servers searcher
-    void serverInfoMessageReceive(const QHostAddress &, QList<ClientInfo>);
+    void receiveServerInfoMessage(const QHostAddress &, QList<ClientInfo>);
 
     // from game
     void finishGame(QList<ClientInfo>, int);
+
+public:
+    App(QWidget *parent = 0);
 };
 
 #endif
