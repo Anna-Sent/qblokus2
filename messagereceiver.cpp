@@ -1,5 +1,35 @@
 #include "messagereceiver.h"
 
+Message *next(Message *current)
+{
+    MessageHeader *header = dynamic_cast<MessageHeader *>(current);
+    if (header)
+    {
+        switch(header->msgType())
+        {
+        case mtHeader :                 return new MessageHeader;
+        case mtChat :                   return new ChatMessage(*header);
+        case mtClientConnect :          return new ClientConnectMessage(*header);
+        case mtClientDisconnect :       return new ClientDisconnectMessage(*header);
+        case mtConnectionAccepted :     return new ConnectionAcceptedMessage(*header);
+        case mtServerInfo :             return new ServerInfoMessage(*header);
+        case mtServerReady :            return new ServerReadyMessage(*header);
+        case mtServerRequest :          return new ServerRequestMessage(*header);
+        case mtSurrender :              return new SurrenderMessage(*header);
+        case mtPing :                   return new PingMessage(*header);
+        case mtPlayersList :            return new PlayersListMessage(*header);
+        case mtStartGame :              return new StartGameMessage(*header);
+        case mtTryToConnect :           return new TryToConnectMessage(*header);
+        case mtTurn :                   return new TurnMessage(*header);
+        default :                       return NULL;
+        }
+    }
+    else
+    {
+        return new MessageHeader;
+    }
+}
+
 TcpMessageReceiver::TcpMessageReceiver(QTcpSocket *socket)
 {
     current = new MessageHeader;
@@ -47,7 +77,7 @@ void TcpMessageReceiver::processData()
 
         buffer.remove(0, current->length());
         Message* old = current;
-        current = current->next();
+        current = next(current);
         delete old;
     }
 }
@@ -101,7 +131,7 @@ void UdpMessageReceiver::processData(QByteArray &buffer, const QHostAddress &hos
 
         buffer.remove(0, current->length());
         Message* old = current;
-        current = current->next();
+        current = next(current);
         delete old;
     }
 }

@@ -1,10 +1,5 @@
 #include "message.h"
 
-Message *Message::next() const
-{
-    return new MessageHeader;
-}
-
 void Message::send(QTcpSocket *socket) const
 {
     QByteArray data = serialize();
@@ -15,28 +10,6 @@ void Message::send(QUdpSocket *socket, const QHostAddress &host, quint16 port) c
 {
     QByteArray data = serialize();
     socket->writeDatagram(data, host, port);
-}
-
-Message *MessageHeader::next() const
-{
-    switch(_msgType)
-    {
-    case mtHeader :                 return new MessageHeader;
-    case mtChat :                   return new ChatMessage(*this);
-    case mtClientConnect :          return new ClientConnectMessage(*this);
-    case mtClientDisconnect :       return new ClientDisconnectMessage(*this);
-    case mtConnectionAccepted :     return new ConnectionAcceptedMessage(*this);
-    case mtServerInfo :             return new ServerInfoMessage(*this);
-    case mtServerReady :            return new ServerReadyMessage(*this);
-    case mtServerRequest :          return new ServerRequestMessage(*this);
-    case mtSurrender :              return new SurrenderMessage(*this);
-    case mtPing :                   return new PingMessage(*this);
-    case mtPlayersList :            return new PlayersListMessage(*this);
-    case mtStartGame :              return new StartGameMessage(*this);
-    case mtTryToConnect :           return new TryToConnectMessage(*this);
-    case mtTurn :                   return new TurnMessage(*this);
-    default :                       return NULL;
-    }
 }
 
 QByteArray MessageHeader::serialize() const

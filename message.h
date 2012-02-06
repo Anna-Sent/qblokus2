@@ -30,7 +30,6 @@ class Message
 public:
     virtual qint64 length() const = 0;
     virtual MessageType type() const = 0;
-    virtual Message *next() const;
     void send(QTcpSocket *) const;
     void send(QUdpSocket *, const QHostAddress &, quint16) const;
     virtual QByteArray serialize() const = 0;
@@ -48,7 +47,6 @@ public:
     MessageType type() const { return mtHeader; }
     qint64 msgLength() const { return _msgLen; }
     MessageType msgType() const { return _msgType; }
-    Message *next() const;
     QByteArray serialize() const;
     void setMsgLength(qint64 value) { _msgLen = value; }
     void setMsgType(MessageType value) { _msgType = value; }
