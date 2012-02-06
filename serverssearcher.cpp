@@ -37,7 +37,7 @@ void ServersSearcher::setPort(int port)
 
 void ServersSearcher::start()
 {
-    //if (!timer.isActive())
+    if (!timer.isActive())
     {
         socket.bind();
         timer.start();
@@ -46,7 +46,7 @@ void ServersSearcher::start()
 
 void ServersSearcher::stop()
 {
-    //if (timer.isActive())
+    if (timer.isActive())
     {
         timer.stop();
         socket.close();
