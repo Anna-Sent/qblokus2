@@ -4,15 +4,12 @@
 #include "clientinfo.h"
 #include "messagereceiver.h"
 #include <QObject>
-#include <QtNetwork/QUdpSocket>
 #include <QTimer>
+#include <QUdpSocket>
 
 class ServersSearcher : public QObject
 {
     Q_OBJECT
-public:
-    explicit ServersSearcher();
-    ~ServersSearcher();
 
 private:
     UdpMessageReceiver *messageReceiver;
@@ -20,18 +17,21 @@ private:
     QUdpSocket socket;
     QTimer timer;
 
-signals:
-    void serverInfoMessageReceived(const QHostAddress &, QList<ClientInfo>);
-
 private slots:
-    void serverInfoMessageReceive(ServerInfoMessage, const QHostAddress &, quint16);
+    void receiveServerInfoMessage(ServerInfoMessage, const QHostAddress &, quint16);
     void timeout();
+
+public:
+    explicit ServersSearcher();
 
 public slots:
     bool isActive() const;
     void setPort(int port);
     void start();
     void stop();
+
+signals:
+    void serverInfoMessageReceived(const QHostAddress &, QList<ClientInfo>);
 };
 
 #endif // SERVERSSEARCHER_H

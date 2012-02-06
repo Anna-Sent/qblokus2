@@ -20,7 +20,6 @@ App::App(QWidget *parent)
     connect(&_localClient, SIGNAL(disconnected()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(disconnected()), lwServersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(disconnected()), &_serversSearcher, SLOT(start()));
-    connect(&_localClient, SIGNAL(errorOccurred()), &_serversSearcher, SLOT(start()));
     connect(&_localClient, SIGNAL(errorOccurred(QString)), this, SLOT(perror(QString)));
     connect(&_localClient, SIGNAL(chatMessageReceived(QString, QColor, QString)), this, SLOT(receiveChatMessage(QString, QColor, QString)));
     connect(&_localClient, SIGNAL(clientConnectMessageReceived(QString, QColor)), this, SLOT(receiveClientConnectMessage(QString, QColor)));
