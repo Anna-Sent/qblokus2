@@ -37,6 +37,8 @@ App::App(QWidget *parent)
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
     connect(leNickname, SIGNAL(returnPressed()), pbConnect, SLOT(animateClick()));
     connect(leNickname, SIGNAL(returnPressed()), pbConnect, SLOT(setFocus()));
+    connect(leServerAddress, SIGNAL(returnPressed()), pbConnect, SLOT(animateClick()));
+    connect(leServerAddress, SIGNAL(returnPressed()), pbConnect, SLOT(setFocus()));
     connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendMessage()));
     connect(lineEdit, SIGNAL(returnPressed()), lineEdit, SLOT(clear()));
     connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(guiClickServersListItem(QListWidgetItem*)));
