@@ -5,7 +5,8 @@
 #include <QString>
 #include <QMetaType>
 
-class ClientInfo {
+class ClientInfo
+{
 private:
     QColor _color;
     QString _name;
@@ -16,11 +17,11 @@ public:
     ~ClientInfo() { }
     QColor color() const { return _color; }
     QString name() const { return _name; }
-    void setColor(const QColor &value) { _color = value; }
-    void setName(const QString &value) { _name = value; }
     QByteArray serialize() const;
     int size() const;
     void fill(const char*);
+    void setColor(const QColor &value) { _color = value; }
+    void setName(const QString &value) { _name = value; }
 };
 
 Q_DECLARE_METATYPE(ClientInfo)
