@@ -9,8 +9,8 @@ class LocalPlayer : public Player
 
 public:
     LocalPlayer(const ClientInfo &info,
-                int wid = 200,
-                int hei = 200,
+                int width = 300,
+                int height = 200,
                 QGraphicsItem *parent = 0,
                 QGraphicsScene *scene = 0);
 };

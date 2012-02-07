@@ -77,7 +77,7 @@ void Game::turnComplete(QColor color, QString tile, int id, int x, int y)
     }
 
     players[currplayer]->completeTurn(color, tile, id, x, y);
-    if (players[currplayer]->tilesLeft() == 0)
+    if (players[currplayer]->leftTilesCount() == 0)
     {
         winner(players[currplayer]);
     }
@@ -264,9 +264,9 @@ void Game::retirePlayer(int i)
     }
 
     Player *player = players[i];
-    if (!player->surrendered)
+    if (!player->_surrendered)
     {
-        player->surrendered = true;
+        player->_surrendered = true;
         --playersleft;
     }
 

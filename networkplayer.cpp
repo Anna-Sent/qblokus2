@@ -12,13 +12,13 @@ NetworkPlayer::NetworkPlayer(const ClientInfo &info,
 
 void NetworkPlayer::activateAll()
 {
-    active = true;
+    _active = true;
     update();
 }
 
 void NetworkPlayer::deactivateAll()
 {
-    active = false;
+    _active = false;
     update();
 }
 

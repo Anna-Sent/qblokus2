@@ -3,17 +3,23 @@
 #include <QPainter>
 
 Player::Player(const ClientInfo &info,
-               int wid,
-               int hei,
+               int width,
+               int height,
                QGraphicsItem *parent,
                QGraphicsScene *scene)
-    : QGraphicsItem(parent, scene), active(false), lastactive(false), height(wid), width(hei), _score(0), surrendered(false)
+    : QGraphicsItem(parent, scene),
+    _active(false),
+    _lastactive(false),
+    _surrendered(false),
+    _height(height),
+    _width(width),
+    _score(0)
 {
     _info = info;
     char const *cTiles[] = { "1", "11", "11|01", "111", "11|11", "010|111", "1111", "001|111", "011|110", "1000|1111", "010|010|111", "100|100|111", "0111|1100", "001|111|100", "1|1|1|1|1", "10|11|11", "011|110|100", "11|10|11", "011|110|010", "010|111|010", "0100|1111" };
 
     vector<string> tiles(cTiles, cTiles + 21);
-    tilesleft = tiles.size();
+    _tilesleft = tiles.size();
 
     int xs = 10;
     int ys = 10;
@@ -25,7 +31,7 @@ Player::Player(const ClientInfo &info,
     for (size_t i = 0; i < tiles.size(); ++i)
     {
         ColorItem *item = new ColorItem(tiles[i], _info.color(), i);
-        items.append(item);
+        _items.append(item);
         item->setParentItem(this);
         item->setPos(xs, ys);
         int dim = max(item->height(), item->width());
@@ -42,7 +48,7 @@ Player::Player(const ClientInfo &info,
             realwidth = xs;
         }
 
-        if (xs > width)
+        if (xs > _width)
         {
             ys += maxheight;
             xs = 10;
@@ -52,49 +58,29 @@ Player::Player(const ClientInfo &info,
     }
 
     realheight += maxheight;
-    height = realheight;
-    width = realwidth;
-}
-
-QRectF Player::boundingRect() const 
-{
-    return QRectF(0, 0, width, height);
-}
-
-bool Player::isSurrendered() const
-{
-    return surrendered;
-}
-
-void Player::startTurn()
-{
-    if (surrendered || tilesleft == 0)
-    {
-        return;
-    }
-
-    activateAll();
-}
-
-void Player::deactivateAll()
-{
-    for (int i = 0; i < items.size(); ++i)
-    {
-        items[i]->deactivate();
-    }
-
-    active = false;
-    update();
+    _height = realheight;
+    _width = realwidth;
 }
 
 void Player::activateAll()
 {
-    for (int i = 0; i < items.size(); ++i)
+    for (int i = 0; i < _items.size(); ++i)
     {
-        items[i]->activate();
+        _items[i]->activate();
     }
 
-    active = true;
+    _active = true;
+    update();
+}
+
+void Player::deactivateAll()
+{
+    for (int i = 0; i < _items.size(); ++i)
+    {
+        _items[i]->deactivate();
+    }
+
+    _active = false;
     update();
 }
 
@@ -103,9 +89,9 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *style, QWi
     Q_UNUSED(style);
     Q_UNUSED(widget);
 
-    if (active != lastactive)
+    if (_active != _lastactive)
     {
-        if (active)
+        if (_active)
         {
             scene()->setBackgroundBrush(QBrush(_info.color().light(180)));
         }
@@ -114,15 +100,15 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *style, QWi
             scene()->setBackgroundBrush(Qt::NoBrush);
         }
 
-        lastactive = active;
+        _lastactive = _active;
     }
 
-    if (surrendered)
+    if (_surrendered)
     {
         painter->drawText(boundingRect(), Qt::AlignCenter, QString::fromUtf8("I gave up"));
     }
 
-    if (tilesleft == 0)
+    if (_tilesleft == 0)
     {
         painter->drawText(boundingRect(), Qt::AlignCenter, QString::fromUtf8("I won!"));
     }
@@ -138,19 +124,29 @@ void Player::completeTurn(QColor color, QString, int item, int x, int y)
         return;
     }
 
-    --tilesleft;
-    items[item]->hide();
-    Tile *tile = items[item];
+    --_tilesleft;
+    _items[item]->hide();
+    Tile *tile = _items[item];
     _score += tile->score();
     emit scoreChanged(_score);
     deactivateAll();
 }
 
+void Player::startTurn()
+{
+    if (_surrendered || _tilesleft == 0)
+    {
+        return;
+    }
+
+    activateAll();
+}
+
 void Player::surrender()
 {
-    if (active)
+    if (_active)
     {
-        surrendered = true;
+        _surrendered = true;
         deactivateAll();
     }
 }
