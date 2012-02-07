@@ -32,6 +32,7 @@ App::App(QWidget *parent)
     // from user
     connect(actionStartGame, SIGNAL(activated()), this, SLOT(userStartGame()));
     connect(actionQuit, SIGNAL(activated()), this, SLOT(userQuit()));
+    connect(actionConnectToServer, SIGNAL(activated()), this, SLOT(userTryToConnect()));
     connect(actionDisconnectFromServer, SIGNAL(activated()), this, SLOT(userDisconnectFromServer()));
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
     connect(leNickname, SIGNAL(returnPressed()), pbConnect, SLOT(animateClick()));
@@ -98,6 +99,10 @@ void App::perror(const QString &text)
 {
     textEdit->setTextColor(Qt::darkRed);
     textEdit->append(text);
+    if (!dockWidget->isVisible())
+    {
+        QMessageBox::critical(this, QString::fromUtf8("Error"), text);
+    }
 }
 
 void App::pinfo(const QString &text)
@@ -112,7 +117,7 @@ void App::userDisconnectFromServer()
     {
         QMessageBox msgBox;
         msgBox.setText(QString::fromUtf8("Disconnection"));
-        msgBox.setInformativeText(QString::fromUtf8("Disconnect from server?"));
+        msgBox.setInformativeText(QString::fromUtf8("Disconnect from the server?"));
         msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::No);
         msgBox.setIcon(QMessageBox::Warning);
@@ -202,16 +207,24 @@ void App::userTryToConnect()
         {
             QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
                     "Enter the nickname"));
-            dockWidget->activateWindow();
-            leNickname->setFocus();
+            if (dockWidget->isVisible())
+            {
+                dockWidget->activateWindow();
+                leNickname->setFocus();
+            }
+
             return;
         }
         else if (leNickname->text().toUtf8().size() > 100)
         {
             QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
                     "Your nickname is too long"));
-            dockWidget->activateWindow();
-            leNickname->setFocus();
+            if (dockWidget->isVisible())
+            {
+                dockWidget->activateWindow();
+                leNickname->setFocus();
+            }
+
             return;
         }
 
@@ -221,8 +234,12 @@ void App::userTryToConnect()
         {
             QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
                     "Enter the server"));
-            dockWidget->activateWindow();
-            leServerAddress->setFocus();
+            if (dockWidget->isVisible())
+            {
+                dockWidget->activateWindow();
+                leServerAddress->setFocus();
+            }
+
             return;
         }
 
