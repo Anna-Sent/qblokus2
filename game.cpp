@@ -8,22 +8,141 @@ using namespace std;
 
 Game::Game(QWidget* widget)
 {
-    ui = dynamic_cast<Ui::MainWindow *>(widget);
-    table = new Table(20, 20);
-    tablescene = new QGraphicsScene;
-    tablescene->addItem(table);
-    ui->gvTable->setScene(tablescene);
-    connect(table, SIGNAL(turnCompleted(QColor,QString,int,int,int)), this, SLOT(turnComplete(QColor,QString,int,int,int)));
+    _ui = dynamic_cast<Ui::MainWindow *>(widget);
+    _table = new Table(20, 20);
+    _tablescene = new QGraphicsScene;
+    _tablescene->addItem(_table);
+    _ui->gvTable->setScene(_tablescene);
+    connect(_table, SIGNAL(turnCompleted(QColor,QString,int,int,int)), this, SLOT(turnComplete(QColor,QString,int,int,int)));
     QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
-    connect(surrender, SIGNAL(clicked()), this, SLOT(playerRetired()));
+    connect(surrender, SIGNAL(clicked()), this, SLOT(retirePlayer()));
     surrender->setEnabled(false);
 
-    this->widget = widget;
+    _widget = widget;
     clear();
 
     connect(this, SIGNAL(destroyed()), this, SLOT(clear()));
-    connect(this, SIGNAL(destroyed()), tablescene, SLOT(deleteLater()));
-    connect(this, SIGNAL(destroyed()), table, SLOT(deleteLater()));
+    connect(this, SIGNAL(destroyed()), _tablescene, SLOT(deleteLater()));
+    connect(this, SIGNAL(destroyed()), _table, SLOT(deleteLater()));
+}
+
+void Game::retirePlayer(int i)
+{
+    if (_players[i]->isSurrendered())
+    {
+        return;
+    }
+
+    if (_currplayer == i)
+    {
+        retirePlayer();
+        return;
+    }
+
+    Player *player = _players[i];
+    if (!player->_surrendered)
+    {
+        player->_surrendered = true;
+        --_playersleft;
+    }
+
+    if (_playersleft == 1)
+    {
+        int msp = 0;
+        for (int p = 1; p < _players.size(); ++p)
+        {
+            if (_players[p]->score() > _players[msp]->score())
+            {
+                msp = p;
+            }
+        }
+
+        winner(_players[msp]);
+    }
+
+    player->update();
+}
+
+void Game::winner(Player *winner)
+{
+    QList<ClientInfo> clients;
+    for (int i = 0; i < _players.size(); ++i)
+    {
+        if (_players[i]->score() == winner->score())
+        {
+            clients.append(_players[i]->info());
+        }
+    }
+
+    _running = false;
+    QPushButton *surrender = _widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
+    surrender->setEnabled(false);
+    emit gameOver(clients, winner->score());
+}
+
+void Game::retireRemotePlayer(QString name, QColor color)
+{
+    if (name == _players[_currplayer]->name() && color == _players[_currplayer]->color())
+    {
+        retirePlayer();
+    }
+}
+
+void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
+{
+    if (!_running)
+    {
+        clear();
+        for (int i = 0; i < clients.size(); ++i)
+        {
+            addPlayer(clients[i], local[i] ? ptLocal : ptNetwork);
+        }
+    }
+    else
+    {
+        // merge
+        int pl = 0, cl = 0;
+        while(pl < _players.size() || cl < clients.size())
+        {
+            if (pl == _players.size() || cl == clients.size())
+            {
+                if (pl == _players.size())
+                {
+                    addPlayer(clients[cl], local[cl] ? ptLocal : ptNetwork);
+                }
+
+                if (cl == clients.size())
+                {
+                    for (int i = pl; i < _players.size(); ++i)
+                    {
+                        if (!_players[i]->isSurrendered())
+                        {
+                            retirePlayer(i);
+                        }
+                    }
+
+                    pl = _players.size();
+                }
+            }
+            else
+            {
+                if (_players[pl]->name() == clients[cl].name() && _players[pl]->color() == clients[cl].color())
+                {
+                    ++pl;
+                    ++cl;
+                }
+                else
+                {
+                    if (!_players[pl]->isSurrendered())
+                    {
+                        retirePlayer(pl);
+                    }
+
+                    ++pl;
+                }
+            }
+        }
+    }
 }
 
 void Game::addPlayer(ClientInfo info, PlayerType type)
@@ -35,89 +154,73 @@ void Game::addPlayer(ClientInfo info, PlayerType type)
         player = new LocalPlayer(info);
         break;
     case(ptNetwork):
-        player = new NetworkPlayer(info, table);
+        player = new NetworkPlayer(info, _table);
         break;
     default:
         return;
     }
 
-    int i = playersleft;
+    int i = _playersleft;
     QString playerwidget(QString::fromUtf8("gvPlayer"));
     QString playerscore(QString::fromUtf8("score"));
     player->setPos(0, 0);
-    players.append(player);
+    _players.append(player);
     QGraphicsScene *playerscene = new QGraphicsScene;
-    scenes.append(playerscene);
+    _scenes.append(playerscene);
     playerscene->addItem(player);
-    QGraphicsView *gv = widget->findChild<QGraphicsView *>(playerwidget + QString::number(i + 1));
-    QLCDNumber *lcd = widget->findChild<QLCDNumber *>(playerscore + QString::number(i + 1));
+    QGraphicsView *gv = _widget->findChild<QGraphicsView *>(playerwidget + QString::number(i + 1));
+    QLCDNumber *lcd = _widget->findChild<QLCDNumber *>(playerscore + QString::number(i + 1));
     gv->setScene(playerscene);
-    ui->gridLayout->invalidate();
+    _ui->gridLayout->invalidate();
     gv->setMinimumSize(playerscene->sceneRect().size().toSize());
     gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     lcd->setPalette(QPalette(info.color()));
     connect(player, SIGNAL(scoreChanged(int)), lcd, SLOT(display(int)));
-    connect(player, SIGNAL(won(Player *)), this, SLOT(winner(Player *)));
     lcd->display(0);
-    ++playersleft;
+    ++_playersleft;
 }
 
-void Game::turnComplete(QColor color, QString tile, int id, int x, int y)
+void Game::clear()
 {
-    if (color != players[currplayer]->color())
+    _running = false;
+    _playersleft = 0;
+    _currplayer = 0;
+    _table->clear();
+
+    for (int i = 0; i < _scenes.size(); ++i)
     {
-        return;
+        _scenes[i]->deleteLater();
     }
 
-    if (dynamic_cast<Table *>(sender()))
+    _scenes.clear();
+
+    for (int i = 0; i < _scenes.size(); ++i)
     {
-        emit turnCompleted(players[currplayer]->name(), color, tile, id, x, y);
+        _players[i]->deleteLater();
     }
 
-    players[currplayer]->completeTurn(color, tile, id, x, y);
-    if (players[currplayer]->leftTilesCount() == 0)
-    {
-        winner(players[currplayer]);
-    }
+    _players.clear();
 
-    do
+    QList<QLCDNumber *> lcds = _widget->findChildren<QLCDNumber *>();
+    for (int i = 0; i < lcds.size(); ++i)
     {
-        currplayer = (currplayer + 1) % players.size();
-    }
-    while(players[currplayer]->isSurrendered());
-    players[currplayer]->startTurn();
-
-    QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
-    if (dynamic_cast<LocalPlayer *>(players[currplayer]))
-    {
-        surrender->setEnabled(true);
-    }
-    else
-    {
-        surrender->setEnabled(false);
+        lcds[i]->setPalette(QPalette());
+        lcds[i]->display(0);
     }
 }
 
-void Game::remotePlayerRetired(QString name, QColor color)
+void Game::retirePlayer()
 {
-    if (name == players[currplayer]->name() && color == players[currplayer]->color())
-    {
-        playerRetired();
-    }
-}
-
-void Game::playerRetired()
-{
-    if (!running)
+    if (!_running)
     {
         return;
     }
 
     if (sender() && dynamic_cast<QPushButton *>(sender()))
     {
-        LocalPlayer *player = dynamic_cast<LocalPlayer *>(players[currplayer]);
+        LocalPlayer *player = dynamic_cast<LocalPlayer *>(_players[_currplayer]);
         if (!player)
         {
             return;
@@ -134,37 +237,37 @@ void Game::playerRetired()
             return;
         }
 
-        emit playerRetired(players[currplayer]->name(), players[currplayer]->color());
+        emit playerRetired(_players[_currplayer]->name(), _players[_currplayer]->color());
     }
 
-    Player *player = players[currplayer];
+    Player *player = _players[_currplayer];
     player->surrender();
-    --playersleft;
-    if (playersleft > 0)
+    --_playersleft;
+    if (_playersleft > 0)
     {
         do
         {
-            currplayer = (currplayer + 1) % players.size();
+            _currplayer = (_currplayer + 1) % _players.size();
         }
-        while(players[currplayer]->isSurrendered());
-        if (playersleft == 1)
+        while(_players[_currplayer]->isSurrendered());
+        if (_playersleft == 1)
         {
             int msp = 0;
-            for (int p = 1; p < players.size(); ++p)
+            for (int p = 1; p < _players.size(); ++p)
             {
-                if ((players[p]->score() > players[msp]->score()))
+                if ((_players[p]->score() > _players[msp]->score()))
                 {
                     msp = p;
                 }
             }
 
-            winner(players[msp]);
+            winner(_players[msp]);
         }
         else
         {
-            players[currplayer]->startTurn();
-            QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
-            if (dynamic_cast<LocalPlayer *>(players[currplayer]))
+            _players[_currplayer]->startTurn();
+            QPushButton *surrender = _widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
+            if (dynamic_cast<LocalPlayer *>(_players[_currplayer]))
             {
                 surrender->setEnabled(true);
             }
@@ -176,53 +279,24 @@ void Game::playerRetired()
     }
 }
 
-void Game::clear()
-{
-    running = false;
-    playersleft = 0;
-    currplayer = 0;
-    table->clear();
-
-    for (int i = 0; i < scenes.size(); ++i)
-    {
-        scenes[i]->deleteLater();
-    }
-
-    scenes.clear();
-
-    for (int i = 0; i < scenes.size(); ++i)
-    {
-        players[i]->deleteLater();
-    }
-
-    players.clear();
-
-    QList<QLCDNumber *> lcds = widget->findChildren<QLCDNumber *>();
-    for (int i = 0; i < lcds.size(); ++i)
-    {
-        lcds[i]->setPalette(QPalette());
-        lcds[i]->display(0);
-    }
-}
-
 void Game::start()
 {
-    if (running)
+    if (_running)
     {
         return;
     }
 
-    if (players.size() == 0)
+    if (_players.size() == 0)
     {
         return;
     }
 
-    if (players.size() > 0)
+    if (_players.size() > 0)
     {
-        running = true;
-        players[0]->startTurn();
-        QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
-        if (dynamic_cast<LocalPlayer *>(players[currplayer]))
+        _running = true;
+        _players[0]->startTurn();
+        QPushButton *surrender = _widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
+        if (dynamic_cast<LocalPlayer *>(_players[_currplayer]))
         {
             surrender->setEnabled(true);
         }
@@ -233,118 +307,38 @@ void Game::start()
     }
 }
 
-void Game::winner(Player *winner)
+void Game::turnComplete(QColor color, QString tile, int id, int x, int y)
 {
-    QList<ClientInfo> clients;
-    for (int i = 0; i < players.size(); ++i)
-    {
-        if (players[i]->score() == winner->score())
-        {
-            clients.append(players[i]->info());
-        }
-    }
-
-    running = false;
-    QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
-    surrender->setEnabled(false);
-    emit gameOver(clients, winner->score());
-}
-
-void Game::retirePlayer(int i)
-{
-    if (players[i]->isSurrendered())
+    if (color != _players[_currplayer]->color())
     {
         return;
     }
 
-    if (currplayer == i)
+    if (dynamic_cast<Table *>(sender()))
     {
-        playerRetired();
-        return;
+        emit turnCompleted(_players[_currplayer]->name(), color, tile, id, x, y);
     }
 
-    Player *player = players[i];
-    if (!player->_surrendered)
+    _players[_currplayer]->completeTurn(color, tile, id, x, y);
+    if (_players[_currplayer]->leftTilesCount() == 0)
     {
-        player->_surrendered = true;
-        --playersleft;
+        winner(_players[_currplayer]);
     }
 
-    if (playersleft == 1)
+    do
     {
-        int msp = 0;
-        for (int p = 1; p < players.size(); ++p)
-        {
-            if (players[p]->score() > players[msp]->score())
-            {
-                msp = p;
-            }
-        }
-
-        winner(players[msp]);
+        _currplayer = (_currplayer + 1) % _players.size();
     }
+    while(_players[_currplayer]->isSurrendered());
+    _players[_currplayer]->startTurn();
 
-    player->update();
-}
-
-void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
-{
-    if (!running)
+    QPushButton *surrender = _widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
+    if (dynamic_cast<LocalPlayer *>(_players[_currplayer]))
     {
-        clear();
-        for (int i = 0; i < clients.size(); ++i)
-        {
-            addPlayer(clients[i], local[i] ? ptLocal : ptNetwork);
-        }
+        surrender->setEnabled(true);
     }
     else
     {
-        // merge
-        int pl = 0, cl = 0;
-        while(pl < players.size() || cl < clients.size())
-        {
-            if (pl == players.size() || cl == clients.size())
-            {
-                if (pl == players.size())
-                {
-                    addPlayer(clients[cl], local[cl] ? ptLocal : ptNetwork);
-                }
-
-                if (cl == clients.size())
-                {
-                    for (int i = pl; i < players.size(); ++i)
-                    {
-                        if (!players[i]->isSurrendered())
-                        {
-                            retirePlayer(i);
-                        }
-                    }
-
-                    pl = players.size();
-                }
-            }
-            else
-            {
-                if (players[pl]->name() == clients[cl].name() && players[pl]->color() == clients[cl].color())
-                {
-                    ++pl;
-                    ++cl;
-                }
-                else
-                {
-                    if (!players[pl]->isSurrendered())
-                    {
-                        retirePlayer(pl);
-                    }
-
-                    ++pl;
-                }
-            }
-        }
+        surrender->setEnabled(false);
     }
-}
-
-bool Game::isStarted() const
-{
-    return running;
 }

@@ -350,7 +350,7 @@ void App::receiveStartGameMessage(QList<ClientInfo> list)
 
 void App::receiveSurrenderMessage(QString name, QColor color)
 {
-    _game->remotePlayerRetired(name, color);
+    _game->retireRemotePlayer(name, color);
 }
 
 void App::receiveTurnMessage(QColor color, int x, int y, int id, QString mask)

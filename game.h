@@ -1,13 +1,13 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "ui_racingForm.h"
-#include "clientinfo.h"
-#include "table.h"
-#include "player.h"
 #include <QObject>
 #include <QColor>
 #include <QGraphicsScene>
+#include "clientinfo.h"
+#include "player.h"
+#include "table.h"
+#include "ui_racingForm.h"
 
 enum PlayerType { ptLocal, ptNetwork };
 
@@ -16,31 +16,30 @@ class Game : public QObject
     Q_OBJECT
 
 private:
-    QList<Player *> players;
-    QList<QGraphicsScene *> scenes;
-    Table *table;
-    QGraphicsScene *tablescene;
-    Ui::MainWindow *ui;
-    QWidget *widget;
-    int currplayer;
-    bool isserver;
-    int playersleft;
-    bool running;
+    bool _running;
+    int _currplayer;
+    int _playersleft;
+    Table *_table;
+    Ui::MainWindow *_ui;
+    QWidget *_widget;
+    QGraphicsScene *_tablescene;
+    QList<Player *> _players;
+    QList<QGraphicsScene *> _scenes;
     void retirePlayer(int); // ?
 
 private slots:
-    void winner(Player*); // ?
+    void winner(Player *); // ?
 
 public:
     Game(QWidget *widget);
-    bool isStarted() const;
-    void remotePlayerRetired(QString name, QColor color); // ?
+    bool isStarted() const { return _running; }
+    void retireRemotePlayer(QString name, QColor color); // ?
     void updatePlayers(QList<ClientInfo>, QList<bool>);
 
 public slots:
     void addPlayer(ClientInfo info, PlayerType type);
     void clear();
-    void playerRetired(); // ?
+    void retirePlayer(); // ?
     void start();
     void turnComplete(QColor color, QString tile, int id, int x, int y);
 

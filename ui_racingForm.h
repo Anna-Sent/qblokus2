@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Sun Jan 22 01:04:21 2012
+** Created: Wed Feb 8 01:04:11 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -363,7 +363,7 @@ public:
         lPlayersList->setText(QApplication::translate("MainWindow", "Players list", 0, QApplication::UnicodeUTF8));
         lPort->setText(QApplication::translate("MainWindow", "Port", 0, QApplication::UnicodeUTF8));
         lNickname->setText(QApplication::translate("MainWindow", "Nickname", 0, QApplication::UnicodeUTF8));
-        pbConnect->setText(QApplication::translate("MainWindow", "Connect to server", 0, QApplication::UnicodeUTF8));
+        pbConnect->setText(QApplication::translate("MainWindow", "Connect to the server", 0, QApplication::UnicodeUTF8));
         leServerAddress->setText(QApplication::translate("MainWindow", "localhost", 0, QApplication::UnicodeUTF8));
         cbCreateServer->setText(QApplication::translate("MainWindow", "Create server", 0, QApplication::UnicodeUTF8));
         lServerAddress->setText(QApplication::translate("MainWindow", "Server address", 0, QApplication::UnicodeUTF8));

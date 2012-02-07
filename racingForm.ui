@@ -203,7 +203,7 @@
            <item row="14" column="0">
             <widget class="QPushButton" name="pbConnect">
              <property name="text">
-              <string>Connect to server</string>
+              <string>Connect to the server</string>
              </property>
             </widget>
            </item>

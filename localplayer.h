@@ -9,7 +9,7 @@ class LocalPlayer : public Player
 
 public:
     LocalPlayer(const ClientInfo &info,
-                int width = 300,
+                int width = 200,
                 int height = 200,
                 QGraphicsItem *parent = 0,
                 QGraphicsScene *scene = 0);

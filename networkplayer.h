@@ -18,7 +18,7 @@ private:
 public:
     NetworkPlayer(const ClientInfo &info,
                   Table *table,
-                  int width = 300,
+                  int width = 200,
                   int height = 200,
                   QGraphicsItem *parent = 0,
                   QGraphicsScene *scene = 0);
