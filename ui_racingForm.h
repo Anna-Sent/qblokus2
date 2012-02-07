@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Wed Feb 8 02:11:20 2012
+** Created: Wed Feb 8 03:19:38 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -43,6 +43,9 @@ public:
     QAction *actionDisconnectFromServer;
     QAction *actionStartGame;
     QAction *actionConnectionWindow;
+    QAction *actionConnectToServer;
+    QAction *actionEnglish;
+    QAction *actionRussian;
     QWidget *centralwidget;
     QGridLayout *gridLayout_11;
     QGridLayout *gridLayout;
@@ -58,7 +61,9 @@ public:
     QPushButton *pbSurrender;
     QMenuBar *menubar;
     QMenu *menu;
+    QMenu *menuWindow;
     QMenu *menuView;
+    QMenu *menuLanguage;
     QStatusBar *statusbar;
     QDockWidget *dockWidget;
     QWidget *dockWidgetContents;
@@ -103,6 +108,12 @@ public:
         actionConnectionWindow->setObjectName(QString::fromUtf8("actionConnectionWindow"));
         actionConnectionWindow->setCheckable(true);
         actionConnectionWindow->setChecked(true);
+        actionConnectToServer = new QAction(MainWindow);
+        actionConnectToServer->setObjectName(QString::fromUtf8("actionConnectToServer"));
+        actionEnglish = new QAction(MainWindow);
+        actionEnglish->setObjectName(QString::fromUtf8("actionEnglish"));
+        actionRussian = new QAction(MainWindow);
+        actionRussian->setObjectName(QString::fromUtf8("actionRussian"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout_11 = new QGridLayout(centralwidget);
@@ -183,8 +194,12 @@ public:
         menubar->setGeometry(QRect(0, 0, 1182, 23));
         menu = new QMenu(menubar);
         menu->setObjectName(QString::fromUtf8("menu"));
+        menuWindow = new QMenu(menubar);
+        menuWindow->setObjectName(QString::fromUtf8("menuWindow"));
         menuView = new QMenu(menubar);
         menuView->setObjectName(QString::fromUtf8("menuView"));
+        menuLanguage = new QMenu(menuView);
+        menuLanguage->setObjectName(QString::fromUtf8("menuLanguage"));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -331,11 +346,16 @@ public:
 
         menubar->addAction(menu->menuAction());
         menubar->addAction(menuView->menuAction());
+        menubar->addAction(menuWindow->menuAction());
         menu->addAction(actionStartGame);
+        menu->addAction(actionConnectToServer);
         menu->addAction(actionDisconnectFromServer);
         menu->addSeparator();
         menu->addAction(actionQuit);
-        menuView->addAction(actionConnectionWindow);
+        menuWindow->addAction(actionConnectionWindow);
+        menuView->addAction(menuLanguage->menuAction());
+        menuLanguage->addAction(actionEnglish);
+        menuLanguage->addAction(actionRussian);
 
         retranslateUi(MainWindow);
         QObject::connect(actionConnectionWindow, SIGNAL(toggled(bool)), dockWidget, SLOT(setVisible(bool)));
@@ -354,12 +374,17 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "QBLOKUS", 0, QApplication::UnicodeUTF8));
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
-        actionDisconnectFromServer->setText(QApplication::translate("MainWindow", "Disconnect from server", 0, QApplication::UnicodeUTF8));
-        actionStartGame->setText(QApplication::translate("MainWindow", "Start game", 0, QApplication::UnicodeUTF8));
+        actionDisconnectFromServer->setText(QApplication::translate("MainWindow", "Disconnect from the server", 0, QApplication::UnicodeUTF8));
+        actionStartGame->setText(QApplication::translate("MainWindow", "Start a new game", 0, QApplication::UnicodeUTF8));
         actionConnectionWindow->setText(QApplication::translate("MainWindow", "Connection window", 0, QApplication::UnicodeUTF8));
+        actionConnectToServer->setText(QApplication::translate("MainWindow", "Connect to the server", 0, QApplication::UnicodeUTF8));
+        actionEnglish->setText(QApplication::translate("MainWindow", "English", 0, QApplication::UnicodeUTF8));
+        actionRussian->setText(QApplication::translate("MainWindow", "Russian", 0, QApplication::UnicodeUTF8));
         pbSurrender->setText(QApplication::translate("MainWindow", "Give up!", 0, QApplication::UnicodeUTF8));
         menu->setTitle(QApplication::translate("MainWindow", "Menu", 0, QApplication::UnicodeUTF8));
+        menuWindow->setTitle(QApplication::translate("MainWindow", "Window", 0, QApplication::UnicodeUTF8));
         menuView->setTitle(QApplication::translate("MainWindow", "View", 0, QApplication::UnicodeUTF8));
+        menuLanguage->setTitle(QApplication::translate("MainWindow", "Language", 0, QApplication::UnicodeUTF8));
         lServersList->setText(QApplication::translate("MainWindow", "Local servers list", 0, QApplication::UnicodeUTF8));
         lPlayersList->setText(QApplication::translate("MainWindow", "Players list", 0, QApplication::UnicodeUTF8));
         lPort->setText(QApplication::translate("MainWindow", "Port", 0, QApplication::UnicodeUTF8));

@@ -110,18 +110,33 @@
      <string>Menu</string>
     </property>
     <addaction name="actionStartGame"/>
+    <addaction name="actionConnectToServer"/>
     <addaction name="actionDisconnectFromServer"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="actionConnectionWindow"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
      <string>View</string>
     </property>
-    <addaction name="actionConnectionWindow"/>
+    <widget class="QMenu" name="menuLanguage">
+     <property name="title">
+      <string>Language</string>
+     </property>
+     <addaction name="actionEnglish"/>
+     <addaction name="actionRussian"/>
+    </widget>
+    <addaction name="menuLanguage"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menuView"/>
+   <addaction name="menuWindow"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget">
@@ -327,12 +342,12 @@
   </action>
   <action name="actionDisconnectFromServer">
    <property name="text">
-    <string>Disconnect from server</string>
+    <string>Disconnect from the server</string>
    </property>
   </action>
   <action name="actionStartGame">
    <property name="text">
-    <string>Start game</string>
+    <string>Start a new game</string>
    </property>
   </action>
   <action name="actionConnectionWindow">
@@ -344,6 +359,21 @@
    </property>
    <property name="text">
     <string>Connection window</string>
+   </property>
+  </action>
+  <action name="actionConnectToServer">
+   <property name="text">
+    <string>Connect to the server</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="text">
+    <string>English</string>
+   </property>
+  </action>
+  <action name="actionRussian">
+   <property name="text">
+    <string>Russian</string>
    </property>
   </action>
  </widget>
