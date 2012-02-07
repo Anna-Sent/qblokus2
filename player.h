@@ -46,7 +46,6 @@ public slots:
 
 signals:
     void scoreChanged(int score);
-    void turnCompleted();
     void won(Player *);
 };
 

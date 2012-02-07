@@ -66,7 +66,6 @@ void Player::startTurn()
 {
     if (surrendered || tilesleft == 0)
     {
-        emit turnCompleted();
         return;
     }
 
@@ -140,7 +139,6 @@ void Player::turnComplete(QColor color, QString, int item, int x, int y)
     Tile *tile = items[item];
     _score += tile->score();
     emit scoreChanged(_score);
-    emit turnCompleted();
     deactivateAll();
     if (tilesleft == 0)
     {
@@ -154,6 +152,5 @@ void Player::surrender()
     {
         surrendered = true;
         deactivateAll();
-        emit turnCompleted();
     }
 }

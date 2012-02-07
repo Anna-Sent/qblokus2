@@ -82,6 +82,8 @@ void Game::turnComplete(QColor color, QString tile, int id, int x, int y)
         currplayer = (currplayer + 1) % players.size();
     }
     while(players[currplayer]->isSurrendered());
+    players[currplayer]->startTurn();
+
     QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
     if (dynamic_cast<LocalPlayer *>(players[currplayer]))
     {
@@ -91,8 +93,6 @@ void Game::turnComplete(QColor color, QString tile, int id, int x, int y)
     {
         surrender->setEnabled(false);
     }
-
-    players[currplayer]->startTurn();
 }
 
 void Game::remotePlayerRetired(QString name, QColor color)
@@ -213,6 +213,12 @@ void Game::start()
         return;
     }
 
+    if (players.size() > 0)
+    {
+        players[0]->startTurn();
+    }
+
+    running = true;
     QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
     if (dynamic_cast<LocalPlayer *>(players[currplayer]))
     {
@@ -222,13 +228,6 @@ void Game::start()
     {
         surrender->setEnabled(false);
     }
-
-    if (players.size() > 0)
-    {
-        players[0]->startTurn();
-    }
-
-    running = true;
 }
 
 void Game::winner(Player *winner)
