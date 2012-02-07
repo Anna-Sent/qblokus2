@@ -14,13 +14,8 @@ Game::Game(QWidget* widget)
     _tablescene->addItem(_table);
     _ui->gvTable->setScene(_tablescene);
     connect(_table, SIGNAL(turnCompleted(QColor,QString,int,int,int)), this, SLOT(turnComplete(QColor,QString,int,int,int)));
-    QPushButton *surrender = widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
-    connect(surrender, SIGNAL(clicked()), this, SLOT(retirePlayer()));
-    surrender->setEnabled(false);
-
     _widget = widget;
     clear();
-
     connect(this, SIGNAL(destroyed()), this, SLOT(clear()));
     connect(this, SIGNAL(destroyed()), _tablescene, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), _table, SLOT(deleteLater()));
@@ -75,8 +70,6 @@ void Game::winner(Player *winner)
     }
 
     _running = false;
-    QPushButton *surrender = _widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
-    surrender->setEnabled(false);
     emit gameOver(clients, winner->score());
 }
 
@@ -265,16 +258,8 @@ void Game::retirePlayer()
         }
         else
         {
+            emit turnStarted(_players[_currplayer]->info());
             _players[_currplayer]->startTurn();
-            QPushButton *surrender = _widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
-            if (dynamic_cast<LocalPlayer *>(_players[_currplayer]))
-            {
-                surrender->setEnabled(true);
-            }
-            else
-            {
-                surrender->setEnabled(false);
-            }
         }
     }
 }
@@ -294,16 +279,8 @@ void Game::start()
     if (_players.size() > 0)
     {
         _running = true;
+        emit turnStarted(_players[0]->info());
         _players[0]->startTurn();
-        QPushButton *surrender = _widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
-        if (dynamic_cast<LocalPlayer *>(_players[_currplayer]))
-        {
-            surrender->setEnabled(true);
-        }
-        else
-        {
-            surrender->setEnabled(false);
-        }
     }
 }
 
@@ -330,15 +307,6 @@ void Game::turnComplete(QColor color, QString tile, int id, int x, int y)
         _currplayer = (_currplayer + 1) % _players.size();
     }
     while(_players[_currplayer]->isSurrendered());
+    emit turnStarted(_players[_currplayer]->info());
     _players[_currplayer]->startTurn();
-
-    QPushButton *surrender = _widget->findChild<QPushButton *>(QString::fromUtf8("pbSurrender"));
-    if (dynamic_cast<LocalPlayer *>(_players[_currplayer]))
-    {
-        surrender->setEnabled(true);
-    }
-    else
-    {
-        surrender->setEnabled(false);
-    }
 }

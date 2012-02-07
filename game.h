@@ -47,6 +47,7 @@ signals:
     void gameOver(QList<ClientInfo>, int);
     void playerRetired(QString name, QColor color);
     void turnCompleted(QString name, QColor color, QString mask, int id, int x, int y);
+    void turnStarted(const ClientInfo &);
 };
 
 #endif

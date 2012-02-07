@@ -49,7 +49,10 @@ private slots:
     void receiveServerInfoMessage(const QHostAddress &, QList<ClientInfo>);
 
     // from game
+    void completeTurn(QString, QColor, QString, int, int, int);
     void finishGame(QList<ClientInfo>, int);
+    void retirePlayer(QString, QColor);
+    void startTurn(const ClientInfo &);
 
 public:
     App(QWidget *parent = 0);

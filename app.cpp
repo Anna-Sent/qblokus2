@@ -52,11 +52,19 @@ App::App(QWidget *parent)
     _serversSearcher.start();
 
     _game = new Game(this);
-    connect(_game, SIGNAL(turnCompleted(QString,QColor,QString,int,int,int)),
-            &_localClient, SLOT(sendTurnMessage(QString,QColor,QString,int,int,int)));
-    connect(_game, SIGNAL(playerRetired(QString,QColor)),
-            &_localClient, SLOT(sendSurrenderMessage(QString,QColor)));
-    connect(_game, SIGNAL(gameOver(QList<ClientInfo>, int)), this, SLOT(finishGame(QList<ClientInfo>, int)));
+    connect(_game, SIGNAL(playerRetired(QString, QColor)),
+            this, SLOT(retirePlayer(QString, QColor)));
+    connect(_game, SIGNAL(turnStarted(const ClientInfo &)),
+            this, SLOT(startTurn(const ClientInfo &)));
+    connect(_game, SIGNAL(turnCompleted(QString, QColor, QString, int, int, int)),
+            this, SLOT(completeTurn(QString, QColor, QString, int, int, int)));
+    connect(_game, SIGNAL(turnCompleted(QString, QColor, QString, int, int, int)),
+            &_localClient, SLOT(sendTurnMessage(QString, QColor, QString, int, int, int)));
+    connect(_game, SIGNAL(playerRetired(QString, QColor)),
+            &_localClient, SLOT(sendSurrenderMessage(QString, QColor)));
+    connect(_game, SIGNAL(gameOver(QList<ClientInfo>, int)),
+            this, SLOT(finishGame(QList<ClientInfo>, int)));
+    connect(pbSurrender, SIGNAL(clicked()), _game, SLOT(retirePlayer()));
 
     connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), &_serversSearcher, SLOT(stop()));
@@ -270,6 +278,7 @@ void App::processClientDisconnected()
     lColor->setDisabled(false);
     cbColor->setDisabled(false);
     pbConnect->setText(QString::fromUtf8("Connect to the server"));
+    pbSurrender->setDisabled(true);
     _game->clear();
 }
 
@@ -358,6 +367,14 @@ void App::receiveTurnMessage(QColor color, int x, int y, int id, QString mask)
     _game->turnComplete(color, mask, id, x, y);
 }
 
+void App::completeTurn(QString name, QColor color, QString, int, int, int)
+{
+    if (_localClient.color() == color && _localClient.name() == name)
+    {
+        pbSurrender->setDisabled(true);
+    }
+}
+
 void App::finishGame(QList<ClientInfo> winners, int score)
 {
     if (_server.isRunning())
@@ -367,36 +384,56 @@ void App::finishGame(QList<ClientInfo> winners, int score)
 
     int count = winners.count();
     QMessageBox msgBox;
-    if (count == 1)
+    if (score > 0)
     {
-        msgBox.setText(QString::fromUtf8("The winner is ") + winners[0].name()
-                       + QString::fromUtf8(" with score ") + QString::number(score));
-    }
-    else if (count > 1)
-    {
-        QStringList names;
-        for (int i = 0; i < count; ++i)
+        if (count == 1)
         {
-            names << winners[i].name();
+            msgBox.setText(QString::fromUtf8("The winner is ") + winners[0].name()
+                           + QString::fromUtf8(" with score ") + QString::number(score));
         }
-
-        names.sort();
-        QString str;
-        for (int i = 0; i < count - 1; ++i)
+        else if (count > 1)
         {
-            str += names[i] + ", ";
-        }
+            QStringList names;
+            for (int i = 0; i < count; ++i)
+            {
+                names << winners[i].name();
+            }
 
-        str += names[count - 1];
-        msgBox.setText(QString::fromUtf8("The winners are ") + str
-                       + QString::fromUtf8(" with score ") + QString::number(score));
+            names.sort();
+            QString str;
+            for (int i = 0; i < count - 1; ++i)
+            {
+                str += names[i] + ", ";
+            }
+
+            str += names[count - 1];
+            msgBox.setText(QString::fromUtf8("The winners are ") + str
+                           + QString::fromUtf8(" with score ") + QString::number(score));
+        }
     }
     else
     {
         msgBox.setText(QString::fromUtf8("There is no winner"));
     }
 
+    pbSurrender->setDisabled(true);
     msgBox.exec();
+}
+
+void App::retirePlayer(QString name, QColor color)
+{
+    if (_localClient.color() == color && _localClient.name() == name)
+    {
+        pbSurrender->setDisabled(true);
+    }
+}
+
+void App::startTurn(const ClientInfo &info)
+{
+    if (_localClient.info() == info)
+    {
+        pbSurrender->setEnabled(true);
+    }
 }
 
 void App::guiChangePortValue(int value)

@@ -84,8 +84,11 @@
       </item>
       <item row="4" column="1">
        <widget class="QPushButton" name="pbSurrender">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
-         <string>Сдаться!</string>
+         <string>Give up!</string>
         </property>
        </widget>
       </item>

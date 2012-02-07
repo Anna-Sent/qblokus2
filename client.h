@@ -19,9 +19,10 @@ private:
 
 public:
     LocalClient();
-    QColor  color() const       { return _info.color(); }
-    bool    isStarted() const   { return _isStarted; }
-    QString name() const        { return _info.name(); }
+    QColor              color() const       { return _info.color(); }
+    const ClientInfo   &info() const        { return _info; }
+    bool                isStarted() const   { return _isStarted; }
+    QString             name() const        { return _info.name(); }
 
 public slots:
     void sendChatMessage(QString text);

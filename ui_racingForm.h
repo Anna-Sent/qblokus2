@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Wed Feb 8 01:04:11 2012
+** Created: Wed Feb 8 02:11:20 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -170,6 +170,7 @@ public:
 
         pbSurrender = new QPushButton(centralwidget);
         pbSurrender->setObjectName(QString::fromUtf8("pbSurrender"));
+        pbSurrender->setEnabled(false);
 
         gridLayout->addWidget(pbSurrender, 4, 1, 1, 1);
 
@@ -356,7 +357,7 @@ public:
         actionDisconnectFromServer->setText(QApplication::translate("MainWindow", "Disconnect from server", 0, QApplication::UnicodeUTF8));
         actionStartGame->setText(QApplication::translate("MainWindow", "Start game", 0, QApplication::UnicodeUTF8));
         actionConnectionWindow->setText(QApplication::translate("MainWindow", "Connection window", 0, QApplication::UnicodeUTF8));
-        pbSurrender->setText(QApplication::translate("MainWindow", "\320\241\320\264\320\260\321\202\321\214\321\201\321\217!", 0, QApplication::UnicodeUTF8));
+        pbSurrender->setText(QApplication::translate("MainWindow", "Give up!", 0, QApplication::UnicodeUTF8));
         menu->setTitle(QApplication::translate("MainWindow", "Menu", 0, QApplication::UnicodeUTF8));
         menuView->setTitle(QApplication::translate("MainWindow", "View", 0, QApplication::UnicodeUTF8));
         lServersList->setText(QApplication::translate("MainWindow", "Local servers list", 0, QApplication::UnicodeUTF8));
