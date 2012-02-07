@@ -164,7 +164,6 @@ void Game::addPlayer(ClientInfo info, PlayerType type)
     QGraphicsView *gv = _widget->findChild<QGraphicsView *>(playerwidget + QString::number(i + 1));
     QLCDNumber *lcd = _widget->findChild<QLCDNumber *>(playerscore + QString::number(i + 1));
     gv->setScene(playerscene);
-    _ui->gridLayout->invalidate();
     gv->setMinimumSize(playerscene->sceneRect().size().toSize());
     gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
