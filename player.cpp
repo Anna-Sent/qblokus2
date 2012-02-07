@@ -2,7 +2,11 @@
 #include <QGraphicsScene>
 #include <QPainter>
 
-Player::Player(const ClientInfo &info, int wid, int hei, QGraphicsItem *parent, QGraphicsScene *scene)
+Player::Player(const ClientInfo &info,
+               int wid,
+               int hei,
+               QGraphicsItem *parent,
+               QGraphicsScene *scene)
     : QGraphicsItem(parent, scene), active(false), lastactive(false), height(wid), width(hei), _score(0), surrendered(false)
 {
     _info = info;
