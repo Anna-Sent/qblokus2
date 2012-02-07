@@ -14,7 +14,6 @@ protected:
     ClientInfo _info;
     virtual void activateAll();
     virtual void deactivateAll();
-    friend class Game;
 
 private:
     bool _lastactive;

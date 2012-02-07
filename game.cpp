@@ -40,9 +40,9 @@ void Game::retirePlayer(int i)
     }
 
     Player *player = _players[i];
-    if (!player->_surrendered)
+    if (!player->isSurrendered())
     {
-        player->_surrendered = true;
+        player->surrender();
         --_playersleft;
     }
 
