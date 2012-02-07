@@ -22,14 +22,14 @@ void NetworkPlayer::deactivateAll()
     update();
 }
 
-void NetworkPlayer::turnComplete(QColor color, QString tile, int item, int x, int y)
+void NetworkPlayer::completeTurn(QColor color, QString tile, int item, int x, int y)
 {
     if (color != _info.color())
     {
         return;
     }
 
-    Player::turnComplete(color, tile, item, x, y);
+    Player::completeTurn(color, tile, item, x, y);
     Tile t(tile.toStdString());
     _table->accept(x, y, t, item, true, false, color);
 }

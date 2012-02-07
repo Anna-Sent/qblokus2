@@ -124,7 +124,7 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *style, QWi
     }
 }
 
-void Player::turnComplete(QColor color, QString, int item, int x, int y)
+void Player::completeTurn(QColor color, QString, int item, int x, int y)
 {
     Q_UNUSED(x);
     Q_UNUSED(y);
@@ -140,10 +140,6 @@ void Player::turnComplete(QColor color, QString, int item, int x, int y)
     _score += tile->score();
     emit scoreChanged(_score);
     deactivateAll();
-    if (tilesleft == 0)
-    {
-        emit won(this);
-    }
 }
 
 void Player::surrender()

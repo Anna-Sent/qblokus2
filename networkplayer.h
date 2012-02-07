@@ -24,7 +24,7 @@ public:
                   QGraphicsScene *scene = 0);
 
 public slots:
-    void turnComplete(QColor color, QString tile, int item, int x, int y);
+    void completeTurn(QColor color, QString tile, int item, int x, int y);
 };
 
 #endif

@@ -36,17 +36,17 @@ public:
     bool isSurrendered() const;
     QString name() const { return _info.name(); }
     int score() const { return _score; }
+    int tilesLeft() const { return tilesleft; }
     ColorItem *tile(int i) const { return items[i]; }
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 public slots:
     virtual void startTurn();
     virtual void surrender();
-    virtual void turnComplete(QColor color, QString tile, int item, int x, int y);
+    virtual void completeTurn(QColor color, QString tile, int item, int x, int y);
 
 signals:
     void scoreChanged(int score);
-    void won(Player *);
 };
 
 #endif
