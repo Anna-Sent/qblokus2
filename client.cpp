@@ -147,9 +147,9 @@ void LocalClient::sendChatMessage(QString text)
     msg.send(_socket);
 }
 
-void LocalClient::sendSurrenderMessage(QString name, QColor color)
+void LocalClient::sendSurrenderMessage()
 {
-    SurrenderMessage msg(name, color);
+    SurrenderMessage msg(_info.name(), _info.color());
     msg.send(_socket);
 }
 

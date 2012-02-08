@@ -31,6 +31,7 @@ private slots:
 
     void guiChangePortValue(int);
     void guiChangeServersListCurrentText(QString);
+    void guiClickRetirePlayer();
     void guiClickServersListItem(QListWidgetItem *item);
     void guiToggleCreateServer(bool);
 
@@ -51,7 +52,6 @@ private slots:
     // from game
     void completeTurn(QString, QColor, QString, int, int, int);
     void finishGame(QList<ClientInfo>, int);
-    void retirePlayer(QString, QColor);
     void startTurn(const ClientInfo &);
 
 public:

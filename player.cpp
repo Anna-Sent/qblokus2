@@ -144,7 +144,7 @@ void Player::startTurn()
 
 void Player::surrender()
 {
-    if (_active)
+    //if (_active)
     {
         _surrendered = true;
         deactivateAll();

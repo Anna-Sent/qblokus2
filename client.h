@@ -26,7 +26,7 @@ public:
 
 public slots:
     void sendChatMessage(QString text);
-    void sendSurrenderMessage(QString name, QColor color);
+    void sendSurrenderMessage();
     void sendTurnMessage(QString name, QColor color, QString tile, int id, int x, int y);
 
     void start(const QColor &color, const QString &name, const QString &hostname, quint16 port);

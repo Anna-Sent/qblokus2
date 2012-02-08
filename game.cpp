@@ -23,39 +23,39 @@ Game::Game(QWidget* widget)
 
 void Game::retirePlayer(int i)
 {
-    if (_players[i]->isSurrendered())
-    {
-        return;
-    }
-
-    if (_currplayer == i)
-    {
-        retirePlayer();
-        return;
-    }
-
     Player *player = _players[i];
-    if (!player->isSurrendered())
+    player->surrender();
+    --_playersleft;
+    if (_playersleft > 0)
     {
-        player->surrender();
-        --_playersleft;
-    }
-
-    if (_playersleft == 1)
-    {
-        int msp = 0;
-        for (int p = 1; p < _players.size(); ++p)
+        if (_running)
         {
-            if (_players[p]->score() > _players[msp]->score())
+            do
             {
-                msp = p;
+                _currplayer = (_currplayer + 1) % _players.size();
             }
+            while(_players[_currplayer]->isSurrendered());
         }
 
-        winner(_players[msp]);
-    }
+        if (_playersleft == 1)
+        {
+            int msp = 0;
+            for (int p = 1; p < _players.size(); ++p)
+            {
+                if ((_players[p]->score() > _players[msp]->score()))
+                {
+                    msp = p;
+                }
+            }
 
-    player->update();
+            winner(_players[msp]);
+        }
+        else if (_running)
+        {
+            emit turnStarted(_players[_currplayer]->info());
+            _players[_currplayer]->startTurn();
+        }
+    }
 }
 
 void Game::winner(Player *winner)
@@ -71,14 +71,6 @@ void Game::winner(Player *winner)
 
     _running = false;
     emit gameOver(clients, winner->score());
-}
-
-void Game::retireRemotePlayer(QString name, QColor color)
-{
-    if (name == _players[_currplayer]->name() && color == _players[_currplayer]->color())
-    {
-        retirePlayer();
-    }
 }
 
 void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
@@ -203,62 +195,14 @@ void Game::clear()
     }
 }
 
-void Game::retirePlayer()
+void Game::retirePlayer(QString name, QColor color)
 {
-    if (!_running)
+    for (int i = 0; i < _players.size(); ++i)
     {
-        return;
-    }
-
-    if (sender() && dynamic_cast<QPushButton *>(sender()))
-    {
-        LocalPlayer *player = dynamic_cast<LocalPlayer *>(_players[_currplayer]);
-        if (!player)
+        if (_players[i]->name() == name && _players[i]->color() == color)
         {
+            retirePlayer(i);
             return;
-        }
-
-        QMessageBox msgBox;
-        msgBox.setInformativeText(QString::fromUtf8("Do you really want to give up and finish the game?"));
-        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        msgBox.setDefaultButton(QMessageBox::No);
-        msgBox.setIcon(QMessageBox::Warning);
-        int ret = msgBox.exec();
-        if (ret == QMessageBox::No)
-        {
-            return;
-        }
-
-        emit playerRetired(_players[_currplayer]->name(), _players[_currplayer]->color());
-    }
-
-    Player *player = _players[_currplayer];
-    player->surrender();
-    --_playersleft;
-    if (_playersleft > 0)
-    {
-        do
-        {
-            _currplayer = (_currplayer + 1) % _players.size();
-        }
-        while(_players[_currplayer]->isSurrendered());
-        if (_playersleft == 1)
-        {
-            int msp = 0;
-            for (int p = 1; p < _players.size(); ++p)
-            {
-                if ((_players[p]->score() > _players[msp]->score()))
-                {
-                    msp = p;
-                }
-            }
-
-            winner(_players[msp]);
-        }
-        else
-        {
-            emit turnStarted(_players[_currplayer]->info());
-            _players[_currplayer]->startTurn();
         }
     }
 }

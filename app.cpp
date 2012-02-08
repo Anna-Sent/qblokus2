@@ -53,19 +53,15 @@ App::App(QWidget *parent)
     _serversSearcher.start();
 
     _game = new Game(this);
-    connect(_game, SIGNAL(playerRetired(QString, QColor)),
-            this, SLOT(retirePlayer(QString, QColor)));
     connect(_game, SIGNAL(turnStarted(const ClientInfo &)),
             this, SLOT(startTurn(const ClientInfo &)));
     connect(_game, SIGNAL(turnCompleted(QString, QColor, QString, int, int, int)),
             this, SLOT(completeTurn(QString, QColor, QString, int, int, int)));
     connect(_game, SIGNAL(turnCompleted(QString, QColor, QString, int, int, int)),
             &_localClient, SLOT(sendTurnMessage(QString, QColor, QString, int, int, int)));
-    connect(_game, SIGNAL(playerRetired(QString, QColor)),
-            &_localClient, SLOT(sendSurrenderMessage(QString, QColor)));
     connect(_game, SIGNAL(gameOver(QList<ClientInfo>, int)),
             this, SLOT(finishGame(QList<ClientInfo>, int)));
-    connect(pbSurrender, SIGNAL(clicked()), _game, SLOT(retirePlayer()));
+    connect(pbSurrender, SIGNAL(clicked()), this, SLOT(guiClickRetirePlayer()));
 
     connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), &_serversSearcher, SLOT(stop()));
@@ -376,7 +372,7 @@ void App::receiveStartGameMessage(QList<ClientInfo> list)
 
 void App::receiveSurrenderMessage(QString name, QColor color)
 {
-    _game->retireRemotePlayer(name, color);
+    _game->retirePlayer(name, color);
 }
 
 void App::receiveTurnMessage(QColor color, int x, int y, int id, QString mask)
@@ -437,14 +433,6 @@ void App::finishGame(QList<ClientInfo> winners, int score)
     msgBox.exec();
 }
 
-void App::retirePlayer(QString name, QColor color)
-{
-    if (_localClient.color() == color && _localClient.name() == name)
-    {
-        pbSurrender->setDisabled(true);
-    }
-}
-
 void App::startTurn(const ClientInfo &info)
 {
     if (_localClient.info() == info)
@@ -466,6 +454,22 @@ void App::guiChangeServersListCurrentText(QString text)
     {
         leServerAddress->setText(text);
     }
+}
+
+void App::guiClickRetirePlayer()
+{
+    QMessageBox msgBox;
+    msgBox.setInformativeText(QString::fromUtf8("Do you really want to give up and finish the game?"));
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    msgBox.setIcon(QMessageBox::Warning);
+    int ret = msgBox.exec();
+    if (ret == QMessageBox::No)
+    {
+        return;
+    }
+
+    _localClient.sendSurrenderMessage();;
 }
 
 void App::guiClickServersListItem(QListWidgetItem *item)
