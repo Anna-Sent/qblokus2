@@ -32,8 +32,7 @@ App::App(QWidget *parent)
     // from user
     connect(actionStartGame, SIGNAL(activated()), this, SLOT(userStartGame()));
     connect(actionQuit, SIGNAL(activated()), this, SLOT(userQuit()));
-    connect(actionConnectToServer, SIGNAL(activated()), this, SLOT(userTryToConnect()));
-    connect(actionDisconnectFromServer, SIGNAL(activated()), this, SLOT(userDisconnectFromServer()));
+    connect(actionConnect, SIGNAL(activated()), this, SLOT(userTryToConnect()));
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
     connect(leNickname, SIGNAL(returnPressed()), pbConnect, SLOT(animateClick()));
     connect(leNickname, SIGNAL(returnPressed()), pbConnect, SLOT(setFocus()));
@@ -274,6 +273,7 @@ void App::acceptConnection()
     lColor->setDisabled(true);
     cbColor->setDisabled(true);
     pbConnect->setText(QString::fromUtf8("Disconnect from the server"));
+    actionConnect->setText(QString::fromUtf8("Disconnect from the server"));
 }
 
 void App::processClientDisconnected()
@@ -293,6 +293,7 @@ void App::processClientDisconnected()
     lColor->setDisabled(false);
     cbColor->setDisabled(false);
     pbConnect->setText(QString::fromUtf8("Connect to the server"));
+    actionConnect->setText(QString::fromUtf8("Connect to the server"));
     pbSurrender->setDisabled(true);
     _game->clear();
 }

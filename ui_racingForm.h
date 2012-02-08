@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Wed Feb 8 03:19:38 2012
+** Created: Wed Feb 8 18:47:51 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -43,7 +43,7 @@ public:
     QAction *actionDisconnectFromServer;
     QAction *actionStartGame;
     QAction *actionConnectionWindow;
-    QAction *actionConnectToServer;
+    QAction *actionConnect;
     QAction *actionEnglish;
     QAction *actionRussian;
     QWidget *centralwidget;
@@ -108,8 +108,8 @@ public:
         actionConnectionWindow->setObjectName(QString::fromUtf8("actionConnectionWindow"));
         actionConnectionWindow->setCheckable(true);
         actionConnectionWindow->setChecked(true);
-        actionConnectToServer = new QAction(MainWindow);
-        actionConnectToServer->setObjectName(QString::fromUtf8("actionConnectToServer"));
+        actionConnect = new QAction(MainWindow);
+        actionConnect->setObjectName(QString::fromUtf8("actionConnect"));
         actionEnglish = new QAction(MainWindow);
         actionEnglish->setObjectName(QString::fromUtf8("actionEnglish"));
         actionRussian = new QAction(MainWindow);
@@ -275,7 +275,7 @@ public:
         pbConnect = new QPushButton(dockWidgetContents);
         pbConnect->setObjectName(QString::fromUtf8("pbConnect"));
 
-        gridLayout_8->addWidget(pbConnect, 14, 0, 1, 1);
+        gridLayout_8->addWidget(pbConnect, 13, 0, 1, 1);
 
         leServerAddress = new QLineEdit(dockWidgetContents);
         leServerAddress->setObjectName(QString::fromUtf8("leServerAddress"));
@@ -348,8 +348,7 @@ public:
         menubar->addAction(menuView->menuAction());
         menubar->addAction(menuWindow->menuAction());
         menu->addAction(actionStartGame);
-        menu->addAction(actionConnectToServer);
-        menu->addAction(actionDisconnectFromServer);
+        menu->addAction(actionConnect);
         menu->addSeparator();
         menu->addAction(actionQuit);
         menuWindow->addAction(actionConnectionWindow);
@@ -377,7 +376,7 @@ public:
         actionDisconnectFromServer->setText(QApplication::translate("MainWindow", "Disconnect from the server", 0, QApplication::UnicodeUTF8));
         actionStartGame->setText(QApplication::translate("MainWindow", "Start a new game", 0, QApplication::UnicodeUTF8));
         actionConnectionWindow->setText(QApplication::translate("MainWindow", "Connection window", 0, QApplication::UnicodeUTF8));
-        actionConnectToServer->setText(QApplication::translate("MainWindow", "Connect to the server", 0, QApplication::UnicodeUTF8));
+        actionConnect->setText(QApplication::translate("MainWindow", "Connect to the server", 0, QApplication::UnicodeUTF8));
         actionEnglish->setText(QApplication::translate("MainWindow", "English", 0, QApplication::UnicodeUTF8));
         actionRussian->setText(QApplication::translate("MainWindow", "Russian", 0, QApplication::UnicodeUTF8));
         pbSurrender->setText(QApplication::translate("MainWindow", "Give up!", 0, QApplication::UnicodeUTF8));
