@@ -16,7 +16,11 @@ private:
     LocalClient _localClient;
     Server _server;
     ServersSearcher _serversSearcher;
-    void setTabOrder();
+    bool confirm(const QString &) const;
+    void setTabOrder() const;
+    void showCriticalMessage(const QString &) const;
+    void showInformationMessage(const QString &) const;
+    void showWarningMessage(const QString &) const;
 
 private slots:
     void perror(const QString &);

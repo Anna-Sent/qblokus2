@@ -70,7 +70,18 @@ App::App(QWidget *parent)
     connect(this, SIGNAL(destroyed()), &_server, SLOT(stop()));
 }
 
-void App::setTabOrder()
+bool App::confirm(const QString &question) const
+{
+    QMessageBox msgBox;
+    msgBox.setText(question);
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    msgBox.setIcon(QMessageBox::Question);
+    int ret = msgBox.exec();
+    return ret == QMessageBox::Yes;
+}
+
+void App::setTabOrder() const
 {
     QWidget::setTabOrder(gvPlayer1, gvPlayer2);
     QWidget::setTabOrder(gvPlayer2, gvPlayer3);
@@ -92,12 +103,36 @@ void App::setTabOrder()
     QWidget::setTabOrder(lineEdit, lwServersList);
 }
 
+void App::showCriticalMessage(const QString &text) const
+{
+    QMessageBox msgBox;
+    msgBox.setText(text);
+    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.exec();
+}
+
+void App::showInformationMessage(const QString &text) const
+{
+    QMessageBox msgBox;
+    msgBox.setText(text);
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.exec();
+}
+
+void App::showWarningMessage(const QString &text) const
+{
+    QMessageBox msgBox;
+    msgBox.setText(text);
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.exec();
+}
+
 void App::perror(const QString &text)
 {
     pinfo(text, Qt::darkRed);
     if (!dockWidget->isVisible())
     {
-        QMessageBox::critical(this, QString::fromUtf8("Error"), text);
+        showCriticalMessage(text);
     }
 }
 
@@ -111,19 +146,11 @@ void App::userDisconnectFromServer()
 {
     if (_localClient.isStarted())
     {
-        QMessageBox msgBox;
-        msgBox.setText(QString::fromUtf8("Disconnect from the server?"));
-        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        msgBox.setDefaultButton(QMessageBox::No);
-        msgBox.setIcon(QMessageBox::Warning);
-        int ret = msgBox.exec();
-        if (ret == QMessageBox::No)
+        if (confirm(QString::fromUtf8("Disconnect from the server?")))
         {
-            return;
+            _localClient.stop();
+            _server.stop();
         }
-
-        _localClient.stop();
-        _server.stop();
     }
 }
 
@@ -149,14 +176,7 @@ void App::userStartGame()
         {
             if (_game->isStarted())
             {
-                QMessageBox msgBox;
-                msgBox.setText(QString::fromUtf8(
-                        "Are you sure you want to start a new game?"));
-                msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-                msgBox.setDefaultButton(QMessageBox::No);
-                msgBox.setIcon(QMessageBox::Warning);
-                int ret = msgBox.exec();
-                if (ret == QMessageBox::No)
+                if (!confirm(QString::fromUtf8("Are you sure you want to start a new game?")))
                 {
                     return;
                 }
@@ -166,15 +186,14 @@ void App::userStartGame()
         }
         else
         {
-            QMessageBox::warning(this, QString::fromUtf8("Warning"), QString::fromUtf8("Wait for ")
-                                 + QString::number(_server.maxClientsCount())
-                                 + QString::fromUtf8(" players"));
+            showWarningMessage(QString::fromUtf8("Wait for ")
+                               + QString::number(_server.maxClientsCount())
+                               + QString::fromUtf8(" players"));
         }
     }
     else
     {
-        QMessageBox::warning(this, QString::fromUtf8("Warning"), QString::fromUtf8(
-                "Only the server can start a game"));
+        showWarningMessage(QString::fromUtf8("Only the server can start a game"));
     }
 }
 
@@ -193,14 +212,12 @@ void App::userTryToConnect()
         case 1:     color = Qt::darkYellow; break;
         case 2:     color = Qt::green; break;
         case 3:     color = Qt::blue; break;
-        default:    QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
-                    "Incorrect color")); return;
+        default:    showCriticalMessage(QString::fromUtf8("Incorrect color")); return;
         }
 
         if (leNickname->text() == "")
         {
-            QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
-                    "Enter the nickname"));
+            showWarningMessage(QString::fromUtf8("Enter the nickname"));
             if (dockWidget->isVisible())
             {
                 dockWidget->activateWindow();
@@ -209,10 +226,10 @@ void App::userTryToConnect()
 
             return;
         }
-        else if (leNickname->text().toUtf8().size() > 100)
+
+        if (leNickname->text().toUtf8().size() > 100)
         {
-            QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
-                    "Your nickname is too long"));
+            showWarningMessage(QString::fromUtf8("Your nickname is too long"));
             if (dockWidget->isVisible())
             {
                 dockWidget->activateWindow();
@@ -226,8 +243,7 @@ void App::userTryToConnect()
         QString hostname = cbCreateServer->checkState() ? "localhost" : leServerAddress->text();
         if (hostname == "")
         {
-            QMessageBox::warning(this, QString::fromUtf8("Error"), QString::fromUtf8(
-                    "Enter the server"));
+            showWarningMessage(QString::fromUtf8("Enter the server"));
             if (dockWidget->isVisible())
             {
                 dockWidget->activateWindow();
@@ -244,7 +260,7 @@ void App::userTryToConnect()
             _server.start(maxClientsCount, port);
             if (!_server.isRunning())
             {
-                QMessageBox::critical(this, QString::fromUtf8("Error"), _server.errorString());
+                showCriticalMessage(_server.errorString());
                 return;
             }
         }
@@ -436,7 +452,7 @@ void App::finishGame(QList<ClientInfo> winners, int score)
 
     pbSurrender->setDisabled(true);
     pinfo(msg);
-    QMessageBox::information(this, QString::fromUtf8("Winners"), msg);
+    showInformationMessage(msg);
 }
 
 void App::startTurn(const ClientInfo &info)
@@ -464,19 +480,10 @@ void App::guiChangeServersListCurrentText(QString text)
 
 void App::guiClickRetirePlayer()
 {
-    QMessageBox msgBox;
-    msgBox.setText(QString::fromUtf8(
-            "Do you really want to give up and finish the game?"));
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    msgBox.setDefaultButton(QMessageBox::No);
-    msgBox.setIcon(QMessageBox::Warning);
-    int ret = msgBox.exec();
-    if (ret == QMessageBox::No)
+    if (confirm(QString::fromUtf8("Do you really want to give up and finish the game?")))
     {
-        return;
+        _localClient.sendSurrenderMessage();
     }
-
-    _localClient.sendSurrenderMessage();
 }
 
 void App::guiClickServersListItem(QListWidgetItem *item)
