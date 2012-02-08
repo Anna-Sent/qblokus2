@@ -1,10 +1,6 @@
 #include "game.h"
 #include "localplayer.h"
 #include "networkplayer.h"
-#include <iostream>
-#include <QMessageBox>
-
-using namespace std;
 
 Game::Game(QGraphicsView *gv,
            QGraphicsView *gvs[MAX_PLAYERS_COUNT], QLCDNumber *lcds[MAX_PLAYERS_COUNT])
@@ -152,7 +148,7 @@ void Game::retirePlayer(int i)
 
                 winner(_players[msp]);
             }
-            else
+            else if (i == _currplayer)
             {
                 startTurn();
             }
