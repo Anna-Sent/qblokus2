@@ -52,7 +52,9 @@ App::App(QWidget *parent)
     _serversSearcher.setPort(sbPort->value());
     _serversSearcher.start();
 
-    _game = new Game(this);
+    QGraphicsView *gvs[4] = { gvPlayer1, gvPlayer2, gvPlayer3, gvPlayer4 };
+    QLCDNumber *lcds[4] = { score1, score2, score3, score4 };
+    _game = new Game(gvTable, gvs, lcds);
     connect(_game, SIGNAL(turnStarted(const ClientInfo &)),
             this, SLOT(startTurn(const ClientInfo &)));
     connect(_game, SIGNAL(turnCompleted(QString, QColor, QString, int, int, int)),

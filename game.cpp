@@ -6,15 +6,21 @@
 
 using namespace std;
 
-Game::Game(QWidget* widget)
+Game::Game(QGraphicsView *gv,
+           QGraphicsView *gvs[MAX_PLAYERS_COUNT], QLCDNumber *lcds[MAX_PLAYERS_COUNT])
 {
-    _ui = dynamic_cast<Ui::MainWindow *>(widget);
+    for (int i = 0; i < MAX_PLAYERS_COUNT; ++i)
+    {
+        _gvs[i] = gvs[i];
+        _lcds[i] = lcds[i];
+    }
+
     _table = new Table(20, 20);
     _tablescene = new QGraphicsScene;
     _tablescene->addItem(_table);
-    _ui->gvTable->setScene(_tablescene);
-    connect(_table, SIGNAL(turnCompleted(QColor,QString,int,int,int)), this, SLOT(turnComplete(QColor,QString,int,int,int)));
-    _widget = widget;
+    gv->setScene(_tablescene);
+    connect(_table, SIGNAL(turnCompleted(QColor, QString, int, int, int)),
+            this, SLOT(turnComplete(QColor, QString, int, int, int)));
     clear();
     connect(this, SIGNAL(destroyed()), this, SLOT(clear()));
     connect(this, SIGNAL(destroyed()), _tablescene, SLOT(deleteLater()));
@@ -150,24 +156,23 @@ void Game::addPlayer(ClientInfo info, PlayerType type)
         return;
     }
 
-    int i = _playersleft;
-    QString playerwidget(QString::fromUtf8("gvPlayer"));
-    QString playerscore(QString::fromUtf8("score"));
     player->setPos(0, 0);
     _players.append(player);
     QGraphicsScene *playerscene = new QGraphicsScene;
     _scenes.append(playerscene);
     playerscene->addItem(player);
-    QGraphicsView *gv = _widget->findChild<QGraphicsView *>(playerwidget + QString::number(i + 1));
-    QLCDNumber *lcd = _widget->findChild<QLCDNumber *>(playerscore + QString::number(i + 1));
+
+    QGraphicsView *gv = _gvs[_playersleft];
     gv->setScene(playerscene);
     gv->setMinimumSize(playerscene->sceneRect().size().toSize());
     gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    lcd->setPalette(QPalette(info.color()));
+    QLCDNumber *lcd = _lcds[_playersleft];
     connect(player, SIGNAL(scoreChanged(int)), lcd, SLOT(display(int)));
+    lcd->setPalette(QPalette(info.color()));
     lcd->display(0);
+
     ++_playersleft;
 }
 
@@ -192,11 +197,10 @@ void Game::clear()
 
     _players.clear();
 
-    QList<QLCDNumber *> lcds = _widget->findChildren<QLCDNumber *>();
-    for (int i = 0; i < lcds.size(); ++i)
+    for (int i = 0; i < MAX_PLAYERS_COUNT; ++i)
     {
-        lcds[i]->setPalette(QPalette());
-        lcds[i]->display(0);
+        _lcds[i]->setPalette(QPalette());
+        _lcds[i]->display(0);
     }
 }
 

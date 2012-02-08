@@ -9,6 +9,8 @@
 #include "table.h"
 #include "ui_racingForm.h"
 
+#define MAX_PLAYERS_COUNT 4
+
 enum PlayerType { ptLocal, ptNetwork };
 
 class Game : public QObject
@@ -21,8 +23,9 @@ private:
     int _playersleft;
     Table *_table;
     Ui::MainWindow *_ui;
-    QWidget *_widget;
+    QGraphicsView *_gvs[MAX_PLAYERS_COUNT];
     QGraphicsScene *_tablescene;
+    QLCDNumber *_lcds[MAX_PLAYERS_COUNT];
     QList<Player *> _players;
     QList<QGraphicsScene *> _scenes;
     void countNextActivePlayerNumber();
@@ -32,7 +35,7 @@ private slots:
     void winner(Player *);
 
 public:
-    Game(QWidget *widget);
+    Game(QGraphicsView *, QGraphicsView *[MAX_PLAYERS_COUNT], QLCDNumber *[MAX_PLAYERS_COUNT]);
     bool isStarted() const { return _running; }
     void updatePlayers(QList<ClientInfo>, QList<bool>);
 
