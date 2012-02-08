@@ -25,6 +25,7 @@ private:
     QGraphicsScene *_tablescene;
     QList<Player *> _players;
     QList<QGraphicsScene *> _scenes;
+    void countNextActivePlayerNumber();
     void retirePlayer(int);
 
 private slots:

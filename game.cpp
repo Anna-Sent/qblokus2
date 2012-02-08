@@ -21,6 +21,15 @@ Game::Game(QWidget* widget)
     connect(this, SIGNAL(destroyed()), _table, SLOT(deleteLater()));
 }
 
+void Game::countNextActivePlayerNumber()
+{
+    do
+    {
+        _currplayer = (_currplayer + 1) % _players.size();
+    }
+    while(_players[_currplayer]->isSurrendered());
+}
+
 void Game::retirePlayer(int i)
 {
     Player *player = _players[i];
@@ -30,11 +39,7 @@ void Game::retirePlayer(int i)
     {
         if (_running)
         {
-            do
-            {
-                _currplayer = (_currplayer + 1) % _players.size();
-            }
-            while(_players[_currplayer]->isSurrendered());
+            countNextActivePlayerNumber();
         }
 
         if (_playersleft == 1)
@@ -214,11 +219,6 @@ void Game::start()
         return;
     }
 
-    if (_players.size() == 0)
-    {
-        return;
-    }
-
     if (_players.size() > 0)
     {
         _running = true;
@@ -245,11 +245,7 @@ void Game::turnComplete(QColor color, QString tile, int id, int x, int y)
         winner(_players[_currplayer]);
     }
 
-    do
-    {
-        _currplayer = (_currplayer + 1) % _players.size();
-    }
-    while(_players[_currplayer]->isSurrendered());
+    countNextActivePlayerNumber();
     emit turnStarted(_players[_currplayer]->info());
     _players[_currplayer]->startTurn();
 }
