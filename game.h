@@ -28,22 +28,21 @@ private:
     QLCDNumber *_lcds[MAX_PLAYERS_COUNT];
     QList<Player *> _players;
     QList<QGraphicsScene *> _scenes;
+    void addPlayer(ClientInfo info, PlayerType type);
     void countNextActivePlayerNumber();
     void retirePlayer(int);
-
-private slots:
+    void startTurn();
     void winner(Player *);
 
 public:
     Game(QGraphicsView *, QGraphicsView *[MAX_PLAYERS_COUNT], QLCDNumber *[MAX_PLAYERS_COUNT]);
     bool isStarted() const { return _running; }
+    void retirePlayer(QString name, QColor color);
+    void start();
     void updatePlayers(QList<ClientInfo>, QList<bool>);
 
 public slots:
-    void addPlayer(ClientInfo info, PlayerType type);
     void clear();
-    void retirePlayer(QString name, QColor color);
-    void start();
     void turnComplete(QColor color, QString tile, int id, int x, int y);
 
 signals:

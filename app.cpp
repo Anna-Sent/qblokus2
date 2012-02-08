@@ -375,6 +375,10 @@ void App::receiveStartGameMessage(QList<ClientInfo> list)
 void App::receiveSurrenderMessage(QString name, QColor color)
 {
     _game->retirePlayer(name, color);
+    if (_localClient.name() == name && _localClient.color() == color)
+    {
+        pbSurrender->setDisabled(true);
+    }
 }
 
 void App::receiveTurnMessage(QColor color, int x, int y, int id, QString mask)

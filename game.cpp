@@ -27,45 +27,64 @@ Game::Game(QGraphicsView *gv,
     connect(this, SIGNAL(destroyed()), _table, SLOT(deleteLater()));
 }
 
-void Game::countNextActivePlayerNumber()
+void Game::clear()
 {
-    do
+    _running = false;
+    _currplayer = -1;
+    _playersleft = 0;
+    _table->clear();
+
+    for (int i = 0; i < _scenes.size(); ++i)
     {
-        _currplayer = (_currplayer + 1) % _players.size();
+        _scenes[i]->deleteLater();
     }
-    while(_players[_currplayer]->isSurrendered());
+
+    _scenes.clear();
+
+    for (int i = 0; i < _players.size(); ++i)
+    {
+        _players[i]->deleteLater();
+    }
+
+    _players.clear();
+
+    for (int i = 0; i < MAX_PLAYERS_COUNT; ++i)
+    {
+        _lcds[i]->setPalette(QPalette());
+        _lcds[i]->display(0);
+    }
 }
 
-void Game::retirePlayer(int i)
+void Game::countNextActivePlayerNumber()
 {
-    Player *player = _players[i];
-    player->surrender();
-    --_playersleft;
-    if (_playersleft > 0)
+    if (_currplayer == -1)
     {
-        if (_running)
+        _currplayer = 0;
+    }
+    else
+    {
+        do
         {
-            countNextActivePlayerNumber();
+            _currplayer = (_currplayer + 1) % _players.size();
         }
+        while(_players[_currplayer]->isSurrendered());
+    }
+}
 
-        if (_playersleft == 1)
-        {
-            int msp = 0;
-            for (int p = 1; p < _players.size(); ++p)
-            {
-                if ((_players[p]->score() > _players[msp]->score()))
-                {
-                    msp = p;
-                }
-            }
+void Game::startTurn()
+{
+    countNextActivePlayerNumber();
+    Player *player = _players[_currplayer];
+    emit turnStarted(player->info());
+    player->startTurn();
+}
 
-            winner(_players[msp]);
-        }
-        else if (_running)
-        {
-            emit turnStarted(_players[_currplayer]->info());
-            _players[_currplayer]->startTurn();
-        }
+void Game::start()
+{
+    if (!_running && _players.size() > 0)
+    {
+        _running = true;
+        startTurn();
     }
 }
 
@@ -81,7 +100,114 @@ void Game::winner(Player *winner)
     }
 
     _running = false;
+    _currplayer = -1;
     emit gameOver(clients, winner->score());
+}
+
+void Game::turnComplete(QColor color, QString tile, int id, int x, int y)
+{
+    if (_currplayer != -1)
+    {
+        Player *player = _players[_currplayer];
+        if (player->color() == color)
+        {
+            player->completeTurn(color, tile, id, x, y);
+            if (dynamic_cast<Table *>(sender()))
+            {
+                emit turnCompleted(player->name(), color, tile, id, x, y);
+            }
+
+            if (player->leftTilesCount() == 0)
+            {
+                winner(_players[_currplayer]);
+            }
+            else
+            {
+                startTurn();
+            }
+        }
+    }
+}
+
+void Game::retirePlayer(int i)
+{
+    if (_running)
+    {
+        Player *player = _players[i];
+        player->surrender();
+        --_playersleft;
+
+        if (_playersleft > 0)
+        {
+            if (_playersleft == 1)
+            {
+                int msp = 0;
+                for (int p = 1; p < _players.size(); ++p)
+                {
+                    if ((_players[p]->score() > _players[msp]->score()))
+                    {
+                        msp = p;
+                    }
+                }
+
+                winner(_players[msp]);
+            }
+            else
+            {
+                startTurn();
+            }
+        }
+        else
+        {
+            _running = false;
+            _currplayer = -1;
+        }
+    }
+}
+
+void Game::retirePlayer(QString name, QColor color)
+{
+    for (int i = 0; i < _players.size(); ++i)
+    {
+        if (_players[i]->name() == name && _players[i]->color() == color)
+        {
+            retirePlayer(i);
+            return;
+        }
+    }
+}
+
+void Game::addPlayer(ClientInfo info, PlayerType type)
+{
+    Player *player;
+    switch (type)
+    {
+    case(ptLocal):
+        player = new LocalPlayer(info);
+        break;
+    case(ptNetwork):
+        player = new NetworkPlayer(info, _table);
+        break;
+    }
+
+    player->setPos(0, 0);
+    _players.append(player);
+    QGraphicsScene *playerscene = new QGraphicsScene;
+    _scenes.append(playerscene);
+    playerscene->addItem(player);
+
+    QGraphicsView *gv = _gvs[_playersleft];
+    gv->setScene(playerscene);
+    gv->setMinimumSize(playerscene->sceneRect().size().toSize());
+    gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    QLCDNumber *lcd = _lcds[_playersleft];
+    connect(player, SIGNAL(scoreChanged(int)), lcd, SLOT(display(int)));
+    lcd->setPalette(QPalette(info.color()));
+    lcd->display(0);
+
+    ++_playersleft;
 }
 
 void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
@@ -122,7 +248,7 @@ void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
             }
             else
             {
-                if (_players[pl]->name() == clients[cl].name() && _players[pl]->color() == clients[cl].color())
+                if (_players[pl]->info() == clients[cl])
                 {
                     ++pl;
                     ++cl;
@@ -139,117 +265,4 @@ void Game::updatePlayers(QList<ClientInfo> clients, QList<bool> local)
             }
         }
     }
-}
-
-void Game::addPlayer(ClientInfo info, PlayerType type)
-{
-    Player *player;
-    switch (type)
-    {
-    case(ptLocal):
-        player = new LocalPlayer(info);
-        break;
-    case(ptNetwork):
-        player = new NetworkPlayer(info, _table);
-        break;
-    default:
-        return;
-    }
-
-    player->setPos(0, 0);
-    _players.append(player);
-    QGraphicsScene *playerscene = new QGraphicsScene;
-    _scenes.append(playerscene);
-    playerscene->addItem(player);
-
-    QGraphicsView *gv = _gvs[_playersleft];
-    gv->setScene(playerscene);
-    gv->setMinimumSize(playerscene->sceneRect().size().toSize());
-    gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    QLCDNumber *lcd = _lcds[_playersleft];
-    connect(player, SIGNAL(scoreChanged(int)), lcd, SLOT(display(int)));
-    lcd->setPalette(QPalette(info.color()));
-    lcd->display(0);
-
-    ++_playersleft;
-}
-
-void Game::clear()
-{
-    _running = false;
-    _playersleft = 0;
-    _currplayer = 0;
-    _table->clear();
-
-    for (int i = 0; i < _scenes.size(); ++i)
-    {
-        _scenes[i]->deleteLater();
-    }
-
-    _scenes.clear();
-
-    for (int i = 0; i < _scenes.size(); ++i)
-    {
-        _players[i]->deleteLater();
-    }
-
-    _players.clear();
-
-    for (int i = 0; i < MAX_PLAYERS_COUNT; ++i)
-    {
-        _lcds[i]->setPalette(QPalette());
-        _lcds[i]->display(0);
-    }
-}
-
-void Game::retirePlayer(QString name, QColor color)
-{
-    for (int i = 0; i < _players.size(); ++i)
-    {
-        if (_players[i]->name() == name && _players[i]->color() == color)
-        {
-            retirePlayer(i);
-            return;
-        }
-    }
-}
-
-void Game::start()
-{
-    if (_running)
-    {
-        return;
-    }
-
-    if (_players.size() > 0)
-    {
-        _running = true;
-        emit turnStarted(_players[0]->info());
-        _players[0]->startTurn();
-    }
-}
-
-void Game::turnComplete(QColor color, QString tile, int id, int x, int y)
-{
-    if (color != _players[_currplayer]->color())
-    {
-        return;
-    }
-
-    if (dynamic_cast<Table *>(sender()))
-    {
-        emit turnCompleted(_players[_currplayer]->name(), color, tile, id, x, y);
-    }
-
-    _players[_currplayer]->completeTurn(color, tile, id, x, y);
-    if (_players[_currplayer]->leftTilesCount() == 0)
-    {
-        winner(_players[_currplayer]);
-    }
-
-    countNextActivePlayerNumber();
-    emit turnStarted(_players[_currplayer]->info());
-    _players[_currplayer]->startTurn();
 }
