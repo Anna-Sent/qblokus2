@@ -20,7 +20,7 @@ private:
 
 private slots:
     void perror(const QString &);
-    void pinfo(const QString &);
+    void pinfo(const QString &, const QColor &color = Qt::darkBlue);
 
     // from user
     void userDisconnectFromServer();

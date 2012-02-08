@@ -94,17 +94,16 @@ void App::setTabOrder()
 
 void App::perror(const QString &text)
 {
-    textEdit->setTextColor(Qt::darkRed);
-    textEdit->append(text);
+    pinfo(text, Qt::darkRed);
     if (!dockWidget->isVisible())
     {
         QMessageBox::critical(this, QString::fromUtf8("Error"), text);
     }
 }
 
-void App::pinfo(const QString &text)
+void App::pinfo(const QString &text, const QColor &color)
 {
-    textEdit->setTextColor(Qt::darkBlue);
+    textEdit->setTextColor(color);
     textEdit->append(text);
 }
 
@@ -300,22 +299,18 @@ void App::processClientDisconnected()
 
 void App::receiveChatMessage(QString name, QColor color, QString text)
 {
-    textEdit->setTextColor(color);
-    textEdit->append("(" + QTime::currentTime().toString("hh:mm:ss") + ") " + name + ":");
-    textEdit->setTextColor(Qt::black);
-    textEdit->append(text);
+    pinfo("(" + QTime::currentTime().toString("hh:mm:ss") + ") " + name + ":", color);
+    pinfo(text, Qt::black);
 }
 
 void App::receiveClientConnectMessage(QString name, QColor color)
 {
-    textEdit->setTextColor(color);
-    textEdit->append(name + QString::fromUtf8(" connected"));
+    pinfo(name + QString::fromUtf8(" connected"), color);
 }
 
 void App::receiveClientDisconnectMessage(QString name, QColor color)
 {
-    textEdit->setTextColor(color);
-    textEdit->append(name + QString::fromUtf8(" disconnected"));
+    pinfo(name + QString::fromUtf8(" disconnected"), color);
 }
 
 void App::receivePlayersListMessage(QList<ClientInfo> list)
@@ -375,6 +370,7 @@ void App::receiveStartGameMessage(QList<ClientInfo> list)
 
 void App::receiveSurrenderMessage(QString name, QColor color)
 {
+    pinfo(name + QString::fromUtf8(" surrendered"), color);
     _game->retirePlayer(name, color);
     if (_localClient.name() == name && _localClient.color() == color)
     {
@@ -403,13 +399,13 @@ void App::finishGame(QList<ClientInfo> winners, int score)
     }
 
     int count = winners.count();
-    QMessageBox msgBox;
+    QString msg;
     if (score > 0)
     {
         if (count == 1)
         {
-            msgBox.setText(QString::fromUtf8("The winner is ") + winners[0].name()
-                           + QString::fromUtf8(" with score ") + QString::number(score));
+            msg = QString::fromUtf8("The winner is ") + winners[0].name()
+                  + QString::fromUtf8(" with score ") + QString::number(score);
         }
         else if (count > 1)
         {
@@ -427,17 +423,18 @@ void App::finishGame(QList<ClientInfo> winners, int score)
             }
 
             str += names[count - 1];
-            msgBox.setText(QString::fromUtf8("The winners are ") + str
-                           + QString::fromUtf8(" with score ") + QString::number(score));
+            msg = QString::fromUtf8("The winners are ") + str
+                  + QString::fromUtf8(" with score ") + QString::number(score);
         }
     }
     else
     {
-        msgBox.setText(QString::fromUtf8("There is no winner"));
+        msg = QString::fromUtf8("There is no winner");
     }
 
     pbSurrender->setDisabled(true);
-    msgBox.exec();
+    pinfo(msg);
+    QMessageBox::information(this, QString::fromUtf8("Winners"), msg);
 }
 
 void App::startTurn(const ClientInfo &info)
@@ -466,6 +463,7 @@ void App::guiChangeServersListCurrentText(QString text)
 void App::guiClickRetirePlayer()
 {
     QMessageBox msgBox;
+    msgBox.setText(QString::fromUtf8("Give up"));
     msgBox.setInformativeText(QString::fromUtf8("Do you really want to give up and finish the game?"));
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
@@ -476,7 +474,7 @@ void App::guiClickRetirePlayer()
         return;
     }
 
-    _localClient.sendSurrenderMessage();;
+    _localClient.sendSurrenderMessage();
 }
 
 void App::guiClickServersListItem(QListWidgetItem *item)
