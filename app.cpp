@@ -112,8 +112,7 @@ void App::userDisconnectFromServer()
     if (_localClient.isStarted())
     {
         QMessageBox msgBox;
-        msgBox.setText(QString::fromUtf8("Disconnection"));
-        msgBox.setInformativeText(QString::fromUtf8("Disconnect from the server?"));
+        msgBox.setText(QString::fromUtf8("Disconnect from the server?"));
         msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::No);
         msgBox.setIcon(QMessageBox::Warning);
@@ -151,8 +150,7 @@ void App::userStartGame()
             if (_game->isStarted())
             {
                 QMessageBox msgBox;
-                msgBox.setText(QString::fromUtf8("New game"));
-                msgBox.setInformativeText(QString::fromUtf8(
+                msgBox.setText(QString::fromUtf8(
                         "Are you sure you want to start a new game?"));
                 msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                 msgBox.setDefaultButton(QMessageBox::No);
@@ -463,8 +461,8 @@ void App::guiChangeServersListCurrentText(QString text)
 void App::guiClickRetirePlayer()
 {
     QMessageBox msgBox;
-    msgBox.setText(QString::fromUtf8("Give up"));
-    msgBox.setInformativeText(QString::fromUtf8("Do you really want to give up and finish the game?"));
+    msgBox.setText(QString::fromUtf8(
+            "Do you really want to give up and finish the game?"));
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
     msgBox.setIcon(QMessageBox::Warning);
