@@ -293,6 +293,10 @@ void App::processClientDisconnected()
     actionConnect->setText(QString::fromUtf8("Connect to the server"));
     pbSurrender->setDisabled(true);
     _game->clear();
+    if (_server.isRunning())
+    {
+        _server.stop();
+    }
 }
 
 void App::receiveChatMessage(QString name, QColor color, QString text)
