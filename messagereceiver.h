@@ -19,7 +19,7 @@ private slots:
     void readyRead();
 
 public:
-    TcpMessageReceiver(QTcpSocket *);
+    TcpMessageReceiver(QTcpSocket *, QObject *parent = 0);
 
 signals:
     void chatMessageReceived(const ChatMessage &);
@@ -47,7 +47,7 @@ private slots:
     void readyRead();
 
 public:
-    UdpMessageReceiver(QUdpSocket *);
+    UdpMessageReceiver(QUdpSocket *, QObject *parent = 0);
 
 signals:
     void serverInfoMessageReceived(const ServerInfoMessage &, const QHostAddress &, quint16);

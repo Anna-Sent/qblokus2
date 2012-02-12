@@ -3,6 +3,8 @@
 
 int main(int argc, char *argv[])
 {
+    qRegisterMetaType<QHostAddress>("QHostAddress");
+    qRegisterMetaType<QAbstractSocket::SocketError>("QAbstractSocket::SocketError");
     qRegisterMetaType<ChatMessage>("ChatMessage");
     qRegisterMetaType<ClientConnectMessage>("ClientConnectMessage");
     qRegisterMetaType<ClientDisconnectMessage>("ClientDisconnectMessage");
@@ -18,7 +20,6 @@ int main(int argc, char *argv[])
     qRegisterMetaType<SurrenderMessage>("SurrenderMessage");
     qRegisterMetaTypeStreamOperators<ClientInfo>("ClientInfo");
     qRegisterMetaTypeStreamOperators<QList<ClientInfo> >("QList<ClientInfo>");
-
     QApplication app(argc, argv);
     App *dialog = new App;
     dialog->show();

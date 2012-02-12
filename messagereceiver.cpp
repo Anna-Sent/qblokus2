@@ -30,7 +30,7 @@ Message *next(Message *current)
     }
 }
 
-TcpMessageReceiver::TcpMessageReceiver(QTcpSocket *socket)
+TcpMessageReceiver::TcpMessageReceiver(QTcpSocket *socket, QObject *parent) : QObject(parent)
 {
     current = new MessageHeader;
     this->socket = socket;
@@ -82,7 +82,7 @@ void TcpMessageReceiver::processData()
     }
 }
 
-UdpMessageReceiver::UdpMessageReceiver(QUdpSocket *socket)
+UdpMessageReceiver::UdpMessageReceiver(QUdpSocket *socket, QObject *parent) : QObject(parent)
 {
     this->socket = socket;
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));

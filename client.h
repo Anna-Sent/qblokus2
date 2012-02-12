@@ -23,13 +23,15 @@ public:
     const ClientInfo   &info() const        { return _info; }
     bool                isStarted() const   { return _isStarted; }
     QString             name() const        { return _info.name(); }
+    void setColor(const QColor &color) { _info.setColor(color); }
+    void setName(const QString &name) { _info.setName(name); }
 
 public slots:
     void sendChatMessage(QString text);
     void sendSurrenderMessage();
     void sendTurnMessage(QString name, QColor color, QString tile, int id, int x, int y);
 
-    void start(const QColor &color, const QString &name, const QString &hostname, quint16 port);
+    void start(const QString &hostname, quint16 port);
     void stop();
 
 private slots:

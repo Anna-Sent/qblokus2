@@ -4,25 +4,23 @@
 #include "client.h"
 #include "message.h"
 #include <QTcpServer>
-#include <QThread>
 
-class Server : public QThread
+class Server : public QObject
 {
     Q_OBJECT
 
 private:
     QList<RemoteClient *>   _clients;
     bool                    _isGameStarted;
-    QUdpSocket              _listener;
+    QUdpSocket             *_listener;
     int                     _maxClientsCount;
     UdpMessageReceiver     *_messageReceiver;
-    QTcpServer              _tcpServer;
-    QTimer                  _timer;
+    QTcpServer             *_tcpServer;
+    QTimer                 *_timer;
     void sendPlayersList();
     void sendToAll(const Message &);
 
 private slots:
-    void clear();
     void removeClient(RemoteClient *);
 
     // from timer
@@ -45,17 +43,20 @@ private slots:
 public:
     Server();
     QList<ClientInfo>   clients() const;
-    QString             errorString() const     { return _tcpServer.errorString(); }
+    QString             errorString() const     { return _tcpServer->errorString(); }
+    bool                isListening() const     { return _tcpServer->isListening(); }
     int                 maxClientsCount() const { return _maxClientsCount; }
     int                 playersCount() const;
-    void                start(int maxClientsCount, quint16 port);
 
 public slots:
     // from app
+    void start(int maxClientsCount, quint16 port);
     void startGame(QList<ClientInfo>);
+    void stop();
     void stopGame();
 
-    void stop();
+signals:
+    void started(bool);
 };
 
 #endif

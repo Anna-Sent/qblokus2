@@ -6,6 +6,7 @@
 #include "server.h"
 #include "serverssearcher.h"
 #include "ui_racingForm.h"
+#include <QThread>
 
 class App : public QMainWindow, public Ui::MainWindow
 {
@@ -14,6 +15,7 @@ class App : public QMainWindow, public Ui::MainWindow
 private:
     Game *_game;
     LocalClient _localClient;
+    QThread _serverThread;
     Server _server;
     ServersSearcher _serversSearcher;
     bool confirm(const QString &) const;
@@ -58,8 +60,17 @@ private slots:
     void finishGame(QList<ClientInfo>, int);
     void startTurn(const ClientInfo &);
 
+    // from server
+    void processServerStarted(bool);
+
 public:
     App(QWidget *parent = 0);
+
+signals:
+    void gameStarted(QList<ClientInfo>);
+    void gameStopped();
+    void readyToStartServer(int, quint16);
+    void readyToStopServer();
 };
 
 #endif

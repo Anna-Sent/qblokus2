@@ -30,12 +30,10 @@ LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime
     connect(&_localTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 }
 
-void LocalClient::start(const QColor &color, const QString &name, const QString &hostname, quint16 port)
+void LocalClient::start(const QString &hostname, quint16 port)
 {
     if (!_isStarted)
     {
-        _info.setColor(color);
-        _info.setName(name);
         _isStarted = true;
         _socket->connectToHost(hostname, port);
         _localTimer.start();

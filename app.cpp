@@ -67,7 +67,17 @@ App::App(QWidget *parent)
     connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), &_serversSearcher, SLOT(stop()));
     connect(this, SIGNAL(destroyed()), &_localClient, SLOT(stop()));
-    connect(this, SIGNAL(destroyed()), &_server, SLOT(stop()));
+    connect(this, SIGNAL(destroyed()), &_serverThread, SLOT(quit()));
+
+    _server.moveToThread(&_serverThread); // move server and it's thread to main
+    connect(this, SIGNAL(readyToStartServer(int, quint16)), &_server, SLOT(start(int, quint16)));
+    connect(this, SIGNAL(readyToStopServer()), &_server, SLOT(stop()));
+    connect(this, SIGNAL(gameStarted(QList<ClientInfo>)), &_server, SLOT(startGame(QList<ClientInfo>)));
+    connect(this, SIGNAL(gameStopped()), &_server, SLOT(stopGame()));
+    connect(&_server, SIGNAL(started(bool)), this, SLOT(processServerStarted(bool)));
+    connect(&_serverThread, SIGNAL(finished()), &_server, SLOT(stop()));
+    connect(&_serverThread, SIGNAL(terminated()), &_server, SLOT(stop()));
+    _serverThread.start();
 }
 
 bool App::confirm(const QString &question) const
@@ -149,7 +159,7 @@ void App::userDisconnectFromServer()
         if (confirm(QString::fromUtf8("Disconnect from the server?")))
         {
             _localClient.stop();
-            _server.stop();
+            emit readyToStopServer();
         }
     }
 }
@@ -170,9 +180,9 @@ void App::userSendMessage()
 
 void App::userStartGame()
 {
-    if (_server.isRunning())
+    if (_server.isListening()) // replace with isServer
     {
-        if (_server.playersCount() == _server.maxClientsCount())
+        if (_server.playersCount() == _server.maxClientsCount()) // count players number in app, maxclientscount keep in app
         {
             if (_game->isStarted())
             {
@@ -182,7 +192,7 @@ void App::userStartGame()
                 }
             }
 
-            _server.startGame(_server.clients());
+            emit gameStarted(_server.clients()); // server knows the number of clients
         }
         else
         {
@@ -215,6 +225,7 @@ void App::userTryToConnect()
         default:    showCriticalMessage(QString::fromUtf8("Incorrect color")); return;
         }
 
+        _localClient.setColor(color);
         if (leNickname->text() == "")
         {
             showWarningMessage(QString::fromUtf8("Enter the nickname"));
@@ -239,8 +250,10 @@ void App::userTryToConnect()
             return;
         }
 
+        _localClient.setName(leNickname->text());
+
         int port = sbPort->value();
-        QString hostname = cbCreateServer->checkState() ? "localhost" : leServerAddress->text();
+        QString hostname = leServerAddress->text();
         if (hostname == "")
         {
             showWarningMessage(QString::fromUtf8("Enter the server"));
@@ -257,15 +270,24 @@ void App::userTryToConnect()
         {
             // create server
             int maxClientsCount = sbPlayersCount->value();
-            _server.start(maxClientsCount, port);
-            if (!_server.isRunning())
-            {
-                showCriticalMessage(_server.errorString());
-                return;
-            }
+            emit readyToStartServer(maxClientsCount, port);
         }
+        else
+        {
+            _localClient.start(hostname, port);
+        }
+    }
+}
 
-        _localClient.start(color, leNickname->text(), hostname, port);
+void App::processServerStarted(bool isStarted) // set isServer to true if success
+{
+    if (isStarted)
+    {
+        _localClient.start(leServerAddress->text(), sbPort->value());
+    }
+    else
+    {
+        showCriticalMessage(_server.errorString()); // send the string with signal-slot
     }
 }
 
@@ -309,10 +331,7 @@ void App::processClientDisconnected()
     actionConnect->setText(QString::fromUtf8("Connect to the server"));
     pbSurrender->setDisabled(true);
     _game->clear();
-    if (_server.isRunning())
-    {
-        _server.stop();
-    }
+    emit readyToStopServer();
 }
 
 void App::receiveChatMessage(QString name, QColor color, QString text)
@@ -411,11 +430,7 @@ void App::completeTurn(QString name, QColor color, QString, int, int, int)
 
 void App::finishGame(QList<ClientInfo> winners, int score)
 {
-    if (_server.isRunning())
-    {
-        _server.stopGame();
-    }
-
+    emit gameStopped();
     int count = winners.count();
     QString msg;
     if (score > 0)

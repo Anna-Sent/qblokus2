@@ -5,21 +5,18 @@
 
 Server::Server() : _isGameStarted(false)
 {
-    connect(&_tcpServer, SIGNAL(newConnection()), this, SLOT(processNewConnection()));
+    _tcpServer = new QTcpServer(this);
+    connect(_tcpServer, SIGNAL(newConnection()), this, SLOT(processNewConnection()));
 
-    _messageReceiver = new UdpMessageReceiver(&_listener);
+    _listener = new QUdpSocket(this);
+    _messageReceiver = new UdpMessageReceiver(_listener, this);
     connect(_messageReceiver, SIGNAL(serverRequestMessageReceived(const ServerRequestMessage &, const QHostAddress &, quint16)), this, SLOT(receiveServerRequestMessage(const ServerRequestMessage &, const QHostAddress &, quint16)));
-    connect(this, SIGNAL(destroyed()), _messageReceiver, SLOT(deleteLater()));
 
-    _timer.setInterval(PING_INTERVAL);
-    connect(&_timer, SIGNAL(timeout()), this, SLOT(ping()));
+    _timer = new QTimer(this);
+    _timer->setInterval(PING_INTERVAL);
+    connect(_timer, SIGNAL(timeout()), this, SLOT(ping()));
 
-    connect(this, SIGNAL(finished()), &_timer, SLOT(stop()));
-    connect(this, SIGNAL(finished()), this, SLOT(stopGame()));
-    connect(this, SIGNAL(finished()), this, SLOT(clear()));
-    connect(this, SIGNAL(terminated()), &_timer, SLOT(stop()));
-    connect(this, SIGNAL(terminated()), this, SLOT(stopGame()));
-    connect(this, SIGNAL(terminated()), this, SLOT(clear()));
+    connect(this, SIGNAL(destroyed()), this, SLOT(stop()));
 }
 
 QList<ClientInfo> Server::clients() const
@@ -88,44 +85,52 @@ void Server::sendToAll(const Message &msg)
 
 void Server::start(int maxClientsCount, quint16 port)
 {
-    if (!isRunning())
+    bool listening = _tcpServer->isListening();
+    if (!listening)
     {
         _maxClientsCount = maxClientsCount;
-        bool listening = _tcpServer.listen(QHostAddress::Any, port);
+        listening = _tcpServer->listen(QHostAddress::Any, port);
         if (listening)
         {
-            _timer.start();
-            _listener.bind(QHostAddress::Any, port);
-            QThread::start();
+            _timer->start();
+            _listener->bind(QHostAddress::Any, port);
         }
     }
+
+    emit started(listening);
 }
 
 void Server::startGame(QList<ClientInfo> list)
 {
     _isGameStarted = true;
-    StartGameMessage msg(list);
-    sendToAll(msg);
+    if (_tcpServer->isListening())
+    {
+        StartGameMessage msg(list);
+        sendToAll(msg);
+    }
+}
+
+void Server::stop()
+{
+    if (_tcpServer->isListening())
+    {
+        stopGame();
+        _timer->stop();
+        _listener->disconnectFromHost();
+        for (int i = 0; i < _clients.size(); ++i)
+        {
+            _clients[i]->setDisconnectedFromGame();
+            _clients[i]->deleteLater();
+        }
+
+        _clients.clear();
+        _tcpServer->close();
+    }
 }
 
 void Server::stopGame()
 {
     _isGameStarted = false;
-}
-
-void Server::stop()
-{
-    if (isRunning())
-    {
-        quit();
-    }
-}
-
-void Server::clear()
-{
-    _clients.clear();
-    _tcpServer.close();
-    _listener.disconnectFromHost();
 }
 
 void Server::removeClient(RemoteClient *client)
@@ -225,9 +230,9 @@ void Server::receiveTurnMessage(const TurnMessage &msg, RemoteClient *)
 
 void Server::processNewConnection()
 {
-    if (_tcpServer.hasPendingConnections())
+    if (_tcpServer->hasPendingConnections())
     {
-        QTcpSocket *s = _tcpServer.nextPendingConnection();
+        QTcpSocket *s = _tcpServer->nextPendingConnection();
         if (_clients.size() >= MAX_CONNECTIONS_COUNT)
         {
             s->disconnectFromHost();
@@ -238,10 +243,6 @@ void Server::processNewConnection()
         RemoteClient *client = new RemoteClient(s);
         connect(client, SIGNAL(disconnected(RemoteClient *)), this, SLOT(removeClient(RemoteClient *)));
         connect(client, SIGNAL(tryToConnectMessageReceived(const TryToConnectMessage &, RemoteClient *)), this, SLOT(receiveTryToConnectMessage(const TryToConnectMessage &, RemoteClient *)));
-        connect(this, SIGNAL(finished()), client, SLOT(setDisconnectedFromGame()));
-        connect(this, SIGNAL(finished()), client, SLOT(deleteLater()));
-        connect(this, SIGNAL(terminated()), client, SLOT(setDisconnectedFromGame()));
-        connect(this, SIGNAL(terminated()), client, SLOT(deleteLater()));
         _clients.append(client);
         ServerReadyMessage msg;
         msg.send(s);
@@ -251,5 +252,5 @@ void Server::processNewConnection()
 void Server::receiveServerRequestMessage(const ServerRequestMessage &, const QHostAddress &host, quint16 port)
 {
     ServerInfoMessage msg(clients());
-    msg.send(&_listener, host, port);
+    msg.send(_listener, host, port);
 }
