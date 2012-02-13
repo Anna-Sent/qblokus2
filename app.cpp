@@ -13,13 +13,13 @@ App::App(QWidget *parent)
     // from local client
     connect(&_localClient, SIGNAL(connectionAccepted()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(connectionAccepted()), lwServersList, SLOT(clear()));
-    connect(&_localClient, SIGNAL(connectionAccepted()), &_serversSearcher, SLOT(stop()));
+    connect(&_localClient, SIGNAL(connectionAccepted()), &_serverSearcher, SLOT(stop()));
     connect(&_localClient, SIGNAL(connectionAccepted()), this, SLOT(acceptConnection()));
     connect(&_localClient, SIGNAL(connectionRejected(const QString &)), this, SLOT(perror(const QString &)));
     connect(&_localClient, SIGNAL(disconnected()), this, SLOT(processClientDisconnected()));
     connect(&_localClient, SIGNAL(disconnected()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(disconnected()), lwServersList, SLOT(clear()));
-    connect(&_localClient, SIGNAL(disconnected()), &_serversSearcher, SLOT(start()));
+    connect(&_localClient, SIGNAL(disconnected()), &_serverSearcher, SLOT(start()));
     connect(&_localClient, SIGNAL(errorOccurred(QString)), this, SLOT(perror(QString)));
     connect(&_localClient, SIGNAL(chatMessageReceived(QString, QColor, QString)), this, SLOT(receiveChatMessage(QString, QColor, QString)));
     connect(&_localClient, SIGNAL(clientConnectMessageReceived(QString, QColor)), this, SLOT(receiveClientConnectMessage(QString, QColor)));
@@ -46,10 +46,10 @@ App::App(QWidget *parent)
     connect(sbPort, SIGNAL(valueChanged(int)), this, SLOT(guiChangePortValue(int)));
 
     // from servers searcher
-    connect(&_serversSearcher, SIGNAL(serverInfoMessageReceived(const QHostAddress &,QList<ClientInfo>)), this, SLOT(receiveServerInfoMessage(const QHostAddress &,QList<ClientInfo>)));
+    connect(&_serverSearcher, SIGNAL(serverInfoMessageReceived(const QHostAddress &,QList<ClientInfo>)), this, SLOT(receiveServerInfoMessage(const QHostAddress &,QList<ClientInfo>)));
 
-    _serversSearcher.setPort(sbPort->value());
-    _serversSearcher.start();
+    _serverSearcher.setPort(sbPort->value());
+    _serverSearcher.start();
 
     QGraphicsView *gvs[4] = { gvPlayer1, gvPlayer2, gvPlayer3, gvPlayer4 };
     QLCDNumber *lcds[4] = { score1, score2, score3, score4 };
@@ -65,7 +65,7 @@ App::App(QWidget *parent)
     connect(pbSurrender, SIGNAL(clicked()), this, SLOT(guiClickRetirePlayer()));
 
     connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
-    connect(this, SIGNAL(destroyed()), &_serversSearcher, SLOT(stop()));
+    connect(this, SIGNAL(destroyed()), &_serverSearcher, SLOT(stop()));
     connect(this, SIGNAL(destroyed()), &_localClient, SLOT(stop()));
     connect(this, SIGNAL(destroyed()), &_serverThread, SLOT(quit()));
 
@@ -479,7 +479,7 @@ void App::startTurn(const ClientInfo &info)
 
 void App::guiChangePortValue(int value)
 {
-    _serversSearcher.setPort(value);
+    _serverSearcher.setPort(value);
     lwServersList->clear();
     lwPlayersList->clear();
 }
@@ -520,7 +520,7 @@ void App::guiToggleCreateServer(bool value)
     if (value)
     {
         leServerAddress->setText("localhost");
-        _serversSearcher.stop();
+        _serverSearcher.stop();
         lwServersList->clear();
         lwPlayersList->clear();
     }
@@ -528,6 +528,6 @@ void App::guiToggleCreateServer(bool value)
     {
         lwPlayersList->clear();
         lwServersList->clear();
-        _serversSearcher.start();
+        _serverSearcher.start();
     }
 }

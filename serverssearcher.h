@@ -7,7 +7,7 @@
 #include <QTimer>
 #include <QUdpSocket>
 
-class ServersSearcher : public QObject
+class ServerSearcher : public QObject
 {
     Q_OBJECT
 
@@ -22,7 +22,7 @@ private slots:
     void timeout();
 
 public:
-    explicit ServersSearcher();
+    explicit ServerSearcher();
 
 public slots:
     bool isActive() const;

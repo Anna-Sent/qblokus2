@@ -15,9 +15,9 @@ class App : public QMainWindow, public Ui::MainWindow
 private:
     Game *_game;
     LocalClient _localClient;
-    QThread _serverThread;
     Server _server;
-    ServersSearcher _serversSearcher;
+    ServerSearcher _serverSearcher;
+    QThread _serverThread;
     bool confirm(const QString &) const;
     void setTabOrder() const;
     void showCriticalMessage(const QString &) const;
