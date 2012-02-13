@@ -13,7 +13,7 @@ private:
     QList<RemoteClient *>   _clients;
     bool                    _isGameStarted;
     QUdpSocket             *_listener;
-    int                     _maxClientsCount;
+    int                     _playersCount;
     UdpMessageReceiver     *_messageReceiver;
     QTcpServer             *_tcpServer;
     QTimer                 *_timer;
@@ -45,8 +45,8 @@ public:
     QList<ClientInfo>   clients() const;
     QString             errorString() const     { return _tcpServer->errorString(); }
     bool                isListening() const     { return _tcpServer->isListening(); }
-    int                 maxClientsCount() const { return _maxClientsCount; }
-    int                 playersCount() const;
+    int                 playersCount() const { return _playersCount; }
+    int                 currentPlayersCount() const;
 
 public slots:
     // from app

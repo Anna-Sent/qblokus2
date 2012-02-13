@@ -182,7 +182,7 @@ void App::userStartGame()
 {
     if (_server.isListening()) // replace with isServer
     {
-        if (_server.playersCount() == _server.maxClientsCount()) // count players number in app, maxclientscount keep in app
+        if (_server.currentPlayersCount() == _server.playersCount()) // count players number in app, maxclientscount keep in app
         {
             if (_game->isStarted())
             {
@@ -197,7 +197,7 @@ void App::userStartGame()
         else
         {
             showWarningMessage(QString::fromUtf8("Wait for ")
-                               + QString::number(_server.maxClientsCount())
+                               + QString::number(_server.playersCount())
                                + QString::fromUtf8(" players"));
         }
     }
@@ -252,7 +252,6 @@ void App::userTryToConnect()
 
         _localClient.setName(leNickname->text());
 
-        int port = sbPort->value();
         QString hostname = leServerAddress->text();
         if (hostname == "")
         {
@@ -266,11 +265,11 @@ void App::userTryToConnect()
             return;
         }
 
+        int port = sbPort->value();
         if (cbCreateServer->checkState())
         {
             // create server
-            int maxClientsCount = sbPlayersCount->value();
-            emit readyToStartServer(maxClientsCount, port);
+            emit readyToStartServer(sbPlayersCount->value(), port);
         }
         else
         {

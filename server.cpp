@@ -33,7 +33,7 @@ QList<ClientInfo> Server::clients() const
     return list;
 }
 
-int Server::playersCount() const
+int Server::currentPlayersCount() const
 {
     int count = 0;
     for (int i = 0; i < _clients.size(); ++i)
@@ -83,12 +83,12 @@ void Server::sendToAll(const Message &msg)
 }
 
 
-void Server::start(int maxClientsCount, quint16 port)
+void Server::start(int playersCount, quint16 port)
 {
     bool listening = _tcpServer->isListening();
     if (!listening)
     {
-        _maxClientsCount = maxClientsCount;
+        _playersCount = playersCount;
         listening = _tcpServer->listen(QHostAddress::Any, port);
         if (listening)
         {
@@ -180,7 +180,7 @@ void Server::receiveTryToConnectMessage(const TryToConnectMessage &msg, RemoteCl
     {
         error = ERROR_GAME_STARTED;
     }
-    else if (playersCount() == _maxClientsCount)
+    else if (currentPlayersCount() == _playersCount)
     {
         error = ERROR_MAX_PLAYERS_NUM;
     }
