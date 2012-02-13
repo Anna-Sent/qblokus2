@@ -110,7 +110,7 @@ void Game::turnComplete(QColor color, QString tile, int id, int x, int y)
             player->completeTurn(color, tile, id, x, y);
             if (dynamic_cast<Table *>(sender()))
             {
-                emit turnCompleted(player->name(), color, tile, id, x, y);
+                emit turnCompleted(player->info(), tile, id, x, y);
             }
 
             if (player->leftTilesCount() == 0)

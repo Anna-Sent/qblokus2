@@ -47,7 +47,7 @@ public slots:
 
 signals:
     void gameOver(QList<ClientInfo>, int);
-    void turnCompleted(QString name, QColor color, QString mask, int id, int x, int y);
+    void turnCompleted(const ClientInfo &, const QString &mask, int id, int x, int y);
     void turnStarted(const ClientInfo &);
 };
 

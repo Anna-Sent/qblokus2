@@ -56,7 +56,7 @@ private slots:
     void receiveServerInfoMessage(const QHostAddress &, QList<ClientInfo>);
 
     // from game
-    void completeTurn(QString, QColor, QString, int, int, int);
+    void completeTurn(const ClientInfo &, const QString &, int, int, int);
     void finishGame(QList<ClientInfo>, int);
     void startTurn(const ClientInfo &);
 

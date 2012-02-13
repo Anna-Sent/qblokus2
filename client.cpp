@@ -139,21 +139,21 @@ void LocalClient::processSocketError(QAbstractSocket::SocketError)
     emit errorOccurred(_socket->errorString());
 }
 
-void LocalClient::sendChatMessage(QString text)
+void LocalClient::sendChatMessage(const ClientInfo &info, const QString &text)
 {
-    ChatMessage msg(_info.name(), _info.color(), text);
+    ChatMessage msg(info, text);
     msg.send(_socket);
 }
 
-void LocalClient::sendSurrenderMessage()
+void LocalClient::sendSurrenderMessage(const ClientInfo &info)
 {
-    SurrenderMessage msg(_info.name(), _info.color());
+    SurrenderMessage msg(info);
     msg.send(_socket);
 }
 
-void LocalClient::sendTurnMessage(QString name, QColor color, QString tile, int id, int x, int y)
+void LocalClient::sendTurnMessage(const ClientInfo &info, const QString &tile, int id, int x, int y)
 {
-    TurnMessage msg(name, color, tile, id, x, y);
+    TurnMessage msg(info, tile, id, x, y);
     msg.send(_socket);
 }
 

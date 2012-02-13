@@ -28,9 +28,9 @@ void MessageHeader::fill(const QByteArray &buffer)
     ::memmove(&_msgLen, data, sizeof(qint64));
 }
 
-ChatMessage::ChatMessage(QString name, QColor color, QString text) {
-    _info.setName(name);
-    _info.setColor(color);
+ChatMessage::ChatMessage(const ClientInfo &info, const QString &text) {
+    _info.setName(info.name());
+    _info.setColor(info.color());
     _text = text;
     _header.setMsgLength(_info.size() + _text.toUtf8().size() + sizeof(int));
     _header.setMsgType(mtChat);
@@ -155,10 +155,10 @@ ServerInfoMessage::ServerInfoMessage(QList<ClientInfo> list)
     _header.setMsgType(mtServerInfo);
 }
 
-SurrenderMessage::SurrenderMessage(QString name, QColor color)
+SurrenderMessage::SurrenderMessage(const ClientInfo &info)
 {
-    _info.setName(name);
-    _info.setColor(color);
+    _info.setName(info.name());
+    _info.setColor(info.color());
     _header.setMsgLength(_info.size());
     _header.setMsgType(mtSurrender);
 }
@@ -170,10 +170,10 @@ TryToConnectMessage::TryToConnectMessage(ClientInfo info)
     _header.setMsgType(mtTryToConnect);
 }
 
-TurnMessage::TurnMessage(QString name, QColor color, QString tile, int id, int x, int y)
+TurnMessage::TurnMessage(const ClientInfo &info, const QString &tile, int id, int x, int y)
 {
-    _info.setName(name);
-    _info.setColor(color);
+    _info.setName(info.name());
+    _info.setColor(info.color());
     _id = id;
     _x = x;
     _y = y;

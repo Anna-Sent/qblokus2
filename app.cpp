@@ -56,10 +56,10 @@ App::App(QWidget *parent)
     _game = new Game(gvTable, gvs, lcds);
     connect(_game, SIGNAL(turnStarted(const ClientInfo &)),
             this, SLOT(startTurn(const ClientInfo &)));
-    connect(_game, SIGNAL(turnCompleted(QString, QColor, QString, int, int, int)),
-            this, SLOT(completeTurn(QString, QColor, QString, int, int, int)));
-    connect(_game, SIGNAL(turnCompleted(QString, QColor, QString, int, int, int)),
-            &_localClient, SLOT(sendTurnMessage(QString, QColor, QString, int, int, int)));
+    connect(_game, SIGNAL(turnCompleted(const ClientInfo &, const QString &, int, int, int)),
+            this, SLOT(completeTurn(const ClientInfo &, const QString &, int, int, int)));
+    connect(_game, SIGNAL(turnCompleted(const ClientInfo &, const QString &, int, int, int)),
+            &_localClient, SLOT(sendTurnMessage(const ClientInfo &, const QString &, int, int, int)));
     connect(_game, SIGNAL(gameOver(QList<ClientInfo>, int)),
             this, SLOT(finishGame(QList<ClientInfo>, int)));
     connect(pbSurrender, SIGNAL(clicked()), this, SLOT(guiClickRetirePlayer()));
@@ -174,7 +174,7 @@ void App::userSendMessage()
     QString text = lineEdit->text();
     if (text != "")
     {
-        _localClient.sendChatMessage(text);
+        _localClient.sendChatMessage(_localClient.info(), text);
     }
 }
 
@@ -420,9 +420,9 @@ void App::receiveTurnMessage(QColor color, int x, int y, int id, QString mask)
     _game->turnComplete(color, mask, id, x, y);
 }
 
-void App::completeTurn(QString name, QColor color, QString, int, int, int)
+void App::completeTurn(const ClientInfo &info, const QString &, int, int, int)
 {
-    if (_localClient.color() == color && _localClient.name() == name)
+    if (_localClient.info() == info)
     {
         pbSurrender->setDisabled(true);
     }
@@ -497,7 +497,7 @@ void App::guiClickRetirePlayer()
 {
     if (confirm(QString::fromUtf8("Do you really want to give up and finish the game?")))
     {
-        _localClient.sendSurrenderMessage();
+        _localClient.sendSurrenderMessage(_localClient.info());
     }
 }
 

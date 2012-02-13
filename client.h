@@ -27,9 +27,9 @@ public:
     void setName(const QString &name) { _info.setName(name); }
 
 public slots:
-    void sendChatMessage(QString text);
-    void sendSurrenderMessage();
-    void sendTurnMessage(QString name, QColor color, QString tile, int id, int x, int y);
+    void sendChatMessage(const ClientInfo &, const QString &);
+    void sendSurrenderMessage(const ClientInfo &);
+    void sendTurnMessage(const ClientInfo &, const QString &tile, int id, int x, int y);
 
     void start(const QString &hostname, quint16 port);
     void stop();

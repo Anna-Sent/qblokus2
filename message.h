@@ -72,7 +72,7 @@ private:
 public:
     ChatMessage() { _header.setMsgLength(sizeof(int) + _info.size()); _header.setMsgType(mtChat); }
     ChatMessage(const MessageHeader &header) { _header = header; }
-    ChatMessage(QString name, QColor color, QString text);
+    ChatMessage(const ClientInfo &, const QString &);
     QColor color() const { return _info.color(); }
     QString name() const { return _info.name(); }
     QByteArray serialize() const;
@@ -176,7 +176,7 @@ class SurrenderMessage : public ClientMessage
 public:
     SurrenderMessage() { _header.setMsgType(mtSurrender); }
     SurrenderMessage(const MessageHeader &header) { _header = header; }
-    SurrenderMessage(QString name, QColor color);
+    SurrenderMessage(const ClientInfo &);
 };
 
 class TryToConnectMessage : public ClientMessage
@@ -195,7 +195,7 @@ private:
 public:
     TurnMessage() { _header.setMsgType(mtTurn); }
     TurnMessage(const MessageHeader &header) { _header = header; }
-    TurnMessage(QString, QColor, QString, int id, int x, int y);
+    TurnMessage(const ClientInfo &, const QString &, int id, int x, int y);
     int id() const { return _id; }
     int x() const { return _x; }
     int y() const { return _y; }
