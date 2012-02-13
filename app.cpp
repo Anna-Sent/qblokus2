@@ -71,13 +71,11 @@ App::App(QWidget *parent)
 
     _server.moveToThread(&_serverThread); // move server and it's thread to main
     connect(this, SIGNAL(readyToStartServer(int, quint16)), &_server, SLOT(start(int, quint16)));
-    connect(this, SIGNAL(readyToStopServer()), &_server, SLOT(stop()));
-    connect(this, SIGNAL(gameStarted(QList<ClientInfo>)), &_server, SLOT(startGame(QList<ClientInfo>)));
+    connect(this, SIGNAL(gameStarted()), &_server, SLOT(startGame()));
     connect(this, SIGNAL(gameStopped()), &_server, SLOT(stopGame()));
-    connect(&_server, SIGNAL(started(bool)), this, SLOT(processServerStarted(bool)));
+    connect(&_server, SIGNAL(started()), this, SLOT(processServerStarted()));
     connect(&_serverThread, SIGNAL(finished()), &_server, SLOT(stop()));
     connect(&_serverThread, SIGNAL(terminated()), &_server, SLOT(stop()));
-    _serverThread.start();
 }
 
 bool App::confirm(const QString &question) const
@@ -159,7 +157,10 @@ void App::userDisconnectFromServer()
         if (confirm(QString::fromUtf8("Disconnect from the server?")))
         {
             _localClient.stop();
-            emit readyToStopServer();
+            if (_serverThread.isRunning())
+            {
+                _serverThread.quit();
+            }
         }
     }
 }
@@ -192,7 +193,7 @@ void App::userStartGame()
                 }
             }
 
-            emit gameStarted(_server.clients()); // server knows the number of clients
+            emit gameStarted();
         }
         else
         {
@@ -226,7 +227,9 @@ void App::userTryToConnect()
         }
 
         _localClient.setColor(color);
-        if (leNickname->text() == "")
+
+        QString name = leNickname->text();
+        if (name == "")
         {
             showWarningMessage(QString::fromUtf8("Enter the nickname"));
             if (dockWidget->isVisible())
@@ -238,7 +241,7 @@ void App::userTryToConnect()
             return;
         }
 
-        if (leNickname->text().toUtf8().size() > 100)
+        if (name.toUtf8().size() > 100)
         {
             showWarningMessage(QString::fromUtf8("Your nickname is too long"));
             if (dockWidget->isVisible())
@@ -250,7 +253,7 @@ void App::userTryToConnect()
             return;
         }
 
-        _localClient.setName(leNickname->text());
+        _localClient.setName(name);
 
         QString hostname = leServerAddress->text();
         if (hostname == "")
@@ -269,6 +272,7 @@ void App::userTryToConnect()
         if (cbCreateServer->checkState())
         {
             // create server
+            _serverThread.start();
             emit readyToStartServer(sbPlayersCount->value(), port);
         }
         else
@@ -278,9 +282,9 @@ void App::userTryToConnect()
     }
 }
 
-void App::processServerStarted(bool isStarted) // set isServer to true if success
+void App::processServerStarted() // set isServer to true if success
 {
-    if (isStarted)
+    if (_server.isListening())
     {
         _localClient.start(leServerAddress->text(), sbPort->value());
     }
@@ -330,7 +334,10 @@ void App::processClientDisconnected()
     actionConnect->setText(QString::fromUtf8("Connect to the server"));
     pbSurrender->setDisabled(true);
     _game->clear();
-    emit readyToStopServer();
+    if (_serverThread.isRunning())
+    {
+        _serverThread.quit();
+    }
 }
 
 void App::receiveChatMessage(QString name, QColor color, QString text)

@@ -82,7 +82,6 @@ void Server::sendToAll(const Message &msg)
     }
 }
 
-
 void Server::start(int playersCount, quint16 port)
 {
     bool listening = _tcpServer->isListening();
@@ -97,15 +96,15 @@ void Server::start(int playersCount, quint16 port)
         }
     }
 
-    emit started(listening);
+    emit started();
 }
 
-void Server::startGame(QList<ClientInfo> list)
+void Server::startGame()
 {
     _isGameStarted = true;
     if (_tcpServer->isListening())
     {
-        StartGameMessage msg(list);
+        StartGameMessage msg(clients());
         sendToAll(msg);
     }
 }

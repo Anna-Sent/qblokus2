@@ -79,14 +79,14 @@ private:
 
 public:
     RemoteClient(QTcpSocket *);
-    QColor              color() const                   { return _info.color(); }
-    int                 elapsedSinceLastPing() const    { return _lastPingTime.elapsed(); }
-    const ClientInfo   &info() const                    { return _info; }
-    bool                isConnectedToGame() const       { return _state == 2; }
-    QString             name() const                    { return _info.name(); }
+    QColor              color() const                           { return _info.color(); }
+    int                 elapsedSinceLastPing() const            { return _lastPingTime.elapsed(); }
+    const ClientInfo   &info() const                            { return _info; }
+    bool                isConnectedToGame() const               { return _state == 2; }
+    QString             name() const                            { return _info.name(); }
+    void                sendMessage(const Message &msg) const;
 
 public slots:
-    void sendMessage(const Message &msg);
     void setConnectedToGame(const QString &name, const QColor &color);
     void setDisconnectedFromGame();
 

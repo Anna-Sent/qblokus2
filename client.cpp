@@ -203,7 +203,7 @@ void RemoteClient::setDisconnectedFromGame()
     }
 }
 
-void RemoteClient::sendMessage(const Message &msg)
+void RemoteClient::sendMessage(const Message &msg) const
 {
     msg.send(_socket);
 }

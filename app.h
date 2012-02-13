@@ -61,16 +61,15 @@ private slots:
     void startTurn(const ClientInfo &);
 
     // from server
-    void processServerStarted(bool);
+    void processServerStarted();
 
 public:
     App(QWidget *parent = 0);
 
 signals:
-    void gameStarted(QList<ClientInfo>);
+    void gameStarted();
     void gameStopped();
     void readyToStartServer(int, quint16);
-    void readyToStopServer();
 };
 
 #endif

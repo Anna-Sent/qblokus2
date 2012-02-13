@@ -17,6 +17,7 @@ private:
     UdpMessageReceiver     *_messageReceiver;
     QTcpServer             *_tcpServer;
     QTimer                 *_timer;
+    QList<ClientInfo> clients() const;
     void sendPlayersList();
     void sendToAll(const Message &);
 
@@ -42,21 +43,20 @@ private slots:
 
 public:
     Server();
-    QList<ClientInfo>   clients() const;
-    QString             errorString() const     { return _tcpServer->errorString(); }
-    bool                isListening() const     { return _tcpServer->isListening(); }
-    int                 playersCount() const { return _playersCount; }
-    int                 currentPlayersCount() const;
+    QString errorString() const         { return _tcpServer->errorString(); }
+    bool    isListening() const         { return _tcpServer->isListening(); }
+    int     playersCount() const        { return _playersCount; }
+    int     currentPlayersCount() const;
 
 public slots:
     // from app
     void start(int maxClientsCount, quint16 port);
-    void startGame(QList<ClientInfo>);
+    void startGame();
     void stop();
     void stopGame();
 
 signals:
-    void started(bool);
+    void started();
 };
 
 #endif
