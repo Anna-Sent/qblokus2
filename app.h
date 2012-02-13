@@ -4,7 +4,7 @@
 #include "client.h"
 #include "game.h"
 #include "server.h"
-#include "serverssearcher.h"
+#include "serversearcher.h"
 #include "ui_racingForm.h"
 #include <QThread>
 
@@ -15,6 +15,7 @@ class App : public QMainWindow, public Ui::MainWindow
 private:
     Game *_game;
     LocalClient _localClient;
+    QThread _localClientThread;
     Server _server;
     ServerSearcher _serverSearcher;
     QThread _serverThread;
@@ -67,9 +68,17 @@ public:
     App(QWidget *parent = 0);
 
 signals:
+    // to server
     void gameStarted();
     void gameStopped();
     void readyToStartServer(int, quint16);
+    void readyToStopServer();
+
+    // to local client
+    void chatMessagePosted(const ClientInfo &, const QString &);
+    void readyToStartLocalClient(const QString &hostname, quint16 port);
+    void readyToStopLocalClient();
+    void surrendered(const ClientInfo &);
 };
 
 #endif

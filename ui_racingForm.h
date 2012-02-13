@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Wed Feb 8 18:47:51 2012
+** Created: Mon Feb 13 21:09:54 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -78,8 +78,8 @@ public:
     QGridLayout *gridLayout_6;
     QGridLayout *gridLayout_8;
     QLabel *lPort;
-    QLabel *lNickname;
-    QLineEdit *leNickname;
+    QLabel *lPlayerName;
+    QLineEdit *lePlayerName;
     QSpinBox *sbPort;
     QPushButton *pbConnect;
     QLineEdit *leServerAddress;
@@ -254,15 +254,15 @@ public:
 
         gridLayout_8->addWidget(lPort, 5, 0, 1, 1);
 
-        lNickname = new QLabel(dockWidgetContents);
-        lNickname->setObjectName(QString::fromUtf8("lNickname"));
+        lPlayerName = new QLabel(dockWidgetContents);
+        lPlayerName->setObjectName(QString::fromUtf8("lPlayerName"));
 
-        gridLayout_8->addWidget(lNickname, 8, 0, 1, 1);
+        gridLayout_8->addWidget(lPlayerName, 8, 0, 1, 1);
 
-        leNickname = new QLineEdit(dockWidgetContents);
-        leNickname->setObjectName(QString::fromUtf8("leNickname"));
+        lePlayerName = new QLineEdit(dockWidgetContents);
+        lePlayerName->setObjectName(QString::fromUtf8("lePlayerName"));
 
-        gridLayout_8->addWidget(leNickname, 9, 0, 1, 1);
+        gridLayout_8->addWidget(lePlayerName, 9, 0, 1, 1);
 
         sbPort = new QSpinBox(dockWidgetContents);
         sbPort->setObjectName(QString::fromUtf8("sbPort"));
@@ -365,6 +365,10 @@ public:
         QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lServersList, SLOT(setDisabled(bool)));
         QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lwServersList, SLOT(setDisabled(bool)));
         QObject::connect(cbCreateServer, SIGNAL(toggled(bool)), lPlayersCount, SLOT(setEnabled(bool)));
+        QObject::connect(lePlayerName, SIGNAL(returnPressed()), pbConnect, SLOT(animateClick()));
+        QObject::connect(lePlayerName, SIGNAL(returnPressed()), pbConnect, SLOT(setFocus()));
+        QObject::connect(leServerAddress, SIGNAL(returnPressed()), pbConnect, SLOT(animateClick()));
+        QObject::connect(leServerAddress, SIGNAL(returnPressed()), pbConnect, SLOT(setFocus()));
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
@@ -387,7 +391,7 @@ public:
         lServersList->setText(QApplication::translate("MainWindow", "Local servers list", 0, QApplication::UnicodeUTF8));
         lPlayersList->setText(QApplication::translate("MainWindow", "Players list", 0, QApplication::UnicodeUTF8));
         lPort->setText(QApplication::translate("MainWindow", "Port", 0, QApplication::UnicodeUTF8));
-        lNickname->setText(QApplication::translate("MainWindow", "Nickname", 0, QApplication::UnicodeUTF8));
+        lPlayerName->setText(QApplication::translate("MainWindow", "Player name", 0, QApplication::UnicodeUTF8));
         pbConnect->setText(QApplication::translate("MainWindow", "Connect to the server", 0, QApplication::UnicodeUTF8));
         leServerAddress->setText(QApplication::translate("MainWindow", "localhost", 0, QApplication::UnicodeUTF8));
         cbCreateServer->setText(QApplication::translate("MainWindow", "Create server", 0, QApplication::UnicodeUTF8));

@@ -13,7 +13,7 @@ private:
     bool                _isStarted;
     ClientInfo          _info;
     QTime               _lastPingTime;
-    QTimer              _localTimer;
+    QTimer             *_timer;
     TcpMessageReceiver *_messageReceiver;
     QTcpSocket         *_socket;
 

@@ -7,8 +7,8 @@
 
 LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime())
 {
-    _socket = new QTcpSocket;
-    _messageReceiver = new TcpMessageReceiver(_socket);
+    _socket = new QTcpSocket(this);
+    _messageReceiver = new TcpMessageReceiver(_socket, this);
     connect(_messageReceiver, SIGNAL(chatMessageReceived(const ChatMessage &)), this, SLOT(receiveChatMessage(const ChatMessage &)));
     connect(_messageReceiver, SIGNAL(clientConnectMessageReceived(ClientConnectMessage)), this, SLOT(receiveClientConnectMessage(ClientConnectMessage)));
     connect(_messageReceiver, SIGNAL(clientDisconnectMessageReceived(ClientDisconnectMessage)), this, SLOT(receiveClientDisconnectMessage(ClientDisconnectMessage)));
@@ -19,15 +19,16 @@ LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime
     connect(_messageReceiver, SIGNAL(serverReadyMessageReceived(ServerReadyMessage)), this, SLOT(receiveServerReadyMessage(ServerReadyMessage)));
     connect(_messageReceiver, SIGNAL(surrenderMessageReceived(SurrenderMessage)), this, SLOT(receiveSurrenderMessage(SurrenderMessage)));
     connect(_messageReceiver, SIGNAL(turnMessageReceived(TurnMessage)), this, SLOT(receiveTurnMessage(TurnMessage)));
-    connect(_socket, SIGNAL(disconnected()), this, SLOT(processSocketDisconnected()), Qt::QueuedConnection);
+    connect(_socket, SIGNAL(disconnected()), this, SLOT(processSocketDisconnected()));
     connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(processSocketError(QAbstractSocket::SocketError)));
 
     connect(this, SIGNAL(destroyed()), this, SLOT(stop()));
     connect(this, SIGNAL(destroyed()), _messageReceiver, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), _socket, SLOT(deleteLater()));
 
-    _localTimer.setInterval(PING_INTERVAL);
-    connect(&_localTimer, SIGNAL(timeout()), this, SLOT(timeout()));
+    _timer = new QTimer(this);
+    _timer->setInterval(PING_INTERVAL);
+    connect(_timer, SIGNAL(timeout()), this, SLOT(timeout()));
 }
 
 void LocalClient::start(const QString &hostname, quint16 port)
@@ -36,7 +37,7 @@ void LocalClient::start(const QString &hostname, quint16 port)
     {
         _isStarted = true;
         _socket->connectToHost(hostname, port);
-        _localTimer.start();
+        _timer->start();
         _lastPingTime.start();
     }
 }
@@ -46,7 +47,7 @@ void LocalClient::stop()
     if (_isStarted)
     {
         _isStarted = false;
-        _localTimer.stop();
+        _timer->stop();
         _socket->disconnectFromHost();
     }
 }
@@ -127,7 +128,7 @@ void LocalClient::processSocketDisconnected()
     if (_isStarted)
     {
         _isStarted = false;
-        _localTimer.stop();
+        _timer->stop();
     }
 
     emit disconnected();

@@ -10,7 +10,26 @@ App::App(QWidget *parent)
     setupUi(this);
     setTabOrder();
 
-    // from local client
+    // gui
+    connect(actionStartGame, SIGNAL(activated()), this, SLOT(userStartGame()));
+    connect(actionQuit, SIGNAL(activated()), this, SLOT(userQuit()));
+    connect(actionConnect, SIGNAL(activated()), this, SLOT(userTryToConnect()));
+    connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
+    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendMessage()));
+    connect(lineEdit, SIGNAL(returnPressed()), lineEdit, SLOT(clear()));
+    connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(guiClickServersListItem(QListWidgetItem*)));
+    connect(lwServersList, SIGNAL(currentTextChanged(QString)), this, SLOT(guiChangeServersListCurrentText(QString)));
+    connect(pbConnect, SIGNAL(clicked()), this, SLOT(userTryToConnect()));
+    connect(pbSurrender, SIGNAL(clicked()), this, SLOT(guiClickRetirePlayer()));
+    connect(sbPort, SIGNAL(valueChanged(int)), this, SLOT(guiChangePortValue(int)));
+
+    // server searcher
+    connect(&_serverSearcher, SIGNAL(serverInfoMessageReceived(const QHostAddress &,QList<ClientInfo>)), this, SLOT(receiveServerInfoMessage(const QHostAddress &,QList<ClientInfo>)));
+    _serverSearcher.setPort(sbPort->value());
+    _serverSearcher.start();
+
+    // local client
+    _localClient.moveToThread(&_localClientThread);
     connect(&_localClient, SIGNAL(connectionAccepted()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(connectionAccepted()), lwServersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(connectionAccepted()), &_serverSearcher, SLOT(stop()));
@@ -28,29 +47,22 @@ App::App(QWidget *parent)
     connect(&_localClient, SIGNAL(playersListMessageReceived(QList<ClientInfo>)), this, SLOT(receivePlayersListMessage(QList<ClientInfo>)));
     connect(&_localClient, SIGNAL(startGameMessageReceived(QList<ClientInfo>)), this, SLOT(receiveStartGameMessage(QList<ClientInfo>)));
     connect(&_localClient, SIGNAL(surrenderMessageReceived(QString, QColor)), this, SLOT(receiveSurrenderMessage(QString, QColor)));
+    connect(this, SIGNAL(chatMessagePosted(ClientInfo, QString)), &_localClient, SLOT(sendChatMessage(ClientInfo, QString)));
+    connect(this, SIGNAL(readyToStartLocalClient(QString, quint16)), &_localClient, SLOT(start(QString, quint16)));
+    connect(this, SIGNAL(readyToStopLocalClient()), &_localClient, SLOT(stop()));
+    connect(this, SIGNAL(surrendered(ClientInfo)), &_localClient, SLOT(sendSurrenderMessage(ClientInfo)));
+    _localClientThread.start();
 
-    // from user
-    connect(actionStartGame, SIGNAL(activated()), this, SLOT(userStartGame()));
-    connect(actionQuit, SIGNAL(activated()), this, SLOT(userQuit()));
-    connect(actionConnect, SIGNAL(activated()), this, SLOT(userTryToConnect()));
-    connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
-    connect(leNickname, SIGNAL(returnPressed()), pbConnect, SLOT(animateClick()));
-    connect(leNickname, SIGNAL(returnPressed()), pbConnect, SLOT(setFocus()));
-    connect(leServerAddress, SIGNAL(returnPressed()), pbConnect, SLOT(animateClick()));
-    connect(leServerAddress, SIGNAL(returnPressed()), pbConnect, SLOT(setFocus()));
-    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendMessage()));
-    connect(lineEdit, SIGNAL(returnPressed()), lineEdit, SLOT(clear()));
-    connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(guiClickServersListItem(QListWidgetItem*)));
-    connect(lwServersList, SIGNAL(currentTextChanged(QString)), this, SLOT(guiChangeServersListCurrentText(QString)));
-    connect(pbConnect, SIGNAL(clicked()), this, SLOT(userTryToConnect()));
-    connect(sbPort, SIGNAL(valueChanged(int)), this, SLOT(guiChangePortValue(int)));
+    // server
+    _server.moveToThread(&_serverThread);
+    connect(this, SIGNAL(gameStarted()), &_server, SLOT(startGame()));
+    connect(this, SIGNAL(gameStopped()), &_server, SLOT(stopGame()));
+    connect(this, SIGNAL(readyToStartServer(int, quint16)), &_server, SLOT(start(int, quint16)));
+    connect(this, SIGNAL(readyToStopServer()), &_server, SLOT(stop()));
+    connect(&_server, SIGNAL(started()), this, SLOT(processServerStarted()));
+    _serverThread.start();
 
-    // from servers searcher
-    connect(&_serverSearcher, SIGNAL(serverInfoMessageReceived(const QHostAddress &,QList<ClientInfo>)), this, SLOT(receiveServerInfoMessage(const QHostAddress &,QList<ClientInfo>)));
-
-    _serverSearcher.setPort(sbPort->value());
-    _serverSearcher.start();
-
+    // game
     QGraphicsView *gvs[4] = { gvPlayer1, gvPlayer2, gvPlayer3, gvPlayer4 };
     QLCDNumber *lcds[4] = { score1, score2, score3, score4 };
     _game = new Game(gvTable, gvs, lcds);
@@ -62,20 +74,11 @@ App::App(QWidget *parent)
             &_localClient, SLOT(sendTurnMessage(const ClientInfo &, const QString &, int, int, int)));
     connect(_game, SIGNAL(gameOver(QList<ClientInfo>, int)),
             this, SLOT(finishGame(QList<ClientInfo>, int)));
-    connect(pbSurrender, SIGNAL(clicked()), this, SLOT(guiClickRetirePlayer()));
 
     connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), &_serverSearcher, SLOT(stop()));
-    connect(this, SIGNAL(destroyed()), &_localClient, SLOT(stop()));
+    connect(this, SIGNAL(destroyed()), &_localClientThread, SLOT(quit()));
     connect(this, SIGNAL(destroyed()), &_serverThread, SLOT(quit()));
-
-    _server.moveToThread(&_serverThread); // move server and it's thread to main
-    connect(this, SIGNAL(readyToStartServer(int, quint16)), &_server, SLOT(start(int, quint16)));
-    connect(this, SIGNAL(gameStarted()), &_server, SLOT(startGame()));
-    connect(this, SIGNAL(gameStopped()), &_server, SLOT(stopGame()));
-    connect(&_server, SIGNAL(started()), this, SLOT(processServerStarted()));
-    connect(&_serverThread, SIGNAL(finished()), &_server, SLOT(stop()));
-    connect(&_serverThread, SIGNAL(terminated()), &_server, SLOT(stop()));
 }
 
 bool App::confirm(const QString &question) const
@@ -156,11 +159,8 @@ void App::userDisconnectFromServer()
     {
         if (confirm(QString::fromUtf8("Disconnect from the server?")))
         {
-            _localClient.stop();
-            if (_serverThread.isRunning())
-            {
-                _serverThread.quit();
-            }
+            emit readyToStopLocalClient();
+            emit readyToStopServer();
         }
     }
 }
@@ -175,7 +175,7 @@ void App::userSendMessage()
     QString text = lineEdit->text();
     if (text != "")
     {
-        _localClient.sendChatMessage(_localClient.info(), text);
+        emit chatMessagePosted(_localClient.info(), text);
     }
 }
 
@@ -272,12 +272,11 @@ void App::userTryToConnect()
         if (cbCreateServer->checkState())
         {
             // create server
-            _serverThread.start();
             emit readyToStartServer(sbPlayersCount->value(), port);
         }
         else
         {
-            _localClient.start(hostname, port);
+            emit readyToStartLocalClient(hostname, port);
         }
     }
 }
@@ -286,7 +285,7 @@ void App::processServerStarted() // set isServer to true if success
 {
     if (_server.isListening())
     {
-        _localClient.start(leServerAddress->text(), sbPort->value());
+        emit readyToStartLocalClient(leServerAddress->text(), sbPort->value());
     }
     else
     {
@@ -334,10 +333,7 @@ void App::processClientDisconnected()
     actionConnect->setText(QString::fromUtf8("Connect to the server"));
     pbSurrender->setDisabled(true);
     _game->clear();
-    if (_serverThread.isRunning())
-    {
-        _serverThread.quit();
-    }
+    emit readyToStopServer();
 }
 
 void App::receiveChatMessage(QString name, QColor color, QString text)
@@ -402,8 +398,7 @@ void App::receiveStartGameMessage(QList<ClientInfo> list)
     QList<bool> isLocal;
     for (int i = 0; i < list.size(); ++i)
     {
-        isLocal.append(list[i].name() == _localClient.name()
-                       && list[i].color() == _localClient.color());
+        isLocal.append(list[i] == _localClient.info());
     }
 
     _game->clear();
@@ -503,7 +498,7 @@ void App::guiClickRetirePlayer()
 {
     if (confirm(QString::fromUtf8("Do you really want to give up and finish the game?")))
     {
-        _localClient.sendSurrenderMessage(_localClient.info());
+        emit surrendered(_localClient.info());
     }
 }
 
@@ -527,14 +522,16 @@ void App::guiToggleCreateServer(bool value)
     if (value)
     {
         leServerAddress->setText("localhost");
+        leServerAddress->setDisabled(true);
         _serverSearcher.stop();
         lwServersList->clear();
         lwPlayersList->clear();
     }
     else
     {
-        lwPlayersList->clear();
+        leServerAddress->setEnabled(true);
         lwServersList->clear();
+        lwPlayersList->clear();
         _serverSearcher.start();
     }
 }

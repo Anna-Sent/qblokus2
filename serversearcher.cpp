@@ -1,16 +1,16 @@
-#include "serverssearcher.h"
+#include "serversearcher.h"
 #include "messagereceiver.h"
 #include "constants.h"
 
 ServerSearcher::ServerSearcher()
 {
-    messageReceiver = new UdpMessageReceiver(&socket);
+    messageReceiver = new UdpMessageReceiver(&socket, this);
     connect(messageReceiver, SIGNAL(serverInfoMessageReceived(ServerInfoMessage, const QHostAddress &, quint16)), this, SLOT(receiveServerInfoMessage(ServerInfoMessage, const QHostAddress &, quint16)));
 
     timer.setInterval(1000);
     connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
 
-    connect(this, SIGNAL(destroyed()), messageReceiver, SLOT(deleteLater()));
+    connect(this, SIGNAL(destroyed()), this, SLOT(stop()));
 }
 
 void ServerSearcher::receiveServerInfoMessage(ServerInfoMessage msg, const QHostAddress &host, quint16 port)
