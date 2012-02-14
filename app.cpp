@@ -360,8 +360,7 @@ void App::receivePlayersListMessage(QList<ClientInfo> list)
         item->setForeground(brush);
         item->setText(list[i].name());
         lwPlayersList->addItem(item);
-        isLocal.append(list[i].name() == _localClient.name()
-                       && list[i].color() == _localClient.color());
+        isLocal.append(list[i] == _localClient.info());
     }
 
     lwPlayersList->sortItems();
