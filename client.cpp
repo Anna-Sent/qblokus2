@@ -120,7 +120,7 @@ void LocalClient::receiveSurrenderMessage(const SurrenderMessage &msg)
 
 void LocalClient::receiveTurnMessage(const TurnMessage &msg)
 {
-    emit turnMessageReceived(msg.color(), msg.x(), msg.y(), msg.id(), msg.mask());
+    emit turnMessageReceived(msg.color(), msg.mask(), msg.id(), msg.x(), msg.y());
 }
 
 void LocalClient::processSocketDisconnected()

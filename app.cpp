@@ -43,7 +43,6 @@ App::App(QWidget *parent)
     connect(&_localClient, SIGNAL(chatMessageReceived(ClientInfo, QString)), this, SLOT(receiveChatMessage(ClientInfo, QString)));
     connect(&_localClient, SIGNAL(clientConnectMessageReceived(ClientInfo)), this, SLOT(receiveClientConnectMessage(ClientInfo)));
     connect(&_localClient, SIGNAL(clientDisconnectMessageReceived(ClientInfo)), this, SLOT(receiveClientDisconnectMessage(ClientInfo)));
-    connect(&_localClient, SIGNAL(turnMessageReceived(QColor, int, int, int, QString)), this, SLOT(receiveTurnMessage(QColor, int, int, int, QString)));
     connect(&_localClient, SIGNAL(playersListMessageReceived(QList<ClientInfo>)), this, SLOT(receivePlayersListMessage(QList<ClientInfo>)));
     connect(&_localClient, SIGNAL(startGameMessageReceived(QList<ClientInfo>)), this, SLOT(receiveStartGameMessage(QList<ClientInfo>)));
     connect(&_localClient, SIGNAL(surrenderMessageReceived(ClientInfo)), this, SLOT(receiveSurrenderMessage(ClientInfo)));
@@ -72,6 +71,8 @@ App::App(QWidget *parent)
             this, SLOT(completeTurn(const ClientInfo &, const QString &, int, int, int)));
     connect(_game, SIGNAL(turnCompleted(const ClientInfo &, const QString &, int, int, int)),
             &_localClient, SLOT(sendTurnMessage(const ClientInfo &, const QString &, int, int, int)));
+    connect(&_localClient, SIGNAL(turnMessageReceived(QColor, QString, int, int, int)),
+            _game, SLOT(turnComplete(QColor, QString, int, int, int)));
     connect(_game, SIGNAL(turnStarted(const ClientInfo &)),
             this, SLOT(startTurn(const ClientInfo &)));
 
@@ -409,11 +410,6 @@ void App::receiveSurrenderMessage(const ClientInfo &info)
     {
         pbSurrender->setDisabled(true);
     }
-}
-
-void App::receiveTurnMessage(QColor color, int x, int y, int id, QString mask)
-{
-    _game->turnComplete(color, mask, id, x, y);
 }
 
 void App::completeTurn(const ClientInfo &info, const QString &, int, int, int)
