@@ -128,7 +128,6 @@ void UdpMessageReceiver::processData(QByteArray &buffer, const QHostAddress &hos
         default: ;
         }
 
-
         buffer.remove(0, current->length());
         Message* old = current;
         current = next(current);
