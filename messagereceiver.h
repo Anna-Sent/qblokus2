@@ -28,8 +28,10 @@ signals:
     void connectionAcceptedMessageReceived(const ConnectionAcceptedMessage &);
     void pingMessageReceived(const PingMessage &);
     void playersListMessageReceived(const PlayersListMessage &);
-    void startGameMessageReceived(const StartGameMessage &);
     void serverReadyMessageReceived(const ServerReadyMessage &);
+    void serverStartGameMessageReceived(const ServerStartGameMessage &);
+    void serverStopGameMessageReceived(const ServerStopGameMessage &);
+    void startGameMessageReceived(const StartGameMessage &);
     void surrenderMessageReceived(const SurrenderMessage &);
     void tryToConnectMessageReceived(const TryToConnectMessage &);
     void turnMessageReceived(const TurnMessage &);

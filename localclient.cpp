@@ -5,14 +5,14 @@ LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime
 {
     _socket = new QTcpSocket(this);
     _messageReceiver = new TcpMessageReceiver(_socket, this);
-    connect(_messageReceiver, SIGNAL(chatMessageReceived(const ChatMessage &)), this, SLOT(receiveChatMessage(const ChatMessage &)));
+    connect(_messageReceiver, SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(receiveChatMessage(ChatMessage)));
     connect(_messageReceiver, SIGNAL(clientConnectMessageReceived(ClientConnectMessage)), this, SLOT(receiveClientConnectMessage(ClientConnectMessage)));
     connect(_messageReceiver, SIGNAL(clientDisconnectMessageReceived(ClientDisconnectMessage)), this, SLOT(receiveClientDisconnectMessage(ClientDisconnectMessage)));
     connect(_messageReceiver, SIGNAL(connectionAcceptedMessageReceived(ConnectionAcceptedMessage)), this, SLOT(receiveConnectionAcceptedMessage(ConnectionAcceptedMessage)));
     connect(_messageReceiver, SIGNAL(pingMessageReceived(PingMessage)), this, SLOT(receivePingMessage(PingMessage)));
     connect(_messageReceiver, SIGNAL(playersListMessageReceived(PlayersListMessage)), this, SLOT(receivePlayersListMessage(PlayersListMessage)));
-    connect(_messageReceiver, SIGNAL(startGameMessageReceived(StartGameMessage)), this, SLOT(receiveStartGameMessage(StartGameMessage)));
     connect(_messageReceiver, SIGNAL(serverReadyMessageReceived(ServerReadyMessage)), this, SLOT(receiveServerReadyMessage(ServerReadyMessage)));
+    connect(_messageReceiver, SIGNAL(startGameMessageReceived(StartGameMessage)), this, SLOT(receiveStartGameMessage(StartGameMessage)));
     connect(_messageReceiver, SIGNAL(surrenderMessageReceived(SurrenderMessage)), this, SLOT(receiveSurrenderMessage(SurrenderMessage)));
     connect(_messageReceiver, SIGNAL(turnMessageReceived(TurnMessage)), this, SLOT(receiveTurnMessage(TurnMessage)));
     connect(_socket, SIGNAL(disconnected()), this, SLOT(processSocketDisconnected()));
@@ -139,6 +139,18 @@ void LocalClient::processSocketError(QAbstractSocket::SocketError)
 void LocalClient::sendChatMessage(const ClientInfo &info, const QString &text)
 {
     ChatMessage msg(info, text);
+    msg.send(_socket);
+}
+
+void LocalClient::sendStartGameMessage()
+{
+    ServerStartGameMessage msg;
+    msg.send(_socket);
+}
+
+void LocalClient::sendStopGameMessage()
+{
+    ServerStopGameMessage msg;
     msg.send(_socket);
 }
 

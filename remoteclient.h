@@ -33,6 +33,8 @@ private slots:
     void processSocketError(QAbstractSocket::SocketError);
     void receiveChatMessage(const ChatMessage &);
     void receivePingMessage(const PingMessage &);
+    void receiveServerStartGameMessage(const ServerStartGameMessage &);
+    void receiveServerStopGameMessage(const ServerStopGameMessage &);
     void receiveSurrenderMessage(const SurrenderMessage &);
     void receiveTryToConnectMessage(const TryToConnectMessage &);
     void receiveTurnMessage(const TurnMessage &);
@@ -41,6 +43,8 @@ signals:
     void chatMessageReceived(const ChatMessage &, RemoteClient *);
     void disconnected(RemoteClient *);
     void errorOccurred(RemoteClient *);
+    void startGameMessageReceived();
+    void stopGameMessageReceived();
     void surrenderMessageReceived(const SurrenderMessage &, RemoteClient *);
     void tryToConnectMessageReceived(const TryToConnectMessage &, RemoteClient *);
     void turnMessageReceived(const TurnMessage &, RemoteClient *);

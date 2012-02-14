@@ -15,10 +15,12 @@ Message *next(Message *current)
         case mtServerInfo :             return new ServerInfoMessage(*header);
         case mtServerReady :            return new ServerReadyMessage(*header);
         case mtServerRequest :          return new ServerRequestMessage(*header);
+        case mtServerStartGame :        return new ServerStartGameMessage(*header);
+        case mtServerStopGame :         return new ServerStopGameMessage(*header);
+        case mtStartGame :              return new StartGameMessage(*header);
         case mtSurrender :              return new SurrenderMessage(*header);
         case mtPing :                   return new PingMessage(*header);
         case mtPlayersList :            return new PlayersListMessage(*header);
-        case mtStartGame :              return new StartGameMessage(*header);
         case mtTryToConnect :           return new TryToConnectMessage(*header);
         case mtTurn :                   return new TurnMessage(*header);
         default :                       return NULL;
@@ -67,8 +69,10 @@ void TcpMessageReceiver::processData()
         case mtConnectionAccepted:  DISPATCH_MESSAGE(connectionAcceptedMessageReceived, ConnectionAcceptedMessage); break;
         case mtPing:                DISPATCH_MESSAGE(pingMessageReceived, PingMessage); break;
         case mtPlayersList:         DISPATCH_MESSAGE(playersListMessageReceived, PlayersListMessage); break;
-        case mtStartGame:           DISPATCH_MESSAGE(startGameMessageReceived, StartGameMessage); break;
         case mtServerReady:         DISPATCH_MESSAGE(serverReadyMessageReceived, ServerReadyMessage); break;
+        case mtServerStartGame:     DISPATCH_MESSAGE(serverStartGameMessageReceived, ServerStartGameMessage); break;
+        case mtServerStopGame:      DISPATCH_MESSAGE(serverStopGameMessageReceived, ServerStopGameMessage); break;
+        case mtStartGame:           DISPATCH_MESSAGE(startGameMessageReceived, StartGameMessage); break;
         case mtSurrender:           DISPATCH_MESSAGE(surrenderMessageReceived, SurrenderMessage); break;
         case mtTurn:                DISPATCH_MESSAGE(turnMessageReceived, TurnMessage); break;
         case mtTryToConnect:        DISPATCH_MESSAGE(tryToConnectMessageReceived, TryToConnectMessage); break;
@@ -107,6 +111,8 @@ void UdpMessageReceiver::readyRead()
     }
 }
 
+#define DISPATCH_UDP_MESSAGE(signal, type) if (type *msg = dynamic_cast<type *>(current)) emit signal(*msg, host, port);
+
 void UdpMessageReceiver::processData(QByteArray &buffer, const QHostAddress &host, quint16 port)
 {
     Message *current = new MessageHeader;
@@ -115,16 +121,8 @@ void UdpMessageReceiver::processData(QByteArray &buffer, const QHostAddress &hos
         current->fill(buffer);
         switch (current->type())
         {
-        case mtServerInfo:
-            if (ServerInfoMessage *msg = dynamic_cast<ServerInfoMessage *>(current))
-            {
-                emit serverInfoMessageReceived(*msg, host, port);
-            }
-        case mtServerRequest:
-            if (ServerRequestMessage *msg = dynamic_cast<ServerRequestMessage *>(current))
-            {
-                emit serverRequestMessageReceived(*msg, host, port);
-            }
+        case mtServerInfo:      DISPATCH_UDP_MESSAGE(serverInfoMessageReceived, ServerInfoMessage); break;
+        case mtServerRequest:   DISPATCH_UDP_MESSAGE(serverRequestMessageReceived, ServerRequestMessage); break;
         default: ;
         }
 

@@ -135,15 +135,6 @@ void PlayersListMessage::fill(const QByteArray &buffer)
     }
 }
 
-StartGameMessage::StartGameMessage(QList<ClientInfo> list)
-{
-    _list = list;
-    qint64 len = sizeof(int);
-    for (int i = 0; i < list.size(); len += list[i++].size()) { }
-    _header.setMsgLength(len);
-    _header.setMsgType(mtStartGame);
-}
-
 ServerInfoMessage::ServerInfoMessage(QList<ClientInfo> list)
 {
     _list = list;
@@ -151,6 +142,15 @@ ServerInfoMessage::ServerInfoMessage(QList<ClientInfo> list)
     for (int i = 0; i < list.size(); len += list[i++].size()) { }
     _header.setMsgLength(len);
     _header.setMsgType(mtServerInfo);
+}
+
+StartGameMessage::StartGameMessage(QList<ClientInfo> list)
+{
+    _list = list;
+    qint64 len = sizeof(int);
+    for (int i = 0; i < list.size(); len += list[i++].size()) { }
+    _header.setMsgLength(len);
+    _header.setMsgType(mtStartGame);
 }
 
 SurrenderMessage::SurrenderMessage(const ClientInfo &info)

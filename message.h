@@ -9,20 +9,22 @@
 
 enum MessageType
 {
-    mtHeader,
     mtChat,
-    mtPlayersList,
-    mtServerInfo,
     mtClientConnect,
     mtClientDisconnect,
+    mtConnectionAccepted,
+    mtHeader,
+    mtPing,
+    mtPlayersList,
+    mtServerInfo,
     mtServerReady,
     mtServerRequest,
-    mtConnectionAccepted,
-    mtPing,
-    mtTryToConnect,
+    mtServerStartGame,
+    mtServerStopGame,
     mtStartGame,
+    mtSurrender,
     mtTurn,
-    mtSurrender
+    mtTryToConnect
 };
 
 class Message
@@ -141,14 +143,6 @@ public:
     void fill(const QByteArray &);
 };
 
-class StartGameMessage : public PlayersListMessage
-{
-public:
-    StartGameMessage() { _header.setMsgType(mtStartGame); }
-    StartGameMessage(const MessageHeader &header) { _header = header; }
-    StartGameMessage(QList<ClientInfo>);
-};
-
 class ServerInfoMessage : public PlayersListMessage
 {
 public:
@@ -169,6 +163,28 @@ class ServerRequestMessage : public ComplexMessage
 public:
     ServerRequestMessage() { _header.setMsgLength(0); _header.setMsgType(mtServerRequest); }
     ServerRequestMessage(const MessageHeader &header) { _header = header; }
+};
+
+class ServerStartGameMessage : public ComplexMessage
+{
+public:
+    ServerStartGameMessage() { _header.setMsgLength(0); _header.setMsgType(mtServerStartGame); }
+    ServerStartGameMessage(const MessageHeader &header) { _header = header; }
+};
+
+class ServerStopGameMessage : public ComplexMessage
+{
+public:
+    ServerStopGameMessage() { _header.setMsgLength(0); _header.setMsgType(mtServerStopGame); }
+    ServerStopGameMessage(const MessageHeader &header) { _header = header; }
+};
+
+class StartGameMessage : public PlayersListMessage
+{
+public:
+    StartGameMessage() { _header.setMsgType(mtStartGame); }
+    StartGameMessage(const MessageHeader &header) { _header = header; }
+    StartGameMessage(QList<ClientInfo>);
 };
 
 class SurrenderMessage : public ClientMessage

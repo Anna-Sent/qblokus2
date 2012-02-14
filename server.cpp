@@ -10,7 +10,7 @@ Server::Server() : _isGameStarted(false)
 
     _listener = new QUdpSocket(this);
     _messageReceiver = new UdpMessageReceiver(_listener, this);
-    connect(_messageReceiver, SIGNAL(serverRequestMessageReceived(const ServerRequestMessage &, const QHostAddress &, quint16)), this, SLOT(receiveServerRequestMessage(const ServerRequestMessage &, const QHostAddress &, quint16)));
+    connect(_messageReceiver, SIGNAL(serverRequestMessageReceived(ServerRequestMessage, QHostAddress, quint16)), this, SLOT(receiveServerRequestMessage(ServerRequestMessage, QHostAddress, quint16)));
 
     _timer = new QTimer(this);
     _timer->setInterval(PING_INTERVAL);
@@ -99,16 +99,6 @@ void Server::start(int playersCount, quint16 port)
     emit started();
 }
 
-void Server::startGame()
-{
-    _isGameStarted = true;
-    if (_tcpServer->isListening())
-    {
-        StartGameMessage msg(clients());
-        sendToAll(msg);
-    }
-}
-
 void Server::stop()
 {
     if (_tcpServer->isListening())
@@ -124,6 +114,16 @@ void Server::stop()
 
         _clients.clear();
         _tcpServer->close();
+    }
+}
+
+void Server::startGame()
+{
+    _isGameStarted = true;
+    if (_tcpServer->isListening())
+    {
+        StartGameMessage msg(clients());
+        sendToAll(msg);
     }
 }
 
@@ -210,11 +210,13 @@ void Server::receiveTryToConnectMessage(const TryToConnectMessage &msg, RemoteCl
     }
     else
     {
-        connect(client, SIGNAL(chatMessageReceived(const ChatMessage &, RemoteClient *)), this, SLOT(receiveChatMessage(const ChatMessage &, RemoteClient *)));
+        connect(client, SIGNAL(chatMessageReceived(ChatMessage, RemoteClient *)), this, SLOT(receiveChatMessage(ChatMessage, RemoteClient *)));
         connect(client, SIGNAL(disconnected(RemoteClient *)), this, SLOT(processClientDisconnected(RemoteClient *)));
         connect(client, SIGNAL(errorOccurred(RemoteClient *)), this, SLOT(processClientError(RemoteClient *)));
-        connect(client, SIGNAL(surrenderMessageReceived(const SurrenderMessage &, RemoteClient *)), this, SLOT(receiveSurrenderMessage(const SurrenderMessage &, RemoteClient *)));
-        connect(client, SIGNAL(turnMessageReceived(const TurnMessage &, RemoteClient *)), this, SLOT(receiveTurnMessage(const TurnMessage &, RemoteClient *)));
+        connect(client, SIGNAL(startGameMessageReceived()), this, SLOT(startGame()));
+        connect(client, SIGNAL(stopGameMessageReceived()), this, SLOT(stopGame()));
+        connect(client, SIGNAL(surrenderMessageReceived(SurrenderMessage, RemoteClient *)), this, SLOT(receiveSurrenderMessage(SurrenderMessage, RemoteClient *)));
+        connect(client, SIGNAL(turnMessageReceived(TurnMessage, RemoteClient *)), this, SLOT(receiveTurnMessage(TurnMessage, RemoteClient *)));
         client->setConnectedToGame(msg.name(), msg.color());
         ClientConnectMessage msg1(msg.info());
         sendToAll(msg1);
@@ -241,7 +243,7 @@ void Server::processNewConnection()
 
         RemoteClient *client = new RemoteClient(s);
         connect(client, SIGNAL(disconnected(RemoteClient *)), this, SLOT(removeClient(RemoteClient *)));
-        connect(client, SIGNAL(tryToConnectMessageReceived(const TryToConnectMessage &, RemoteClient *)), this, SLOT(receiveTryToConnectMessage(const TryToConnectMessage &, RemoteClient *)));
+        connect(client, SIGNAL(tryToConnectMessageReceived(TryToConnectMessage, RemoteClient *)), this, SLOT(receiveTryToConnectMessage(TryToConnectMessage, RemoteClient *)));
         _clients.append(client);
         ServerReadyMessage msg;
         msg.send(s);

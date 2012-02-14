@@ -30,6 +30,8 @@ public:
 public slots:
     void sendChatMessage(const ClientInfo &, const QString &);
     void sendSurrenderMessage(const ClientInfo &);
+    void sendStartGameMessage();
+    void sendStopGameMessage();
     void sendTurnMessage(const ClientInfo &, const QString &tile, int id, int x, int y);
 
     void start(const QString &hostname, quint16 port);
@@ -56,7 +58,7 @@ signals:
     void connectionAccepted();
     void connectionRejected(const QString &);
     void disconnected();
-    void errorOccurred(QString);
+    void errorOccurred(const QString &);
 
     void chatMessageReceived(const ClientInfo &, const QString &);
     void clientConnectMessageReceived(const ClientInfo &);

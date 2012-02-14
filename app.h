@@ -67,13 +67,13 @@ public:
 
 signals:
     // to server
-    void gameStarted();
-    void gameStopped();
     void readyToStartServer(int, quint16);
     void readyToStopServer();
 
     // to local client
     void chatMessagePosted(const ClientInfo &, const QString &);
+    void gameStarted();
+    void gameStopped();
     void readyToStartLocalClient(const QString &hostname, quint16 port);
     void readyToStopLocalClient();
     void surrendered(const ClientInfo &);

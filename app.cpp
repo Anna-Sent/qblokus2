@@ -47,6 +47,8 @@ App::App(QWidget *parent)
     connect(&_localClient, SIGNAL(startGameMessageReceived(QList<ClientInfo>)), this, SLOT(receiveStartGameMessage(QList<ClientInfo>)));
     connect(&_localClient, SIGNAL(surrenderMessageReceived(ClientInfo)), this, SLOT(receiveSurrenderMessage(ClientInfo)));
     connect(this, SIGNAL(chatMessagePosted(ClientInfo, QString)), &_localClient, SLOT(sendChatMessage(ClientInfo, QString)));
+    connect(this, SIGNAL(gameStarted()), &_localClient, SLOT(sendStartGameMessage()));
+    connect(this, SIGNAL(gameStopped()), &_localClient, SLOT(sendStopGameMessage()));
     connect(this, SIGNAL(readyToStartLocalClient(QString, quint16)), &_localClient, SLOT(start(QString, quint16)));
     connect(this, SIGNAL(readyToStopLocalClient()), &_localClient, SLOT(stop()));
     connect(this, SIGNAL(surrendered(ClientInfo)), &_localClient, SLOT(sendSurrenderMessage(ClientInfo)));
@@ -54,8 +56,6 @@ App::App(QWidget *parent)
 
     // server
     _server.moveToThread(&_serverThread);
-    connect(this, SIGNAL(gameStarted()), &_server, SLOT(startGame()));
-    connect(this, SIGNAL(gameStopped()), &_server, SLOT(stopGame()));
     connect(this, SIGNAL(readyToStartServer(int, quint16)), &_server, SLOT(start(int, quint16)));
     connect(this, SIGNAL(readyToStopServer()), &_server, SLOT(stop()));
     connect(&_server, SIGNAL(started()), this, SLOT(processServerStarted()));
@@ -77,7 +77,6 @@ App::App(QWidget *parent)
             this, SLOT(startTurn(ClientInfo)));
 
     connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
-    connect(this, SIGNAL(destroyed()), &_serverSearcher, SLOT(stop()));
     connect(this, SIGNAL(destroyed()), &_localClientThread, SLOT(quit()));
     connect(this, SIGNAL(destroyed()), &_serverThread, SLOT(quit()));
 }

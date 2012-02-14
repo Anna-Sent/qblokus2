@@ -24,6 +24,8 @@ private:
 
 private slots:
     void removeClient(RemoteClient *);
+    void startGame();
+    void stopGame();
 
     // from timer
     void ping();
@@ -52,9 +54,7 @@ public:
 public slots:
     // from app
     void start(int maxClientsCount, quint16 port);
-    void startGame();
     void stop();
-    void stopGame();
 
 signals:
     void started();

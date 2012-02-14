@@ -8,8 +8,10 @@ RemoteClient::RemoteClient(QTcpSocket *s) : _lastPingTime(QTime::currentTime()),
 {
     _socket = s;
     _messageReceiver = new TcpMessageReceiver(s);
-    connect(_messageReceiver, SIGNAL(chatMessageReceived(const ChatMessage &)), this, SLOT(receiveChatMessage(const ChatMessage &)));
+    connect(_messageReceiver, SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(receiveChatMessage(ChatMessage)));
     connect(_messageReceiver, SIGNAL(pingMessageReceived(PingMessage)), this, SLOT(receivePingMessage(PingMessage)));
+    connect(_messageReceiver, SIGNAL(serverStartGameMessageReceived(ServerStartGameMessage)), this, SLOT(receiveServerStartGameMessage(ServerStartGameMessage)));
+    connect(_messageReceiver, SIGNAL(serverStopGameMessageReceived(ServerStopGameMessage)), this, SLOT(receiveServerStopGameMessage(ServerStopGameMessage)));
     connect(_messageReceiver, SIGNAL(surrenderMessageReceived(SurrenderMessage)), this, SLOT(receiveSurrenderMessage(SurrenderMessage)));
     connect(_messageReceiver, SIGNAL(tryToConnectMessageReceived(TryToConnectMessage)), this, SLOT(receiveTryToConnectMessage(TryToConnectMessage)));
     connect(_messageReceiver, SIGNAL(turnMessageReceived(TurnMessage)), this, SLOT(receiveTurnMessage(TurnMessage)));
@@ -71,17 +73,27 @@ void RemoteClient::receivePingMessage(const PingMessage &)
     _lastPingTime.start();
 }
 
+void RemoteClient::receiveServerStartGameMessage(const ServerStartGameMessage &)
+{
+    emit startGameMessageReceived();
+}
+
+void RemoteClient::receiveServerStopGameMessage(const ServerStopGameMessage &)
+{
+    emit stopGameMessageReceived();
+}
+
 void RemoteClient::receiveSurrenderMessage(const SurrenderMessage &msg)
 {
     emit surrenderMessageReceived(msg, this);
 }
 
-void RemoteClient::receiveTurnMessage(const TurnMessage &msg)
-{
-    emit turnMessageReceived(msg, this);
-}
-
 void RemoteClient::receiveTryToConnectMessage(const TryToConnectMessage &msg)
 {
     emit tryToConnectMessageReceived(msg, this);
+}
+
+void RemoteClient::receiveTurnMessage(const TurnMessage &msg)
+{
+    emit turnMessageReceived(msg, this);
 }
