@@ -389,6 +389,7 @@ void App::receiveServerInfoMessage(const QHostAddress &host, QList<ClientInfo> c
 
 void App::receiveStartGameMessage(QList<ClientInfo> list)
 {
+    pbSurrender->setDisabled(true);
     QList<bool> isLocal;
     for (int i = 0; i < list.size(); ++i)
     {
