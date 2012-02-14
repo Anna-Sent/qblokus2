@@ -1,5 +1,5 @@
-#ifndef SERVERSSEARCHER_H
-#define SERVERSSEARCHER_H
+#ifndef SERVERSEARCHER_H
+#define SERVERSEARCHER_H
 
 #include "clientinfo.h"
 #include "messagereceiver.h"
@@ -34,4 +34,4 @@ signals:
     void serverInfoMessageReceived(const QHostAddress &, QList<ClientInfo>);
 };
 
-#endif // SERVERSSEARCHER_H
+#endif // SERVERSEARCHER_H
