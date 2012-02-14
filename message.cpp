@@ -70,18 +70,16 @@ void ClientMessage::fill(const QByteArray &buffer)
     _info.fill(data);
 }
 
-ClientConnectMessage::ClientConnectMessage(QString name, QColor color)
+ClientConnectMessage::ClientConnectMessage(const ClientInfo &info)
 {
-    _info.setName(name);
-    _info.setColor(color);
+    _info = info;
     _header.setMsgLength(_info.size());
     _header.setMsgType(mtClientConnect);
 }
 
-ClientDisconnectMessage::ClientDisconnectMessage(QString name, QColor color)
+ClientDisconnectMessage::ClientDisconnectMessage(const ClientInfo &info)
 {
-    _info.setName(name);
-    _info.setColor(color);
+    _info = info;
     _header.setMsgLength(_info.size());
     _header.setMsgType(mtClientDisconnect);
 }

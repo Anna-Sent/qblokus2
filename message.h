@@ -97,7 +97,7 @@ class ClientConnectMessage : public ClientMessage
 public:
     ClientConnectMessage() { _header.setMsgType(mtClientConnect); }
     ClientConnectMessage(const MessageHeader &header) { _header = header; }
-    ClientConnectMessage(QString, QColor);
+    ClientConnectMessage(const ClientInfo &);
 };
 
 class ClientDisconnectMessage : public ClientMessage
@@ -105,7 +105,7 @@ class ClientDisconnectMessage : public ClientMessage
 public:
     ClientDisconnectMessage() { _header.setMsgType(mtClientDisconnect); }
     ClientDisconnectMessage(const MessageHeader &header) { _header = header; }
-    ClientDisconnectMessage(QString, QColor);
+    ClientDisconnectMessage(const ClientInfo &);
 };
 
 class ConnectionAcceptedMessage : public ComplexMessage

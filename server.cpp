@@ -149,7 +149,7 @@ void Server::removeClient(RemoteClient *client)
 
 void Server::processClientDisconnected(RemoteClient *client)
 {
-    ClientDisconnectMessage msg(client->name(), client->color());
+    ClientDisconnectMessage msg(client->info());
     sendToAll(msg);
     sendPlayersList();
 }
@@ -216,7 +216,7 @@ void Server::receiveTryToConnectMessage(const TryToConnectMessage &msg, RemoteCl
         connect(client, SIGNAL(surrenderMessageReceived(const SurrenderMessage &, RemoteClient *)), this, SLOT(receiveSurrenderMessage(const SurrenderMessage &, RemoteClient *)));
         connect(client, SIGNAL(turnMessageReceived(const TurnMessage &, RemoteClient *)), this, SLOT(receiveTurnMessage(const TurnMessage &, RemoteClient *)));
         client->setConnectedToGame(msg.name(), msg.color());
-        ClientConnectMessage msg1(msg.name(), msg.color());
+        ClientConnectMessage msg1(msg.info());
         sendToAll(msg1);
         sendPlayersList();
     }
