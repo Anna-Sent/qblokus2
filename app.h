@@ -31,7 +31,6 @@ private slots:
 
     // from user
     void userDisconnectFromServer();
-    void userQuit();
     void userSendMessage();
     void userStartGame();
     void userTryToConnect();

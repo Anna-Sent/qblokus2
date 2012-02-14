@@ -12,7 +12,7 @@ App::App(QWidget *parent)
 
     // gui
     connect(actionStartGame, SIGNAL(activated()), this, SLOT(userStartGame()));
-    connect(actionQuit, SIGNAL(activated()), this, SLOT(userQuit()));
+    connect(actionQuit, SIGNAL(activated()), qApp, SLOT(quit()));
     connect(actionConnect, SIGNAL(activated()), this, SLOT(userTryToConnect()));
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
     connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendMessage()));
@@ -66,14 +66,14 @@ App::App(QWidget *parent)
     QGraphicsView *gvs[4] = { gvPlayer1, gvPlayer2, gvPlayer3, gvPlayer4 };
     QLCDNumber *lcds[4] = { score1, score2, score3, score4 };
     _game = new Game(gvTable, gvs, lcds);
-    connect(_game, SIGNAL(turnStarted(const ClientInfo &)),
-            this, SLOT(startTurn(const ClientInfo &)));
+    connect(_game, SIGNAL(gameOver(QList<ClientInfo>, int)),
+            this, SLOT(finishGame(QList<ClientInfo>, int)));
     connect(_game, SIGNAL(turnCompleted(const ClientInfo &, const QString &, int, int, int)),
             this, SLOT(completeTurn(const ClientInfo &, const QString &, int, int, int)));
     connect(_game, SIGNAL(turnCompleted(const ClientInfo &, const QString &, int, int, int)),
             &_localClient, SLOT(sendTurnMessage(const ClientInfo &, const QString &, int, int, int)));
-    connect(_game, SIGNAL(gameOver(QList<ClientInfo>, int)),
-            this, SLOT(finishGame(QList<ClientInfo>, int)));
+    connect(_game, SIGNAL(turnStarted(const ClientInfo &)),
+            this, SLOT(startTurn(const ClientInfo &)));
 
     connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), &_serverSearcher, SLOT(stop()));
@@ -163,11 +163,6 @@ void App::userDisconnectFromServer()
             emit readyToStopServer();
         }
     }
-}
-
-void App::userQuit()
-{
-    exit(0);
 }
 
 void App::userSendMessage()
