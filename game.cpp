@@ -173,7 +173,7 @@ void Game::retirePlayer(const ClientInfo &info)
     }
 }
 
-void Game::addPlayer(ClientInfo info, PlayerType type)
+void Game::addPlayer(const ClientInfo &info, PlayerType type)
 {
     Player *player;
     switch (type)

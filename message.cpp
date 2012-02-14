@@ -161,7 +161,7 @@ SurrenderMessage::SurrenderMessage(const ClientInfo &info)
     _header.setMsgType(mtSurrender);
 }
 
-TryToConnectMessage::TryToConnectMessage(ClientInfo info)
+TryToConnectMessage::TryToConnectMessage(const ClientInfo &info)
 {
     _info = info;
     _header.setMsgLength(_info.size());

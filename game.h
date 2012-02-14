@@ -28,7 +28,7 @@ private:
     QLCDNumber *_lcds[MAX_PLAYERS_COUNT];
     QList<Player *> _players;
     QList<QGraphicsScene *> _scenes;
-    void addPlayer(ClientInfo info, PlayerType type);
+    void addPlayer(const ClientInfo &info, PlayerType type);
     void countNextActivePlayerNumber();
     void retirePlayer(int);
     void startTurn();

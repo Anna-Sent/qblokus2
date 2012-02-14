@@ -36,7 +36,7 @@ private slots:
     void userTryToConnect();
 
     void guiChangePortValue(int);
-    void guiChangeServersListCurrentText(QString);
+    void guiChangeServersListCurrentText(const QString &);
     void guiClickRetirePlayer();
     void guiClickServersListItem(QListWidgetItem *item);
     void guiToggleCreateServer(bool);

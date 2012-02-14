@@ -184,7 +184,7 @@ class TryToConnectMessage : public ClientMessage
 public:
     TryToConnectMessage() { _header.setMsgType(mtTryToConnect); }
     TryToConnectMessage(const MessageHeader &header) { _header = header; }
-    TryToConnectMessage(ClientInfo);
+    TryToConnectMessage(const ClientInfo &);
 };
 
 class TurnMessage : public ClientMessage

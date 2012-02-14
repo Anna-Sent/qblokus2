@@ -34,7 +34,7 @@ App::App(QWidget *parent)
     connect(&_localClient, SIGNAL(connectionAccepted()), lwServersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(connectionAccepted()), &_serverSearcher, SLOT(stop()));
     connect(&_localClient, SIGNAL(connectionAccepted()), this, SLOT(acceptConnection()));
-    connect(&_localClient, SIGNAL(connectionRejected(const QString &)), this, SLOT(perror(const QString &)));
+    connect(&_localClient, SIGNAL(connectionRejected(QString)), this, SLOT(perror(QString)));
     connect(&_localClient, SIGNAL(disconnected()), this, SLOT(processClientDisconnected()));
     connect(&_localClient, SIGNAL(disconnected()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(disconnected()), lwServersList, SLOT(clear()));
@@ -67,14 +67,14 @@ App::App(QWidget *parent)
     _game = new Game(gvTable, gvs, lcds);
     connect(_game, SIGNAL(gameOver(QList<ClientInfo>, int)),
             this, SLOT(finishGame(QList<ClientInfo>, int)));
-    connect(_game, SIGNAL(turnCompleted(const ClientInfo &, const QString &, int, int, int)),
-            this, SLOT(completeTurn(const ClientInfo &, const QString &, int, int, int)));
-    connect(_game, SIGNAL(turnCompleted(const ClientInfo &, const QString &, int, int, int)),
-            &_localClient, SLOT(sendTurnMessage(const ClientInfo &, const QString &, int, int, int)));
+    connect(_game, SIGNAL(turnCompleted(ClientInfo, QString, int, int, int)),
+            this, SLOT(completeTurn(ClientInfo, QString, int, int, int)));
+    connect(_game, SIGNAL(turnCompleted(ClientInfo, QString, int, int, int)),
+            &_localClient, SLOT(sendTurnMessage(ClientInfo, QString, int, int, int)));
     connect(&_localClient, SIGNAL(turnMessageReceived(QColor, QString, int, int, int)),
             _game, SLOT(turnComplete(QColor, QString, int, int, int)));
-    connect(_game, SIGNAL(turnStarted(const ClientInfo &)),
-            this, SLOT(startTurn(const ClientInfo &)));
+    connect(_game, SIGNAL(turnStarted(ClientInfo)),
+            this, SLOT(startTurn(ClientInfo)));
 
     connect(this, SIGNAL(destroyed()), _game, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), &_serverSearcher, SLOT(stop()));
@@ -477,7 +477,7 @@ void App::guiChangePortValue(int value)
     lwPlayersList->clear();
 }
 
-void App::guiChangeServersListCurrentText(QString text)
+void App::guiChangeServersListCurrentText(const QString &text)
 {
     if (text != "")
     {
