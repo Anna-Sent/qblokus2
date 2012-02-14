@@ -1,9 +1,10 @@
 #ifndef _SERVER_H_
 #define _SERVER_H_
 
-#include "client.h"
+#include "remoteclient.h"
 #include "message.h"
 #include <QTcpServer>
+#include <QTimer>
 
 class Server : public QObject
 {

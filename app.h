@@ -1,7 +1,7 @@
 #ifndef APP_H
 #define APP_H
 
-#include "client.h"
+#include "localclient.h"
 #include "game.h"
 #include "server.h"
 #include "serversearcher.h"

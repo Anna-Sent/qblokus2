@@ -1,6 +1,7 @@
-#ifndef _CLIENT_H_
-#define _CLIENT_H_
+#ifndef LOCALCLIENT_H
+#define LOCALCLIENT_H
 
+#include "clientinfo.h"
 #include "messagereceiver.h"
 #include <QTime>
 #include <QTimer>
@@ -23,8 +24,8 @@ public:
     const ClientInfo   &info() const        { return _info; }
     bool                isStarted() const   { return _isStarted; }
     QString             name() const        { return _info.name(); }
-    void setColor(const QColor &color) { _info.setColor(color); }
-    void setName(const QString &name) { _info.setName(name); }
+    void setColor(const QColor &color)      { _info.setColor(color); }
+    void setName(const QString &name)       { _info.setName(name); }
 
 public slots:
     void sendChatMessage(const ClientInfo &, const QString &);
@@ -66,46 +67,4 @@ signals:
     void turnMessageReceived(QColor, QString, int, int, int);
 };
 
-class RemoteClient : public QObject
-{
-    Q_OBJECT
-
-private:
-    ClientInfo          _info;
-    QTime               _lastPingTime;
-    TcpMessageReceiver *_messageReceiver;
-    QTcpSocket         *_socket;
-    int                 _state;
-
-public:
-    RemoteClient(QTcpSocket *);
-    QColor              color() const                           { return _info.color(); }
-    int                 elapsedSinceLastPing() const            { return _lastPingTime.elapsed(); }
-    const ClientInfo   &info() const                            { return _info; }
-    bool                isConnectedToGame() const               { return _state == 2; }
-    QString             name() const                            { return _info.name(); }
-    void                sendMessage(const Message &msg) const;
-
-public slots:
-    void setConnectedToGame(const QString &name, const QColor &color);
-    void setDisconnectedFromGame();
-
-private slots:
-    void processSocketDisconnected();
-    void processSocketError(QAbstractSocket::SocketError);
-    void receiveChatMessage(const ChatMessage &);
-    void receivePingMessage(const PingMessage &);
-    void receiveSurrenderMessage(const SurrenderMessage &);
-    void receiveTryToConnectMessage(const TryToConnectMessage &);
-    void receiveTurnMessage(const TurnMessage &);
-
-signals:
-    void chatMessageReceived(const ChatMessage &, RemoteClient *);
-    void disconnected(RemoteClient *);
-    void errorOccurred(RemoteClient *);
-    void surrenderMessageReceived(const SurrenderMessage &, RemoteClient *);
-    void tryToConnectMessageReceived(const TryToConnectMessage &, RemoteClient *);
-    void turnMessageReceived(const TurnMessage &, RemoteClient *);
-};
-
-#endif
+#endif // LOCALCLIENT_H

@@ -3,18 +3,20 @@ SOURCES = main.cpp \
     app.cpp \
     messagereceiver.cpp \
     clientinfo.cpp \
-    client.cpp \
+    remoteclient.cpp \
     server.cpp \
     serversearcher.cpp \
-    message.cpp
+    message.cpp \
+    localclient.cpp
 HEADERS = app.h \
     messagereceiver.h \
     clientinfo.h \
-    client.h \
+    remoteclient.h \
     server.h \
     serversearcher.h \
     constants.h \
-    message.h
+    message.h \
+    localclient.h
 SOURCES += coloritem.cpp \
     tile.cpp \
     table.cpp \
