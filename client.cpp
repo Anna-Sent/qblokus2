@@ -115,7 +115,7 @@ void LocalClient::receiveServerReadyMessage(const ServerReadyMessage &)
 
 void LocalClient::receiveSurrenderMessage(const SurrenderMessage &msg)
 {
-    emit surrenderMessageReceived(msg.name(), msg.color());
+    emit surrenderMessageReceived(msg.info());
 }
 
 void LocalClient::receiveTurnMessage(const TurnMessage &msg)

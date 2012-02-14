@@ -46,7 +46,7 @@ App::App(QWidget *parent)
     connect(&_localClient, SIGNAL(turnMessageReceived(QColor, int, int, int, QString)), this, SLOT(receiveTurnMessage(QColor, int, int, int, QString)));
     connect(&_localClient, SIGNAL(playersListMessageReceived(QList<ClientInfo>)), this, SLOT(receivePlayersListMessage(QList<ClientInfo>)));
     connect(&_localClient, SIGNAL(startGameMessageReceived(QList<ClientInfo>)), this, SLOT(receiveStartGameMessage(QList<ClientInfo>)));
-    connect(&_localClient, SIGNAL(surrenderMessageReceived(QString, QColor)), this, SLOT(receiveSurrenderMessage(QString, QColor)));
+    connect(&_localClient, SIGNAL(surrenderMessageReceived(ClientInfo)), this, SLOT(receiveSurrenderMessage(ClientInfo)));
     connect(this, SIGNAL(chatMessagePosted(ClientInfo, QString)), &_localClient, SLOT(sendChatMessage(ClientInfo, QString)));
     connect(this, SIGNAL(readyToStartLocalClient(QString, quint16)), &_localClient, SLOT(start(QString, quint16)));
     connect(this, SIGNAL(readyToStopLocalClient()), &_localClient, SLOT(stop()));
@@ -106,8 +106,8 @@ void App::setTabOrder() const
     QWidget::setTabOrder(leServerAddress, cbCreateServer);
     QWidget::setTabOrder(cbCreateServer, sbPlayersCount);
     QWidget::setTabOrder(sbPlayersCount, sbPort);
-    QWidget::setTabOrder(sbPort, leNickname);
-    QWidget::setTabOrder(leNickname, cbColor);
+    QWidget::setTabOrder(sbPort, lePlayerName);
+    QWidget::setTabOrder(lePlayerName, cbColor);
     QWidget::setTabOrder(cbColor, pbConnect);
     QWidget::setTabOrder(pbConnect, textEdit);
     QWidget::setTabOrder(textEdit, lineEdit);
@@ -228,14 +228,14 @@ void App::userTryToConnect()
 
         _localClient.setColor(color);
 
-        QString name = leNickname->text();
+        QString name = lePlayerName->text();
         if (name == "")
         {
             showWarningMessage(QString::fromUtf8("Enter the nickname"));
             if (dockWidget->isVisible())
             {
                 dockWidget->activateWindow();
-                leNickname->setFocus();
+                lePlayerName->setFocus();
             }
 
             return;
@@ -247,7 +247,7 @@ void App::userTryToConnect()
             if (dockWidget->isVisible())
             {
                 dockWidget->activateWindow();
-                leNickname->setFocus();
+                lePlayerName->setFocus();
             }
 
             return;
@@ -305,8 +305,8 @@ void App::acceptConnection()
     sbPlayersCount->setDisabled(true);
     lPort->setDisabled(true);
     sbPort->setDisabled(true);
-    lNickname->setDisabled(true);
-    leNickname->setDisabled(true);
+    lPlayerName->setDisabled(true);
+    lePlayerName->setDisabled(true);
     lColor->setDisabled(true);
     cbColor->setDisabled(true);
     pbConnect->setText(QString::fromUtf8("Disconnect from the server"));
@@ -325,8 +325,8 @@ void App::processClientDisconnected()
     sbPlayersCount->setEnabled(cbCreateServer->isChecked());
     lPort->setDisabled(false);
     sbPort->setDisabled(false);
-    lNickname->setDisabled(false);
-    leNickname->setDisabled(false);
+    lPlayerName->setDisabled(false);
+    lePlayerName->setDisabled(false);
     lColor->setDisabled(false);
     cbColor->setDisabled(false);
     pbConnect->setText(QString::fromUtf8("Connect to the server"));
@@ -406,11 +406,11 @@ void App::receiveStartGameMessage(QList<ClientInfo> list)
     _game->start();
 }
 
-void App::receiveSurrenderMessage(QString name, QColor color)
+void App::receiveSurrenderMessage(const ClientInfo &info)
 {
-    pinfo(name + QString::fromUtf8(" surrendered"), color);
-    _game->retirePlayer(name, color);
-    if (_localClient.name() == name && _localClient.color() == color)
+    pinfo(info.name() + QString::fromUtf8(" surrendered"), info.color());
+    _game->retirePlayer(info);
+    if (_localClient.info() == info)
     {
         pbSurrender->setDisabled(true);
     }

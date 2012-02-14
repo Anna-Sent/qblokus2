@@ -161,11 +161,11 @@ void Game::retirePlayer(int i)
     }
 }
 
-void Game::retirePlayer(QString name, QColor color)
+void Game::retirePlayer(const ClientInfo &info)
 {
     for (int i = 0; i < _players.size(); ++i)
     {
-        if (_players[i]->name() == name && _players[i]->color() == color)
+        if (_players[i]->info() == info)
         {
             retirePlayer(i);
             return;

@@ -50,7 +50,7 @@ private slots:
     void receiveClientDisconnectMessage(QString, QColor);
     void receivePlayersListMessage(QList<ClientInfo>);
     void receiveStartGameMessage(QList<ClientInfo>);
-    void receiveSurrenderMessage(QString, QColor);
+    void receiveSurrenderMessage(const ClientInfo &);
     void receiveTurnMessage(QColor, int, int, int, QString);
 
     // from servers searcher

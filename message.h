@@ -87,6 +87,7 @@ protected:
 public:
     ClientMessage() { _header.setMsgLength(_info.size()); }
     QColor color() const { return _info.color(); }
+    ClientInfo info() const { return _info; }
     QString name() const { return _info.name(); }
     virtual QByteArray serialize() const;
     virtual void fill(const QByteArray &);

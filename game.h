@@ -37,7 +37,7 @@ private:
 public:
     Game(QGraphicsView *, QGraphicsView *[MAX_PLAYERS_COUNT], QLCDNumber *[MAX_PLAYERS_COUNT]);
     bool isStarted() const { return _running; }
-    void retirePlayer(QString name, QColor color);
+    void retirePlayer(const ClientInfo &);
     void start();
     void updatePlayers(QList<ClientInfo>, QList<bool>);
 

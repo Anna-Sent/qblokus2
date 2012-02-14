@@ -62,7 +62,7 @@ signals:
     void clientDisconnectMessageReceived(QString, QColor);
     void playersListMessageReceived(QList<ClientInfo>);
     void startGameMessageReceived(QList<ClientInfo>);
-    void surrenderMessageReceived(QString, QColor);
+    void surrenderMessageReceived(const ClientInfo &);
     void turnMessageReceived(QColor, int, int, int, QString);
 };
 
