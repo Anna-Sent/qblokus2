@@ -44,9 +44,9 @@ private slots:
     // from local client
     void acceptConnection();
     void processClientDisconnected();
-    void receiveChatMessage(QString, QColor, QString);
-    void receiveClientConnectMessage(QString, QColor);
-    void receiveClientDisconnectMessage(QString, QColor);
+    void receiveChatMessage(const ClientInfo &, const QString &);
+    void receiveClientConnectMessage(const ClientInfo &);
+    void receiveClientDisconnectMessage(const ClientInfo &);
     void receivePlayersListMessage(QList<ClientInfo>);
     void receiveStartGameMessage(QList<ClientInfo>);
     void receiveSurrenderMessage(const ClientInfo &);

@@ -54,17 +54,17 @@ void LocalClient::stop()
 
 void LocalClient::receiveChatMessage(const ChatMessage &msg)
 {
-    emit chatMessageReceived(msg.name(), msg.color(), msg.text());
+    emit chatMessageReceived(msg.info(), msg.text());
 }
 
 void LocalClient::receiveClientConnectMessage(const ClientConnectMessage &msg)
 {
-    emit clientConnectMessageReceived(msg.name(), msg.color());
+    emit clientConnectMessageReceived(msg.info());
 }
 
 void LocalClient::receiveClientDisconnectMessage(const ClientDisconnectMessage &msg)
 {
-    emit clientDisconnectMessageReceived(msg.name(), msg.color());
+    emit clientDisconnectMessageReceived(msg.info());
 }
 
 void LocalClient::receiveConnectionAcceptedMessage(const ConnectionAcceptedMessage &msg)

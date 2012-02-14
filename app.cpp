@@ -40,9 +40,9 @@ App::App(QWidget *parent)
     connect(&_localClient, SIGNAL(disconnected()), lwServersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(disconnected()), &_serverSearcher, SLOT(start()));
     connect(&_localClient, SIGNAL(errorOccurred(QString)), this, SLOT(perror(QString)));
-    connect(&_localClient, SIGNAL(chatMessageReceived(QString, QColor, QString)), this, SLOT(receiveChatMessage(QString, QColor, QString)));
-    connect(&_localClient, SIGNAL(clientConnectMessageReceived(QString, QColor)), this, SLOT(receiveClientConnectMessage(QString, QColor)));
-    connect(&_localClient, SIGNAL(clientDisconnectMessageReceived(QString, QColor)), this, SLOT(receiveClientDisconnectMessage(QString, QColor)));
+    connect(&_localClient, SIGNAL(chatMessageReceived(ClientInfo, QString)), this, SLOT(receiveChatMessage(ClientInfo, QString)));
+    connect(&_localClient, SIGNAL(clientConnectMessageReceived(ClientInfo)), this, SLOT(receiveClientConnectMessage(ClientInfo)));
+    connect(&_localClient, SIGNAL(clientDisconnectMessageReceived(ClientInfo)), this, SLOT(receiveClientDisconnectMessage(ClientInfo)));
     connect(&_localClient, SIGNAL(turnMessageReceived(QColor, int, int, int, QString)), this, SLOT(receiveTurnMessage(QColor, int, int, int, QString)));
     connect(&_localClient, SIGNAL(playersListMessageReceived(QList<ClientInfo>)), this, SLOT(receivePlayersListMessage(QList<ClientInfo>)));
     connect(&_localClient, SIGNAL(startGameMessageReceived(QList<ClientInfo>)), this, SLOT(receiveStartGameMessage(QList<ClientInfo>)));
@@ -331,20 +331,20 @@ void App::processClientDisconnected()
     emit readyToStopServer();
 }
 
-void App::receiveChatMessage(QString name, QColor color, QString text)
+void App::receiveChatMessage(const ClientInfo &info, const QString &text)
 {
-    pinfo("(" + QTime::currentTime().toString("hh:mm:ss") + ") " + name + ":", color);
+    pinfo("(" + QTime::currentTime().toString("hh:mm:ss") + ") " + info.name() + ":", info.color());
     pinfo(text, Qt::black);
 }
 
-void App::receiveClientConnectMessage(QString name, QColor color)
+void App::receiveClientConnectMessage(const ClientInfo &info)
 {
-    pinfo(name + QString::fromUtf8(" connected"), color);
+    pinfo(info.name() + QString::fromUtf8(" connected"), info.color());
 }
 
-void App::receiveClientDisconnectMessage(QString name, QColor color)
+void App::receiveClientDisconnectMessage(const ClientInfo &info)
 {
-    pinfo(name + QString::fromUtf8(" disconnected"), color);
+    pinfo(info.name() + QString::fromUtf8(" disconnected"), info.color());
 }
 
 void App::receivePlayersListMessage(QList<ClientInfo> list)

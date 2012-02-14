@@ -57,9 +57,9 @@ signals:
     void disconnected();
     void errorOccurred(QString);
 
-    void chatMessageReceived(QString, QColor, QString);
-    void clientConnectMessageReceived(QString, QColor);
-    void clientDisconnectMessageReceived(QString, QColor);
+    void chatMessageReceived(const ClientInfo &, const QString &);
+    void clientConnectMessageReceived(const ClientInfo &);
+    void clientDisconnectMessageReceived(const ClientInfo &);
     void playersListMessageReceived(QList<ClientInfo>);
     void startGameMessageReceived(QList<ClientInfo>);
     void surrenderMessageReceived(const ClientInfo &);

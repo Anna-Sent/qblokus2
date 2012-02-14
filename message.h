@@ -64,22 +64,6 @@ public:
     void fill(const QByteArray &) { }
 };
 
-class ChatMessage : public ComplexMessage
-{
-private:
-    QString _text;
-    ClientInfo _info;
-public:
-    ChatMessage() { _header.setMsgLength(sizeof(int) + _info.size()); _header.setMsgType(mtChat); }
-    ChatMessage(const MessageHeader &header) { _header = header; }
-    ChatMessage(const ClientInfo &, const QString &);
-    QColor color() const { return _info.color(); }
-    QString name() const { return _info.name(); }
-    QByteArray serialize() const;
-    QString text() const { return _text; }
-    void fill(const QByteArray &);
-};
-
 class ClientMessage : public ComplexMessage
 {
 protected:
@@ -91,6 +75,21 @@ public:
     QString name() const { return _info.name(); }
     virtual QByteArray serialize() const;
     virtual void fill(const QByteArray &);
+};
+
+class ChatMessage : public ClientMessage
+{
+private:
+    QString _text;
+public:
+    ChatMessage() { _header.setMsgLength(sizeof(int) + _info.size()); _header.setMsgType(mtChat); }
+    ChatMessage(const MessageHeader &header) { _header = header; }
+    ChatMessage(const ClientInfo &, const QString &);
+    QColor color() const { return _info.color(); }
+    QString name() const { return _info.name(); }
+    QByteArray serialize() const;
+    QString text() const { return _text; }
+    void fill(const QByteArray &);
 };
 
 class ClientConnectMessage : public ClientMessage
