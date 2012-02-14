@@ -84,6 +84,7 @@ void Server::sendToAll(const Message &msg)
 
 void Server::start(int playersCount, quint16 port)
 {
+    _mutex.lock();
     bool listening = _tcpServer->isListening();
     if (!listening)
     {
@@ -96,7 +97,16 @@ void Server::start(int playersCount, quint16 port)
         }
     }
 
+    _mutex.unlock();
     emit started();
+}
+
+void Server::waitForStart(int msec)
+{
+    if (_mutex.tryLock(msec))
+    {
+        _mutex.unlock();
+    }
 }
 
 void Server::stop()

@@ -1,10 +1,49 @@
 #include "app.h"
 #include <QApplication>
 
+#define     ERROR_INCORRECT_PLAYERS_COUNT   1
+#define     ERROR_INCORRECT_PORT_VALUE      2
+#define     ERROR_INCORRECT_SERVER          3
+#define     ERROR_INCORRECT_ARGUMENTS       4
+
+void usage()
+{
+    char *app = qApp->argv()[0];
+    QTextStream qout(stdout);
+    qout << QString::fromUtf8("Usage:") << endl;
+    qout << app << QString::fromUtf8(" -- run GUI application") << endl;
+    qout << app << QString::fromUtf8(" -s [3|4] [PORT] -- run non-GUI game server listening on the specified port, for 3 or 4 players") << endl;
+    qout << app << QString::fromUtf8(" -u -- show usage and exit") << endl;
+}
+
+void error(int code)
+{
+    QTextStream qerr(stderr);
+    switch (code)
+    {
+    case ERROR_INCORRECT_PLAYERS_COUNT:
+        qerr << QString::fromUtf8("Incorrect players count. Players count must be equal 3 or 4.") << endl;
+        break;
+    case ERROR_INCORRECT_PORT_VALUE:
+        qerr << QString::fromUtf8("Incorrect port value. Port must be in the range from 1024 to 65535.") << endl;
+        break;
+    case ERROR_INCORRECT_SERVER:
+        qerr << QString::fromUtf8("Can't start server") << endl;
+        break;
+    case ERROR_INCORRECT_ARGUMENTS:
+        qerr << QString::fromUtf8("Incorrect command line arguments") << endl;
+        break;
+    default:
+        qerr << QString::fromUtf8("Unknown error occured") << endl;
+        break;
+    };
+
+    usage();
+    qApp->exit(code);
+}
+
 int main(int argc, char *argv[])
 {
-    qRegisterMetaType<QHostAddress>("QHostAddress");
-    qRegisterMetaType<QAbstractSocket::SocketError>("QAbstractSocket::SocketError");
     qRegisterMetaType<ChatMessage>("ChatMessage");
     qRegisterMetaType<ClientConnectMessage>("ClientConnectMessage");
     qRegisterMetaType<ClientDisconnectMessage>("ClientDisconnectMessage");
@@ -20,8 +59,53 @@ int main(int argc, char *argv[])
     qRegisterMetaType<SurrenderMessage>("SurrenderMessage");
     qRegisterMetaTypeStreamOperators<ClientInfo>("ClientInfo");
     qRegisterMetaTypeStreamOperators<QList<ClientInfo> >("QList<ClientInfo>");
+
     QApplication app(argc, argv);
-    App *dialog = new App;
-    dialog->show();
-    return app.exec();
+    if (argc == 1)
+    {
+        App *dialog = new App;
+        dialog->show();
+        return app.exec();
+    }
+    else if (argc == 2 && strcmp(argv[1], "-u") == 0)
+    {
+        error(0);
+    }
+    else if (argc == 4 && strcmp(argv[1], "-s") == 0)
+    {
+        QStringList arguments = app.arguments();
+        bool ok;
+
+        int playersCount = arguments[2].toInt(&ok);
+        if (!ok || playersCount != 3 || playersCount != 4)
+        {
+            error(ERROR_INCORRECT_PLAYERS_COUNT);
+        }
+
+        uint port = arguments[3].toUInt(&ok);
+        if (!ok || port < 1024 || port > 65535)
+        {
+            error(ERROR_INCORRECT_PORT_VALUE);
+        }
+
+        Server server;
+        server.start(playersCount, port);
+        server.waitForStart();
+        if (server.isListening())
+        {
+            int result = app.exec();
+            server.stop();
+            return result;
+        }
+        else
+        {
+            QTextStream qerr(stderr);
+            qerr << server.errorString() << endl;
+            error(ERROR_INCORRECT_SERVER);
+        }
+    }
+    else
+    {
+        error(ERROR_INCORRECT_ARGUMENTS);
+    }
 }

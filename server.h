@@ -3,6 +3,7 @@
 
 #include "remoteclient.h"
 #include "message.h"
+#include <QMutex>
 #include <QTcpServer>
 #include <QTimer>
 
@@ -16,6 +17,7 @@ private:
     QUdpSocket             *_listener;
     int                     _playersCount;
     UdpMessageReceiver     *_messageReceiver;
+    QMutex                  _mutex;
     QTcpServer             *_tcpServer;
     QTimer                 *_timer;
     QList<ClientInfo> clients() const;
@@ -50,6 +52,7 @@ public:
     bool    isListening() const         { return _tcpServer->isListening(); }
     int     playersCount() const        { return _playersCount; }
     int     currentPlayersCount() const;
+    void    waitForStart(int msec = 5000);
 
 public slots:
     // from app
