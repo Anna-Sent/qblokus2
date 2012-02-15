@@ -305,7 +305,6 @@ void App::processClientDisconnected()
     actionConnect->setText(QString::fromUtf8("Connect to the server"));
     pbSurrender->setDisabled(true);
     _game->clear();
-    //emit readyToStopServer(); ??
 }
 
 void App::receiveChatMessage(const ClientInfo &info, const QString &text)
