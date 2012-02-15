@@ -21,10 +21,30 @@
        <enum>QLayout::SetFixedSize</enum>
       </property>
       <item row="0" column="0">
-       <widget class="QLCDNumber" name="score1"/>
+       <widget class="QLCDNumber" name="score1">
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Outline</enum>
+        </property>
+       </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QLCDNumber" name="score3"/>
+       <widget class="QLCDNumber" name="score3">
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Outline</enum>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QGraphicsView" name="gvPlayer1">
@@ -47,10 +67,30 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLCDNumber" name="score2"/>
+       <widget class="QLCDNumber" name="score2">
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Outline</enum>
+        </property>
+       </widget>
       </item>
       <item row="2" column="2">
-       <widget class="QLCDNumber" name="score4"/>
+       <widget class="QLCDNumber" name="score4">
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Outline</enum>
+        </property>
+       </widget>
       </item>
       <item row="3" column="0" rowspan="2">
        <widget class="QGraphicsView" name="gvPlayer2">
@@ -102,7 +142,7 @@
      <x>0</x>
      <y>0</y>
      <width>1182</width>
-     <height>23</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
