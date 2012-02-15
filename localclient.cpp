@@ -20,8 +20,6 @@ LocalClient::LocalClient() : _isStarted(false), _lastPingTime(QTime::currentTime
     connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(processSocketError(QAbstractSocket::SocketError)));
 
     connect(this, SIGNAL(destroyed()), this, SLOT(stop()));
-    connect(this, SIGNAL(destroyed()), _messageReceiver, SLOT(deleteLater()));
-    connect(this, SIGNAL(destroyed()), _socket, SLOT(deleteLater()));
 
     _timer = new QTimer(this);
     _timer->setInterval(PING_INTERVAL);

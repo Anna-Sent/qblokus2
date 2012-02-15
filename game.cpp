@@ -12,14 +12,13 @@ Game::Game(QGraphicsView *gv,
     }
 
     _table = new Table(20, 20);
-    _tablescene = new QGraphicsScene;
+    _tablescene = new QGraphicsScene(this);
     _tablescene->addItem(_table);
     gv->setScene(_tablescene);
     connect(_table, SIGNAL(turnCompleted(QColor, QString, int, int, int)),
             this, SLOT(turnComplete(QColor, QString, int, int, int)));
     clear();
     connect(this, SIGNAL(destroyed()), this, SLOT(clear()));
-    connect(this, SIGNAL(destroyed()), _tablescene, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), _table, SLOT(deleteLater()));
 }
 
