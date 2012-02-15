@@ -23,13 +23,12 @@ RemoteClient::RemoteClient(QTcpSocket *s) : _lastPingTime(QTime::currentTime()),
     _lastPingTime.start();
 }
 
-void RemoteClient::setConnectedToGame(const QString &name, const QColor &color)
+void RemoteClient::setConnectedToGame(const ClientInfo &info)
 {
     if (!isConnectedToGame())
     {
         _state = STATE_ACCEPTED_TO_GAME;
-        _info.setName(name);
-        _info.setColor(color);
+        _info = info;
     }
 }
 

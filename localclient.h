@@ -45,6 +45,7 @@ private slots:
     void receiveClientConnectMessage(const ClientConnectMessage &);
     void receiveClientDisconnectMessage(const ClientDisconnectMessage &);
     void receiveConnectionAcceptedMessage(const ConnectionAcceptedMessage &);
+    void receiveErrorMessage(const ErrorMessage &);
     void receivePingMessage(const PingMessage &);
     void receivePlayersListMessage(const PlayersListMessage &);
     void receiveStartGameMessage(const StartGameMessage &);
@@ -56,7 +57,6 @@ private slots:
 
 signals:
     void connectionAccepted();
-    void connectionRejected(const QString &);
     void disconnected();
     void errorOccurred(const QString &);
 

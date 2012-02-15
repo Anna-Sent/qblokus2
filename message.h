@@ -13,6 +13,7 @@ enum MessageType
     mtClientConnect,
     mtClientDisconnect,
     mtConnectionAccepted,
+    mtError,
     mtHeader,
     mtPing,
     mtPlayersList,
@@ -112,12 +113,19 @@ public:
 
 class ConnectionAcceptedMessage : public ComplexMessage
 {
+public:
+    ConnectionAcceptedMessage() { _header.setMsgLength(0); _header.setMsgType(mtConnectionAccepted); }
+    ConnectionAcceptedMessage(const MessageHeader &header) { _header = header; }
+};
+
+class ErrorMessage : public ComplexMessage
+{
 private:
     int _errorCode;
 public:
-    ConnectionAcceptedMessage() { _header.setMsgLength(sizeof(int)); _header.setMsgType(mtConnectionAccepted); }
-    ConnectionAcceptedMessage(const MessageHeader &header) { _header = header; }
-    ConnectionAcceptedMessage(int errorCode);
+    ErrorMessage() { _header.setMsgLength(sizeof(int)); _header.setMsgType(mtError); }
+    ErrorMessage(const MessageHeader &header) { _header = header; }
+    ErrorMessage(int errorCode);
     int errorCode() const { return _errorCode; }
     QByteArray serialize() const;
     void fill(const QByteArray &);

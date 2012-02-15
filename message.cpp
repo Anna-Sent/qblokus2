@@ -84,20 +84,20 @@ ClientDisconnectMessage::ClientDisconnectMessage(const ClientInfo &info)
     _header.setMsgType(mtClientDisconnect);
 }
 
-ConnectionAcceptedMessage::ConnectionAcceptedMessage(int errorCode)
+ErrorMessage::ErrorMessage(int errorCode)
 {
     _errorCode = errorCode;
     _header.setMsgLength(sizeof(int));
-    _header.setMsgType(mtConnectionAccepted);
+    _header.setMsgType(mtError);
 }
 
-QByteArray ConnectionAcceptedMessage::serialize() const
+QByteArray ErrorMessage::serialize() const
 {
     QByteArray result = QByteArray::fromRawData((const char *)(&_errorCode), sizeof(int));
     return _header.serialize().append(result);
 }
 
-void ConnectionAcceptedMessage::fill(const QByteArray &buffer)
+void ErrorMessage::fill(const QByteArray &buffer)
 {
     const char *data = buffer.data();
     ::memmove((void *)(&_errorCode), data, sizeof(int));

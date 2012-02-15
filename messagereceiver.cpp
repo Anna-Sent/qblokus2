@@ -12,6 +12,7 @@ Message *next(Message *current)
         case mtClientConnect :          return new ClientConnectMessage(*header);
         case mtClientDisconnect :       return new ClientDisconnectMessage(*header);
         case mtConnectionAccepted :     return new ConnectionAcceptedMessage(*header);
+        case mtError :                  return new ErrorMessage(*header);
         case mtServerInfo :             return new ServerInfoMessage(*header);
         case mtServerReady :            return new ServerReadyMessage(*header);
         case mtServerRequest :          return new ServerRequestMessage(*header);
@@ -67,6 +68,7 @@ void TcpMessageReceiver::processData()
         case mtClientConnect:       DISPATCH_MESSAGE(clientConnectMessageReceived, ClientConnectMessage); break;
         case mtClientDisconnect:    DISPATCH_MESSAGE(clientDisconnectMessageReceived, ClientDisconnectMessage); break;
         case mtConnectionAccepted:  DISPATCH_MESSAGE(connectionAcceptedMessageReceived, ConnectionAcceptedMessage); break;
+        case mtError:               DISPATCH_MESSAGE(errorMessageReceived, ErrorMessage); break;
         case mtPing:                DISPATCH_MESSAGE(pingMessageReceived, PingMessage); break;
         case mtPlayersList:         DISPATCH_MESSAGE(playersListMessageReceived, PlayersListMessage); break;
         case mtServerReady:         DISPATCH_MESSAGE(serverReadyMessageReceived, ServerReadyMessage); break;

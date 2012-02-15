@@ -26,6 +26,7 @@ signals:
     void clientConnectMessageReceived(const ClientConnectMessage &);
     void clientDisconnectMessageReceived(const ClientDisconnectMessage &);
     void connectionAcceptedMessageReceived(const ConnectionAcceptedMessage &);
+    void errorMessageReceived(const ErrorMessage &);
     void pingMessageReceived(const PingMessage &);
     void playersListMessageReceived(const PlayersListMessage &);
     void serverReadyMessageReceived(const ServerReadyMessage &);

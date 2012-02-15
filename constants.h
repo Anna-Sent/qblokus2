@@ -10,5 +10,7 @@
 #define ERROR_GAME_STARTED          3
 #define ERROR_MAX_CONNECTIONS_NUM   4
 #define ERROR_MAX_PLAYERS_NUM       5
+#define ERROR_WAIT_FOR_OTHER        6
+#define ERROR_YOU_ARE_NOT_SERVER    7
 
 #endif // CONSTANTS_H

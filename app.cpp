@@ -34,7 +34,6 @@ App::App(QWidget *parent)
     connect(&_localClient, SIGNAL(connectionAccepted()), lwServersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(connectionAccepted()), &_serverSearcher, SLOT(stop()));
     connect(&_localClient, SIGNAL(connectionAccepted()), this, SLOT(acceptConnection()));
-    connect(&_localClient, SIGNAL(connectionRejected(QString)), this, SLOT(perror(QString)));
     connect(&_localClient, SIGNAL(disconnected()), this, SLOT(processClientDisconnected()));
     connect(&_localClient, SIGNAL(disconnected()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(disconnected()), lwServersList, SLOT(clear()));

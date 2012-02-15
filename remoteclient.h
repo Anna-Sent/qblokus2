@@ -25,7 +25,7 @@ public:
     void                sendMessage(const Message &msg) const;
 
 public slots:
-    void setConnectedToGame(const QString &name, const QColor &color);
+    void setConnectedToGame(const ClientInfo &);
     void setDisconnectedFromGame();
 
 private slots:

@@ -134,13 +134,15 @@ void Server::startGame(RemoteClient *client)
     {
         if (client != _clients[0])
         {
-            // send to client error mess: Only the first connected client can start a game
+            ErrorMessage msg1(ERROR_YOU_ARE_NOT_SERVER);
+            client->sendMessage(msg1);
             return;
         }
 
         if (currentPlayersCount() != _playersCount)
         {
-            // send to client error mess: Wait for x players
+            ErrorMessage msg1(ERROR_WAIT_FOR_OTHER);
+            client->sendMessage(msg1);
             return;
         }
 
@@ -224,10 +226,10 @@ void Server::receiveTryToConnectMessage(const TryToConnectMessage &msg, RemoteCl
         }
     }
 
-    ConnectionAcceptedMessage msg1(error);
-    client->sendMessage(msg1);
     if (error)
     {
+        ErrorMessage msg1(error);
+        client->sendMessage(msg1);
         client->setDisconnectedFromGame();
     }
     else
@@ -239,9 +241,11 @@ void Server::receiveTryToConnectMessage(const TryToConnectMessage &msg, RemoteCl
         connect(client, SIGNAL(stopGameMessageReceived(RemoteClient *)), this, SLOT(stopGame(RemoteClient *)));
         connect(client, SIGNAL(surrenderMessageReceived(SurrenderMessage, RemoteClient *)), this, SLOT(receiveSurrenderMessage(SurrenderMessage, RemoteClient *)));
         connect(client, SIGNAL(turnMessageReceived(TurnMessage, RemoteClient *)), this, SLOT(receiveTurnMessage(TurnMessage, RemoteClient *)));
-        client->setConnectedToGame(msg.name(), msg.color());
-        ClientConnectMessage msg1(msg.info());
-        sendToAll(msg1);
+        client->setConnectedToGame(msg.info());
+        ConnectionAcceptedMessage msg1;
+        client->sendMessage(msg1);
+        ClientConnectMessage msg2(msg.info());
+        sendToAll(msg2);
         sendPlayersList();
     }
 }
