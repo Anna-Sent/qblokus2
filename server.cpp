@@ -129,7 +129,6 @@ void Server::stop()
 
 void Server::startGame(RemoteClient *client)
 {
-    _isGameStarted = true;
     if (_tcpServer->isListening())
     {
         if (currentPlayersCount() != _playersCount)
@@ -163,6 +162,7 @@ void Server::startGame(RemoteClient *client)
             return;
         }
 
+        _isGameStarted = true;
         StartGameMessage msg(clients());
         sendToAll(msg);
     }
