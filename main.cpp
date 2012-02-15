@@ -3,7 +3,7 @@
 
 #define     ERROR_INCORRECT_PLAYERS_COUNT   1
 #define     ERROR_INCORRECT_PORT_VALUE      2
-#define     ERROR_INCORRECT_SERVER          3
+#define     ERROR_INCORRECT_CONNECTION      3
 #define     ERROR_INCORRECT_ARGUMENTS       4
 
 void usage()
@@ -27,7 +27,7 @@ void error(int code)
     case ERROR_INCORRECT_PORT_VALUE:
         qerr << QString::fromUtf8("Incorrect port value. Port value must be in the range from 1 to 65535.") << endl;
         break;
-    case ERROR_INCORRECT_SERVER:
+    case ERROR_INCORRECT_CONNECTION:
         qerr << QString::fromUtf8("Can't start server") << endl;
         break;
     case ERROR_INCORRECT_ARGUMENTS:
@@ -107,9 +107,9 @@ int main(int argc, char *argv[])
         {
             QTextStream qerr(stderr);
             qerr << server.errorString() << endl;
-            error(ERROR_INCORRECT_SERVER);
+            error(ERROR_INCORRECT_CONNECTION);
             usage();
-            return ERROR_INCORRECT_SERVER;
+            return ERROR_INCORRECT_CONNECTION;
         }
     }
     else

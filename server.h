@@ -1,5 +1,5 @@
-#ifndef _SERVER_H_
-#define _SERVER_H_
+#ifndef SERVER_H
+#define SERVER_H
 
 #include "remoteclient.h"
 #include "message.h"

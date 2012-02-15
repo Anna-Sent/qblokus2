@@ -1,7 +1,7 @@
 #include "server.h"
 #include "constants.h"
 
-#define MAX_CONNECTIONS_COUNT   10
+#define MAX_CONNECTIONS_COUNT 10
 
 Server::Server() : _isGameStarted(false)
 {

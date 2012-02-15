@@ -1,5 +1,5 @@
-#ifndef _CLIENT_H_
-#define _CLIENT_H_
+#ifndef REMOTECLIENT_H
+#define REMOTECLIENT_H
 
 #include "messagereceiver.h"
 #include <QTime>

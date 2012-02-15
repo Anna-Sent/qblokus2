@@ -1,5 +1,5 @@
-#ifndef MESSAGERECV_H_
-#define MESSAGERECV_H_
+#ifndef MESSAGERECEIVER_H
+#define MESSAGERECEIVER_H
 
 #include "message.h"
 #include <QTcpSocket>
