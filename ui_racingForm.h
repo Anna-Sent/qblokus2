@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Mon Feb 13 21:09:54 2012
+** Created: Wed Feb 15 14:49:40 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -266,7 +266,7 @@ public:
 
         sbPort = new QSpinBox(dockWidgetContents);
         sbPort->setObjectName(QString::fromUtf8("sbPort"));
-        sbPort->setMinimum(1024);
+        sbPort->setMinimum(1);
         sbPort->setMaximum(65535);
         sbPort->setValue(1500);
 

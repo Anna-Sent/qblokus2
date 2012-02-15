@@ -25,7 +25,7 @@ void error(int code)
         qerr << QString::fromUtf8("Incorrect players count. Players count must be equal 3 or 4.") << endl;
         break;
     case ERROR_INCORRECT_PORT_VALUE:
-        qerr << QString::fromUtf8("Incorrect port value. Port must be in the range from 1024 to 65535.") << endl;
+        qerr << QString::fromUtf8("Incorrect port value. Port value must be in the range from 1 to 65535.") << endl;
         break;
     case ERROR_INCORRECT_SERVER:
         qerr << QString::fromUtf8("Can't start server") << endl;
@@ -34,12 +34,12 @@ void error(int code)
         qerr << QString::fromUtf8("Incorrect command line arguments") << endl;
         break;
     default:
-        qerr << QString::fromUtf8("Unknown error occured") << endl;
-        break;
+        if (code != 0)
+        {
+            qerr << QString::fromUtf8("Unknown error occured") << endl;
+            break;
+        }
     };
-
-    usage();
-    qApp->exit(code);
 }
 
 int main(int argc, char *argv[])
@@ -69,7 +69,8 @@ int main(int argc, char *argv[])
     }
     else if (argc == 2 && strcmp(argv[1], "-u") == 0)
     {
-        error(0);
+        usage();
+        return 0;
     }
     else if (argc == 4 && strcmp(argv[1], "-s") == 0)
     {
@@ -77,15 +78,19 @@ int main(int argc, char *argv[])
         bool ok;
 
         int playersCount = arguments[2].toInt(&ok);
-        if (!ok || playersCount != 3 || playersCount != 4)
+        if (!ok || (playersCount != 3 && playersCount != 4))
         {
             error(ERROR_INCORRECT_PLAYERS_COUNT);
+            usage();
+            return ERROR_INCORRECT_PLAYERS_COUNT;
         }
 
         uint port = arguments[3].toUInt(&ok);
-        if (!ok || port < 1024 || port > 65535)
+        if (!ok || port <= 0 || port > 65535)
         {
             error(ERROR_INCORRECT_PORT_VALUE);
+            usage();
+            return ERROR_INCORRECT_PORT_VALUE;
         }
 
         Server server;
@@ -95,6 +100,7 @@ int main(int argc, char *argv[])
         {
             int result = app.exec();
             server.stop();
+            qDebug() << "Server has been stopped";
             return result;
         }
         else
@@ -102,10 +108,14 @@ int main(int argc, char *argv[])
             QTextStream qerr(stderr);
             qerr << server.errorString() << endl;
             error(ERROR_INCORRECT_SERVER);
+            usage();
+            return ERROR_INCORRECT_SERVER;
         }
     }
     else
     {
         error(ERROR_INCORRECT_ARGUMENTS);
+        usage();
+        return ERROR_INCORRECT_ARGUMENTS;
     }
 }
