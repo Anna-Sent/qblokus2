@@ -21,9 +21,9 @@ private:
     QThread _serverThread;
     bool confirm(const QString &) const;
     void setTabOrder() const;
-    void showCriticalMessage(const QString &) const;
-    void showInformationMessage(const QString &) const;
-    void showWarningMessage(const QString &) const;
+    void showCriticalMessage(const QString &);
+    void showInformationMessage(const QString &);
+    void showWarningMessage(const QString &);
 
 private slots:
     void perror(const QString &);

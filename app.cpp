@@ -113,28 +113,19 @@ void App::setTabOrder() const
     QWidget::setTabOrder(lineEdit, lwServersList);
 }
 
-void App::showCriticalMessage(const QString &text) const
+void App::showCriticalMessage(const QString &text)
 {
-    QMessageBox msgBox;
-    msgBox.setText(text);
-    msgBox.setIcon(QMessageBox::Critical);
-    msgBox.exec();
+    QMessageBox::critical(this, QString::fromUtf8("Error"), text);
 }
 
-void App::showInformationMessage(const QString &text) const
+void App::showInformationMessage(const QString &text)
 {
-    QMessageBox msgBox;
-    msgBox.setText(text);
-    msgBox.setIcon(QMessageBox::Information);
-    msgBox.exec();
+    QMessageBox::information(this, QString::fromUtf8("Information"), text);
 }
 
-void App::showWarningMessage(const QString &text) const
+void App::showWarningMessage(const QString &text)
 {
-    QMessageBox msgBox;
-    msgBox.setText(text);
-    msgBox.setIcon(QMessageBox::Warning);
-    msgBox.exec();
+    QMessageBox::warning(this, QString::fromUtf8("Warning"), text);
 }
 
 void App::perror(const QString &text)
