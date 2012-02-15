@@ -97,7 +97,7 @@ void LocalClient::receiveErrorMessage(const ErrorMessage &msg)
     case ERROR_WAIT_FOR_OTHER:
         reason = QString::fromUtf8("Wait for other players");
         break;
-    case ERROR_YOU_ARE_NOT_SERVER:
+    case ERROR_YOU_ARE_NOT_FIRST:
         reason = QString::fromUtf8("Only the first connected client can start a game");
         break;
     default:

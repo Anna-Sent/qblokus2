@@ -132,16 +132,33 @@ void Server::startGame(RemoteClient *client)
     _isGameStarted = true;
     if (_tcpServer->isListening())
     {
-        if (client != _clients[0])
+        if (currentPlayersCount() != _playersCount)
         {
-            ErrorMessage msg1(ERROR_YOU_ARE_NOT_SERVER);
+            ErrorMessage msg1(ERROR_WAIT_FOR_OTHER);
             client->sendMessage(msg1);
             return;
         }
 
-        if (currentPlayersCount() != _playersCount)
+        RemoteClient *first = NULL;
+        for (int i = 0; i < _clients.size(); ++i)
         {
-            ErrorMessage msg1(ERROR_WAIT_FOR_OTHER);
+            RemoteClient *current = _clients[i];
+            if (current->isConnectedToGame())
+            {
+                first = current;
+                break;
+            }
+        }
+
+        if (first == NULL)
+        {
+            qDebug() << "Something wrong";
+            return;
+        }
+
+        if (client != first)
+        {
+            ErrorMessage msg1(ERROR_YOU_ARE_NOT_FIRST);
             client->sendMessage(msg1);
             return;
         }
