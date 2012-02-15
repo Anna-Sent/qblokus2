@@ -75,12 +75,12 @@ void RemoteClient::receivePingMessage(const PingMessage &)
 
 void RemoteClient::receiveServerStartGameMessage(const ServerStartGameMessage &)
 {
-    emit startGameMessageReceived();
+    emit startGameMessageReceived(this);
 }
 
 void RemoteClient::receiveServerStopGameMessage(const ServerStopGameMessage &)
 {
-    emit stopGameMessageReceived();
+    emit stopGameMessageReceived(this);
 }
 
 void RemoteClient::receiveSurrenderMessage(const SurrenderMessage &msg)

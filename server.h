@@ -21,13 +21,14 @@ private:
     QTcpServer             *_tcpServer;
     QTimer                 *_timer;
     QList<ClientInfo> clients() const;
+    int currentPlayersCount() const;
     void sendPlayersList();
     void sendToAll(const Message &);
 
 private slots:
     void removeClient(RemoteClient *);
-    void startGame();
-    void stopGame();
+    void startGame(RemoteClient *);
+    void stopGame(RemoteClient *);
 
     // from timer
     void ping();
@@ -50,8 +51,6 @@ public:
     Server();
     QString errorString() const         { return _tcpServer->errorString(); }
     bool    isListening() const         { return _tcpServer->isListening(); }
-    int     playersCount() const        { return _playersCount; }
-    int     currentPlayersCount() const;
     void    waitForStart(int msec = 5000);
 
 public slots:

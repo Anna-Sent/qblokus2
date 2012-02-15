@@ -43,8 +43,8 @@ signals:
     void chatMessageReceived(const ChatMessage &, RemoteClient *);
     void disconnected(RemoteClient *);
     void errorOccurred(RemoteClient *);
-    void startGameMessageReceived();
-    void stopGameMessageReceived();
+    void startGameMessageReceived(RemoteClient *);
+    void stopGameMessageReceived(RemoteClient *);
     void surrenderMessageReceived(const SurrenderMessage &, RemoteClient *);
     void tryToConnectMessageReceived(const TryToConnectMessage &, RemoteClient *);
     void turnMessageReceived(const TurnMessage &, RemoteClient *);

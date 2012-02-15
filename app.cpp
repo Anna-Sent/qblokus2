@@ -176,30 +176,17 @@ void App::userSendMessage()
 
 void App::userStartGame()
 {
-    if (_server.isListening()) // replace with isServer
+    if (_localClient.isStarted())
     {
-        if (_server.currentPlayersCount() == _server.playersCount()) // count players number in app, maxclientscount keep in app
+        if (_game->isStarted())
         {
-            if (_game->isStarted())
+            if (!confirm(QString::fromUtf8("Are you sure you want to start a new game?")))
             {
-                if (!confirm(QString::fromUtf8("Are you sure you want to start a new game?")))
-                {
-                    return;
-                }
+                return;
             }
+        }
 
-            emit gameStarted();
-        }
-        else
-        {
-            showWarningMessage(QString::fromUtf8("Wait for ")
-                               + QString::number(_server.playersCount())
-                               + QString::fromUtf8(" players"));
-        }
-    }
-    else
-    {
-        showWarningMessage(QString::fromUtf8("Only the server can start a game"));
+        emit gameStarted();
     }
 }
 
@@ -276,7 +263,7 @@ void App::userTryToConnect()
     }
 }
 
-void App::processServerStarted() // set isServer to true if success
+void App::processServerStarted()
 {
     if (_server.isListening())
     {
@@ -284,7 +271,7 @@ void App::processServerStarted() // set isServer to true if success
     }
     else
     {
-        showCriticalMessage(_server.errorString()); // send the string with signal-slot
+        showCriticalMessage(_server.errorString());
     }
 }
 
@@ -328,7 +315,7 @@ void App::processClientDisconnected()
     actionConnect->setText(QString::fromUtf8("Connect to the server"));
     pbSurrender->setDisabled(true);
     _game->clear();
-    emit readyToStopServer();
+    //emit readyToStopServer(); ??
 }
 
 void App::receiveChatMessage(const ClientInfo &info, const QString &text)

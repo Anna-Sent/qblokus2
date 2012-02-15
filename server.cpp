@@ -113,7 +113,7 @@ void Server::stop()
 {
     if (_tcpServer->isListening())
     {
-        stopGame();
+        _isGameStarted = false;
         _timer->stop();
         _listener->disconnectFromHost();
         for (int i = 0; i < _clients.size(); ++i)
@@ -127,17 +127,29 @@ void Server::stop()
     }
 }
 
-void Server::startGame()
+void Server::startGame(RemoteClient *client)
 {
     _isGameStarted = true;
     if (_tcpServer->isListening())
     {
+        if (client != _clients[0])
+        {
+            // send to client error mess: Only the first connected client can start a game
+            return;
+        }
+
+        if (currentPlayersCount() != _playersCount)
+        {
+            // send to client error mess: Wait for x players
+            return;
+        }
+
         StartGameMessage msg(clients());
         sendToAll(msg);
     }
 }
 
-void Server::stopGame()
+void Server::stopGame(RemoteClient *)
 {
     _isGameStarted = false;
 }
@@ -223,8 +235,8 @@ void Server::receiveTryToConnectMessage(const TryToConnectMessage &msg, RemoteCl
         connect(client, SIGNAL(chatMessageReceived(ChatMessage, RemoteClient *)), this, SLOT(receiveChatMessage(ChatMessage, RemoteClient *)));
         connect(client, SIGNAL(disconnected(RemoteClient *)), this, SLOT(processClientDisconnected(RemoteClient *)));
         connect(client, SIGNAL(errorOccurred(RemoteClient *)), this, SLOT(processClientError(RemoteClient *)));
-        connect(client, SIGNAL(startGameMessageReceived()), this, SLOT(startGame()));
-        connect(client, SIGNAL(stopGameMessageReceived()), this, SLOT(stopGame()));
+        connect(client, SIGNAL(startGameMessageReceived(RemoteClient *)), this, SLOT(startGame(RemoteClient *)));
+        connect(client, SIGNAL(stopGameMessageReceived(RemoteClient *)), this, SLOT(stopGame(RemoteClient *)));
         connect(client, SIGNAL(surrenderMessageReceived(SurrenderMessage, RemoteClient *)), this, SLOT(receiveSurrenderMessage(SurrenderMessage, RemoteClient *)));
         connect(client, SIGNAL(turnMessageReceived(TurnMessage, RemoteClient *)), this, SLOT(receiveTurnMessage(TurnMessage, RemoteClient *)));
         client->setConnectedToGame(msg.name(), msg.color());
