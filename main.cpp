@@ -37,7 +37,6 @@ void error(int code)
         if (code != 0)
         {
             qerr << QString::fromUtf8("Unknown error occured") << endl;
-            break;
         }
     };
 }
