@@ -74,14 +74,34 @@ void LocalClient::receiveErrorMessage(const ErrorMessage &msg)
     QString reason;
     switch (msg.errorCode())
     {
-    case ERROR_COLOR_IN_USE:        reason = QString::fromUtf8("This color is already in use"); break;
-    case ERROR_GAME_STARTED:        reason = QString::fromUtf8("The game is already started. Wait for finish of the game"); break;
-    case ERROR_NAME_IN_USE:         reason = QString::fromUtf8("This nickname is already in use"); break;
-    case ERROR_MAX_CONNECTIONS_NUM: reason = QString::fromUtf8("The maximum allowed connections number has been reached for the server"); break;
-    case ERROR_MAX_PLAYERS_NUM:     reason = QString::fromUtf8("The maximum allowed number of players has been reached for the game"); break;
-    case ERROR_WAIT_FOR_OTHER:      reason = QString::fromUtf8("Wait for other players"); break;
-    case ERROR_YOU_ARE_NOT_SERVER:  reason = QString::fromUtf8("Only the first connected client can start a game"); break;
-    default:                        reason = QString::fromUtf8("Unknown error");
+    case ERROR_COLOR_IN_USE:
+        reason = QString::fromUtf8("This color is already in use");
+        stop();
+        break;
+    case ERROR_GAME_STARTED:
+        reason = QString::fromUtf8("The game is already started. Wait for finish of the game");
+        stop();
+        break;
+    case ERROR_NAME_IN_USE:
+        reason = QString::fromUtf8("This nickname is already in use");
+        stop();
+        break;
+    case ERROR_MAX_CONNECTIONS_NUM:
+        reason = QString::fromUtf8("The maximum allowed connections number has been reached for the server");
+        stop();
+        break;
+    case ERROR_MAX_PLAYERS_NUM:
+        reason = QString::fromUtf8("The maximum allowed number of players has been reached for the game");
+        stop();
+        break;
+    case ERROR_WAIT_FOR_OTHER:
+        reason = QString::fromUtf8("Wait for other players");
+        break;
+    case ERROR_YOU_ARE_NOT_SERVER:
+        reason = QString::fromUtf8("Only the first connected client can start a game");
+        break;
+    default:
+        reason = QString::fromUtf8("Unknown error");
     }
 
     emit errorOccurred(reason);
