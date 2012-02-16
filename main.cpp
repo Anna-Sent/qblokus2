@@ -8,12 +8,18 @@
 
 void usage()
 {
-    char *app = qApp->argv()[0];
+    QString app = QString(qApp->argv()[0]);
     QTextStream qout(stdout);
     qout << QString::fromUtf8("Usage:") << endl;
-    qout << app << QString::fromUtf8(" -- run GUI application") << endl;
-    qout << app << QString::fromUtf8(" -s [3|4] [PORT] -- run non-GUI game server listening on the specified port, for 3 or 4 players") << endl;
-    qout << app << QString::fromUtf8(" -u -- show usage and exit") << endl;
+    qout << QString::fromUtf8("\t%1").arg(app) << endl;
+    qout << QString::fromUtf8("\t%1 [options]").arg(app) << endl;
+    qout << QString::fromUtf8("%1 without options run GUI application. QBlokus is a networking boardgame for 3 or 4 players.")
+            .arg(app) << endl;
+    qout << "Options:" << endl;
+    qout << QString::fromUtf8("\t-s <3|4> <port>") << endl;
+    qout << QString::fromUtf8("\t\tRun non-GUI game server listening on the specified port, for 3 or 4 players") << endl;
+    qout << QString::fromUtf8("\t-u") << endl;
+    qout << QString::fromUtf8("\t\tDisplay the usage and exit.") << endl;
 }
 
 void error(int code)
