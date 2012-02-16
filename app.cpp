@@ -115,17 +115,17 @@ void App::setTabOrder() const
 
 void App::showCriticalMessage(const QString &text)
 {
-    QMessageBox::critical(this, QString::fromUtf8("Error"), text);
+    QMessageBox::critical(this, tr("Error"), text);
 }
 
 void App::showInformationMessage(const QString &text)
 {
-    QMessageBox::information(this, QString::fromUtf8("Information"), text);
+    QMessageBox::information(this, tr("Information"), text);
 }
 
 void App::showWarningMessage(const QString &text)
 {
-    QMessageBox::warning(this, QString::fromUtf8("Warning"), text);
+    QMessageBox::warning(this, tr("Warning"), text);
 }
 
 void App::perror(const QString &text)
@@ -147,7 +147,7 @@ void App::userDisconnectFromServer()
 {
     if (_localClient.isStarted())
     {
-        if (confirm(QString::fromUtf8("Disconnect from the server?")))
+        if (confirm(tr("Disconnect from the server?")))
         {
             emit readyToStopLocalClient();
             emit readyToStopServer();
@@ -170,7 +170,7 @@ void App::userStartGame()
     {
         if (_game->isStarted())
         {
-            if (!confirm(QString::fromUtf8("Are you sure you want to start a new game?")))
+            if (!confirm(tr("Are you sure you want to start a new game?")))
             {
                 return;
             }
@@ -195,7 +195,7 @@ void App::userTryToConnect()
         case 1:     color = Qt::darkYellow; break;
         case 2:     color = Qt::green; break;
         case 3:     color = Qt::blue; break;
-        default:    showCriticalMessage(QString::fromUtf8("Incorrect color")); return;
+        default:    showCriticalMessage(tr("Incorrect color")); return;
         }
 
         _localClient.setColor(color);
@@ -203,7 +203,7 @@ void App::userTryToConnect()
         QString name = lePlayerName->text();
         if (name == "")
         {
-            showWarningMessage(QString::fromUtf8("Enter the nickname"));
+            showWarningMessage(tr("Enter the nickname"));
             if (dockWidget->isVisible())
             {
                 dockWidget->activateWindow();
@@ -215,7 +215,7 @@ void App::userTryToConnect()
 
         if (name.toUtf8().size() > 100)
         {
-            showWarningMessage(QString::fromUtf8("Your nickname is too long"));
+            showWarningMessage(tr("Your nickname is too long"));
             if (dockWidget->isVisible())
             {
                 dockWidget->activateWindow();
@@ -230,7 +230,7 @@ void App::userTryToConnect()
         QString hostname = leServerAddress->text();
         if (hostname == "")
         {
-            showWarningMessage(QString::fromUtf8("Enter the server"));
+            showWarningMessage(tr("Enter the server"));
             if (dockWidget->isVisible())
             {
                 dockWidget->activateWindow();
@@ -267,7 +267,7 @@ void App::processServerStarted()
 
 void App::acceptConnection()
 {
-    pinfo(QString::fromUtf8("Connected"));
+    pinfo(tr("Connected"));
     lServersList->setDisabled(true);
     lwServersList->setDisabled(true);
     lServerAddress->setDisabled(true);
@@ -281,13 +281,13 @@ void App::acceptConnection()
     lePlayerName->setDisabled(true);
     lColor->setDisabled(true);
     cbColor->setDisabled(true);
-    pbConnect->setText(QString::fromUtf8("Disconnect from the server"));
-    actionConnect->setText(QString::fromUtf8("Disconnect from the server"));
+    pbConnect->setText(tr("Disconnect from the server"));
+    actionConnect->setText(tr("Disconnect from the server"));
 }
 
 void App::processClientDisconnected()
 {
-    pinfo(QString::fromUtf8("Disconnected"));
+    pinfo(tr("Disconnected"));
     lServersList->setDisabled(cbCreateServer->isChecked());
     lwServersList->setDisabled(cbCreateServer->isChecked());
     lServerAddress->setDisabled(cbCreateServer->isChecked());
@@ -301,8 +301,8 @@ void App::processClientDisconnected()
     lePlayerName->setDisabled(false);
     lColor->setDisabled(false);
     cbColor->setDisabled(false);
-    pbConnect->setText(QString::fromUtf8("Connect to the server"));
-    actionConnect->setText(QString::fromUtf8("Connect to the server"));
+    pbConnect->setText(tr("Connect to the server"));
+    actionConnect->setText(tr("Connect to the server"));
     pbSurrender->setDisabled(true);
     _game->clear();
 }
@@ -315,12 +315,12 @@ void App::receiveChatMessage(const ClientInfo &info, const QString &text)
 
 void App::receiveClientConnectMessage(const ClientInfo &info)
 {
-    pinfo(info.name() + QString::fromUtf8(" connected"), info.color());
+    pinfo(tr("%1 connected").arg(info.name()), info.color());
 }
 
 void App::receiveClientDisconnectMessage(const ClientInfo &info)
 {
-    pinfo(info.name() + QString::fromUtf8(" disconnected"), info.color());
+    pinfo(tr("%1 disconnected").arg(info.name()), info.color());
 }
 
 void App::receivePlayersListMessage(QList<ClientInfo> list)
@@ -379,7 +379,7 @@ void App::receiveStartGameMessage(QList<ClientInfo> list)
 
 void App::receiveSurrenderMessage(const ClientInfo &info)
 {
-    pinfo(info.name() + QString::fromUtf8(" surrendered"), info.color());
+    pinfo(tr("%1 surrendered").arg(info.name()), info.color());
     _game->retirePlayer(info);
     if (_localClient.info() == info)
     {
@@ -404,8 +404,8 @@ void App::finishGame(QList<ClientInfo> winners, int score)
     {
         if (count == 1)
         {
-            msg = QString::fromUtf8("The winner is ") + winners[0].name()
-                  + QString::fromUtf8(" with score ") + QString::number(score);
+            msg = tr("The winner is %1 with score %2")
+                  .arg(winners[0].name(), QString::number(score));
         }
         else if (count > 1)
         {
@@ -423,13 +423,13 @@ void App::finishGame(QList<ClientInfo> winners, int score)
             }
 
             str += names[count - 1];
-            msg = QString::fromUtf8("The winners are ") + str
-                  + QString::fromUtf8(" with score ") + QString::number(score);
+            msg = tr("The winners are %1 with score %2")
+                  .arg(str, QString::number(score));
         }
     }
     else
     {
-        msg = QString::fromUtf8("There is no winner");
+        msg = tr("There is no winner");
     }
 
     pbSurrender->setDisabled(true);
@@ -462,7 +462,7 @@ void App::guiChangeServersListCurrentText(const QString &text)
 
 void App::guiClickRetirePlayer()
 {
-    if (confirm(QString::fromUtf8("Do you really want to give up and finish the game?")))
+    if (confirm(tr("Do you really want to give up and finish the game?")))
     {
         emit surrendered(_localClient.info());
     }

@@ -105,12 +105,12 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *style, QWi
 
     if (_surrendered)
     {
-        painter->drawText(boundingRect(), Qt::AlignCenter, QString::fromUtf8("I gave up"));
+        painter->drawText(boundingRect(), Qt::AlignCenter, tr("I gave up"));
     }
 
     if (_tilesleft == 0)
     {
-        painter->drawText(boundingRect(), Qt::AlignCenter, QString::fromUtf8("I won!"));
+        painter->drawText(boundingRect(), Qt::AlignCenter, tr("I won!"));
     }
 }
 
