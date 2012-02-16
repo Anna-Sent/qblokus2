@@ -26,10 +26,10 @@
          <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Plain</enum>
         </property>
         <property name="segmentStyle">
-         <enum>QLCDNumber::Outline</enum>
+         <enum>QLCDNumber::Flat</enum>
         </property>
        </widget>
       </item>
@@ -39,10 +39,10 @@
          <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Plain</enum>
         </property>
         <property name="segmentStyle">
-         <enum>QLCDNumber::Outline</enum>
+         <enum>QLCDNumber::Flat</enum>
         </property>
        </widget>
       </item>
@@ -72,10 +72,10 @@
          <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Plain</enum>
         </property>
         <property name="segmentStyle">
-         <enum>QLCDNumber::Outline</enum>
+         <enum>QLCDNumber::Flat</enum>
         </property>
        </widget>
       </item>
@@ -85,10 +85,10 @@
          <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Plain</enum>
         </property>
         <property name="segmentStyle">
-         <enum>QLCDNumber::Outline</enum>
+         <enum>QLCDNumber::Flat</enum>
         </property>
        </widget>
       </item>
@@ -142,7 +142,7 @@
      <x>0</x>
      <y>0</y>
      <width>1182</width>
-     <height>27</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">

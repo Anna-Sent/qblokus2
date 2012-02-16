@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Thu Feb 16 01:39:54 2012
+** Created: Thu Feb 16 19:24:22 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -124,16 +124,16 @@ public:
         score1 = new QLCDNumber(centralwidget);
         score1->setObjectName(QString::fromUtf8("score1"));
         score1->setFrameShape(QFrame::Box);
-        score1->setFrameShadow(QFrame::Raised);
-        score1->setSegmentStyle(QLCDNumber::Outline);
+        score1->setFrameShadow(QFrame::Plain);
+        score1->setSegmentStyle(QLCDNumber::Flat);
 
         gridLayout->addWidget(score1, 0, 0, 1, 1);
 
         score3 = new QLCDNumber(centralwidget);
         score3->setObjectName(QString::fromUtf8("score3"));
         score3->setFrameShape(QFrame::Box);
-        score3->setFrameShadow(QFrame::Raised);
-        score3->setSegmentStyle(QLCDNumber::Outline);
+        score3->setFrameShadow(QFrame::Plain);
+        score3->setSegmentStyle(QLCDNumber::Flat);
 
         gridLayout->addWidget(score3, 0, 2, 1, 1);
 
@@ -157,16 +157,16 @@ public:
         score2 = new QLCDNumber(centralwidget);
         score2->setObjectName(QString::fromUtf8("score2"));
         score2->setFrameShape(QFrame::Box);
-        score2->setFrameShadow(QFrame::Raised);
-        score2->setSegmentStyle(QLCDNumber::Outline);
+        score2->setFrameShadow(QFrame::Plain);
+        score2->setSegmentStyle(QLCDNumber::Flat);
 
         gridLayout->addWidget(score2, 2, 0, 1, 1);
 
         score4 = new QLCDNumber(centralwidget);
         score4->setObjectName(QString::fromUtf8("score4"));
         score4->setFrameShape(QFrame::Box);
-        score4->setFrameShadow(QFrame::Raised);
-        score4->setSegmentStyle(QLCDNumber::Outline);
+        score4->setFrameShadow(QFrame::Plain);
+        score4->setSegmentStyle(QLCDNumber::Flat);
 
         gridLayout->addWidget(score4, 2, 2, 1, 1);
 
@@ -203,7 +203,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1182, 27));
+        menubar->setGeometry(QRect(0, 0, 1182, 23));
         menu = new QMenu(menubar);
         menu->setObjectName(QString::fromUtf8("menu"));
         menuWindow = new QMenu(menubar);

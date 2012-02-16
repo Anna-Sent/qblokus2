@@ -2,6 +2,14 @@
 #include "localplayer.h"
 #include "networkplayer.h"
 
+void setupLcd(QLCDNumber *lcd, const QColor &color)
+{
+    QPalette palette = lcd->palette();
+    palette.setColor(QPalette::WindowText, color);
+    lcd->setPalette(palette);
+    lcd->display(0);
+}
+
 Game::Game(QGraphicsView *gv,
            QGraphicsView *gvs[MAX_PLAYERS_COUNT], QLCDNumber *lcds[MAX_PLAYERS_COUNT])
 {
@@ -10,7 +18,6 @@ Game::Game(QGraphicsView *gv,
         _gvs[i] = gvs[i];
         _lcds[i] = lcds[i];
     }
-
     _table = new Table(20, 20);
     _tablescene = new QGraphicsScene(this);
     _tablescene->addItem(_table);
@@ -45,8 +52,7 @@ void Game::clear()
 
     for (int i = 0; i < MAX_PLAYERS_COUNT; ++i)
     {
-        _lcds[i]->setPalette(QPalette());
-        _lcds[i]->display(0);
+        setupLcd(_lcds[i], Qt::white);
     }
 }
 
@@ -199,9 +205,7 @@ void Game::addPlayer(const ClientInfo &info, PlayerType type)
 
     QLCDNumber *lcd = _lcds[_playersleft];
     connect(player, SIGNAL(scoreChanged(int)), lcd, SLOT(display(int)));
-    lcd->setPalette(QPalette(info.color()));
-    lcd->display(0);
-
+    setupLcd(lcd, info.color());
     ++_playersleft;
 }
 
