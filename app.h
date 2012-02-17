@@ -7,10 +7,14 @@
 #include "serversearcher.h"
 #include "ui_racingForm.h"
 #include <QThread>
+#include <QTranslator>
 
 class App : public QMainWindow, public Ui::MainWindow
 {
     Q_OBJECT
+
+protected:
+    void changeEvent(QEvent *);
 
 private:
     Game *_game;
@@ -19,6 +23,7 @@ private:
     Server _server;
     ServerSearcher _serverSearcher;
     QThread _serverThread;
+    QTranslator _translator;
     bool confirm(const QString &) const;
     void setTabOrder() const;
     void showCriticalMessage(const QString &);
@@ -45,6 +50,7 @@ private slots:
     // from local client
     void acceptConnection();
     void processClientDisconnected();
+    void processClientErrorOccurred(int);
     void receiveChatMessage(const ClientInfo &, const QString &);
     void receiveClientConnectMessage(const ClientInfo &);
     void receiveClientDisconnectMessage(const ClientInfo &);

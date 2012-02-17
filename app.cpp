@@ -1,4 +1,5 @@
 #include "app.h"
+#include "constants.h"
 #include <QMessageBox>
 
 using namespace std;
@@ -10,9 +11,10 @@ App::App(QWidget *parent)
     setTabOrder();
 
     // gui
+    connect(actionAboutQt, SIGNAL(activated()), qApp, SLOT(aboutQt()));
     connect(actionConnect, SIGNAL(activated()), this, SLOT(userTryToConnect()));
-    connect(actionQuit, SIGNAL(activated()), qApp, SLOT(quit()));
     connect(actionNewGame, SIGNAL(activated()), this, SLOT(userStartGame()));
+    connect(actionQuit, SIGNAL(activated()), qApp, SLOT(quit()));
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
     connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendMessage()));
     connect(lineEdit, SIGNAL(returnPressed()), lineEdit, SLOT(clear()));
@@ -44,7 +46,7 @@ App::App(QWidget *parent)
     connect(&_localClient, SIGNAL(disconnected()), lwPlayersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(disconnected()), lwServersList, SLOT(clear()));
     connect(&_localClient, SIGNAL(disconnected()), &_serverSearcher, SLOT(start()));
-    connect(&_localClient, SIGNAL(errorOccurred(QString)), this, SLOT(perror(QString)));
+    connect(&_localClient, SIGNAL(errorOccurred(int)), this, SLOT(processClientErrorOccurred(int)));
     connect(&_localClient, SIGNAL(chatMessageReceived(ClientInfo, QString)), this, SLOT(receiveChatMessage(ClientInfo, QString)));
     connect(&_localClient, SIGNAL(clientConnectMessageReceived(ClientInfo)), this, SLOT(receiveClientConnectMessage(ClientInfo)));
     connect(&_localClient, SIGNAL(clientDisconnectMessageReceived(ClientInfo)), this, SLOT(receiveClientDisconnectMessage(ClientInfo)));
@@ -313,6 +315,45 @@ void App::processClientDisconnected()
     _game->clear();
 }
 
+void App::processClientErrorOccurred(int errorCode)
+{
+    QString reason;
+    switch (errorCode)
+    {
+    case ERROR_COLOR_IN_USE:
+        reason = tr("This color is already in use");
+        break;
+    case ERROR_GAME_STARTED:
+        reason = tr("The game is already started. Wait for finish of the game");
+        break;
+    case ERROR_NAME_IN_USE:
+        reason = tr("This nickname is already in use");
+        break;
+    case ERROR_MAX_CONNECTIONS_NUM:
+        reason = tr("The maximum allowed connections number has been reached for the server");
+        break;
+    case ERROR_MAX_PLAYERS_NUM:
+        reason = tr("The maximum allowed number of players has been reached for the game");
+        break;
+    case ERROR_WAIT_FOR_OTHER:
+        reason = tr("Wait for other players");
+        break;
+    case ERROR_YOU_ARE_NOT_FIRST:
+        reason = tr("Only the first connected client can start a game");
+        break;
+    case ERROR_PING_TIMEOUT:
+        reason = tr("Ping timeout");
+        break;
+    case ERROR_SOCKET_ERROR:
+        reason = _localClient.socketErrorString();
+        break;
+    default:
+        reason = tr("Unknown error");
+    }
+
+    perror(reason);
+}
+
 void App::receiveChatMessage(const ClientInfo &info, const QString &text)
 {
     pinfo("(" + QTime::currentTime().toString("hh:mm:ss") + ") " + info.name() + ":", info.color());
@@ -517,12 +558,35 @@ void App::guiTriggerLanguageAction()
         if (action == actionEnglish)
         {
             // load english
-            QMessageBox::information(this, "info", "english");
+            if (!_translator.isEmpty())
+            {
+                qApp->removeTranslator(&_translator);
+            }
         }
         else if (action == actionRussian)
         {
+            if (!_translator.isEmpty())
+            {
+                qApp->removeTranslator(&_translator);
+            }
+
             // load russian
-            QMessageBox::information(this, "info", "russian");
+            if (_translator.load("qblokus2_ru"))
+            {
+                qApp->installTranslator(&_translator);
+            }
         }
+    }
+}
+
+void App::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange)
+    {
+        retranslateUi(this);
+    }
+    else
+    {
+        QWidget::changeEvent(event);
     }
 }

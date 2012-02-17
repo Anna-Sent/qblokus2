@@ -32,5 +32,5 @@ HEADERS += coloritem.h \
     game.h \
     networkplayer.h
 QT += network
-
+TRANSLATIONS += qblokus2_ru.ts
 FORMS += racingForm.ui

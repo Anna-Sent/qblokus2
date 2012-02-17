@@ -20,12 +20,13 @@ private:
 
 public:
     LocalClient();
-    QColor              color() const       { return _info.color(); }
-    const ClientInfo   &info() const        { return _info; }
-    bool                isStarted() const   { return _isStarted; }
-    QString             name() const        { return _info.name(); }
-    void setColor(const QColor &color)      { _info.setColor(color); }
-    void setName(const QString &name)       { _info.setName(name); }
+    QColor              color() const               { return _info.color(); }
+    QString             socketErrorString() const   { return _socket->errorString(); }
+    const ClientInfo   &info() const                { return _info; }
+    bool                isStarted() const           { return _isStarted; }
+    QString             name() const                { return _info.name(); }
+    void setColor(const QColor &color)              { _info.setColor(color); }
+    void setName(const QString &name)               { _info.setName(name); }
 
 public slots:
     void sendChatMessage(const ClientInfo &, const QString &);
@@ -58,7 +59,7 @@ private slots:
 signals:
     void connectionAccepted();
     void disconnected();
-    void errorOccurred(const QString &);
+    void errorOccurred(int);
 
     void chatMessageReceived(const ClientInfo &, const QString &);
     void clientConnectMessageReceived(const ClientInfo &);

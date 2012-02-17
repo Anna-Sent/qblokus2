@@ -173,9 +173,16 @@
     </widget>
     <addaction name="menuLanguage"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAboutQt"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menuView"/>
    <addaction name="menuWindow"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget">
@@ -378,6 +385,9 @@
    <property name="text">
     <string>Quit</string>
    </property>
+   <property name="toolTip">
+    <string>Quit application</string>
+   </property>
    <property name="menuRole">
     <enum>QAction::QuitRole</enum>
    </property>
@@ -385,6 +395,9 @@
   <action name="actionNewGame">
    <property name="text">
     <string>New game</string>
+   </property>
+   <property name="toolTip">
+    <string>Start a new game</string>
    </property>
   </action>
   <action name="actionConnectionWindow">
@@ -396,6 +409,9 @@
    </property>
    <property name="text">
     <string>Connection window</string>
+   </property>
+   <property name="toolTip">
+    <string>Open a connection options window</string>
    </property>
   </action>
   <action name="actionConnect">
@@ -413,6 +429,9 @@
    <property name="text">
     <string>English</string>
    </property>
+   <property name="toolTip">
+    <string>Translate the application in English</string>
+   </property>
   </action>
   <action name="actionRussian">
    <property name="checkable">
@@ -420,6 +439,20 @@
    </property>
    <property name="text">
     <string>Russian</string>
+   </property>
+   <property name="toolTip">
+    <string>Translate the application in Russian</string>
+   </property>
+  </action>
+  <action name="actionAboutQt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+   <property name="toolTip">
+    <string>Display information about Qt</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
  </widget>

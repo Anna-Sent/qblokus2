@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Fri Feb 17 16:16:17 2012
+** Created: Fri Feb 17 21:08:35 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -45,6 +45,7 @@ public:
     QAction *actionConnect;
     QAction *actionEnglish;
     QAction *actionRussian;
+    QAction *actionAboutQt;
     QWidget *centralwidget;
     QGridLayout *gridLayout_11;
     QGridLayout *gridLayout;
@@ -63,6 +64,7 @@ public:
     QMenu *menuWindow;
     QMenu *menuView;
     QMenu *menuLanguage;
+    QMenu *menuHelp;
     QStatusBar *statusbar;
     QDockWidget *dockWidget;
     QWidget *dockWidgetContents;
@@ -115,6 +117,9 @@ public:
         actionRussian = new QAction(MainWindow);
         actionRussian->setObjectName(QString::fromUtf8("actionRussian"));
         actionRussian->setCheckable(true);
+        actionAboutQt = new QAction(MainWindow);
+        actionAboutQt->setObjectName(QString::fromUtf8("actionAboutQt"));
+        actionAboutQt->setMenuRole(QAction::AboutQtRole);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout_11 = new QGridLayout(centralwidget);
@@ -213,6 +218,8 @@ public:
         menuView->setObjectName(QString::fromUtf8("menuView"));
         menuLanguage = new QMenu(menuView);
         menuLanguage->setObjectName(QString::fromUtf8("menuLanguage"));
+        menuHelp = new QMenu(menubar);
+        menuHelp->setObjectName(QString::fromUtf8("menuHelp"));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -360,6 +367,7 @@ public:
         menubar->addAction(menu->menuAction());
         menubar->addAction(menuView->menuAction());
         menubar->addAction(menuWindow->menuAction());
+        menubar->addAction(menuHelp->menuAction());
         menu->addAction(actionNewGame);
         menu->addAction(actionConnect);
         menu->addSeparator();
@@ -368,6 +376,7 @@ public:
         menuView->addAction(menuLanguage->menuAction());
         menuLanguage->addAction(actionEnglish);
         menuLanguage->addAction(actionRussian);
+        menuHelp->addAction(actionAboutQt);
 
         retranslateUi(MainWindow);
         QObject::connect(actionConnectionWindow, SIGNAL(toggled(bool)), dockWidget, SLOT(setVisible(bool)));
@@ -390,16 +399,36 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "QBLOKUS", 0, QApplication::UnicodeUTF8));
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        actionQuit->setToolTip(QApplication::translate("MainWindow", "Quit application", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         actionNewGame->setText(QApplication::translate("MainWindow", "New game", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        actionNewGame->setToolTip(QApplication::translate("MainWindow", "Start a new game", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         actionConnectionWindow->setText(QApplication::translate("MainWindow", "Connection window", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        actionConnectionWindow->setToolTip(QApplication::translate("MainWindow", "Open a connection options window", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         actionConnect->setText(QApplication::translate("MainWindow", "Connect to the server", 0, QApplication::UnicodeUTF8));
         actionEnglish->setText(QApplication::translate("MainWindow", "English", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        actionEnglish->setToolTip(QApplication::translate("MainWindow", "Translate the application in English", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         actionRussian->setText(QApplication::translate("MainWindow", "Russian", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        actionRussian->setToolTip(QApplication::translate("MainWindow", "Translate the application in Russian", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        actionAboutQt->setText(QApplication::translate("MainWindow", "About Qt", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        actionAboutQt->setToolTip(QApplication::translate("MainWindow", "Display information about Qt", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         pbSurrender->setText(QApplication::translate("MainWindow", "Give up!", 0, QApplication::UnicodeUTF8));
         menu->setTitle(QApplication::translate("MainWindow", "Menu", 0, QApplication::UnicodeUTF8));
         menuWindow->setTitle(QApplication::translate("MainWindow", "Window", 0, QApplication::UnicodeUTF8));
         menuView->setTitle(QApplication::translate("MainWindow", "View", 0, QApplication::UnicodeUTF8));
         menuLanguage->setTitle(QApplication::translate("MainWindow", "Language", 0, QApplication::UnicodeUTF8));
+        menuHelp->setTitle(QApplication::translate("MainWindow", "Help", 0, QApplication::UnicodeUTF8));
         lServersList->setText(QApplication::translate("MainWindow", "Local servers list", 0, QApplication::UnicodeUTF8));
         lPlayersList->setText(QApplication::translate("MainWindow", "Players list", 0, QApplication::UnicodeUTF8));
         lPort->setText(QApplication::translate("MainWindow", "Port", 0, QApplication::UnicodeUTF8));

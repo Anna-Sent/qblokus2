@@ -1,5 +1,6 @@
 #include "app.h"
 #include <QApplication>
+#include <QLibraryInfo>
 
 #define     ERROR_INCORRECT_PLAYERS_COUNT   1
 #define     ERROR_INCORRECT_PORT_VALUE      2
@@ -42,7 +43,7 @@ void error(int code)
     default:
         if (code != 0)
         {
-            qerr << QString::fromUtf8("Unknown error occured") << endl;
+            qerr << QString::fromUtf8("Unknown error occurred") << endl;
         }
     };
 }
@@ -66,6 +67,9 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<QList<ClientInfo> >("QList<ClientInfo>");
 
     QApplication app(argc, argv);
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    app.installTranslator(&qtTranslator);
     if (argc == 1)
     {
         App *dialog = new App;
