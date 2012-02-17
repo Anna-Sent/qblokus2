@@ -1,5 +1,4 @@
 #include "app.h"
-#include <cstdlib>
 #include <QMessageBox>
 
 using namespace std;
@@ -13,7 +12,7 @@ App::App(QWidget *parent)
     // gui
     connect(actionConnect, SIGNAL(activated()), this, SLOT(userTryToConnect()));
     connect(actionQuit, SIGNAL(activated()), qApp, SLOT(quit()));
-    connect(actionStartGame, SIGNAL(activated()), this, SLOT(userStartGame()));
+    connect(actionNewGame, SIGNAL(activated()), this, SLOT(userStartGame()));
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
     connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendMessage()));
     connect(lineEdit, SIGNAL(returnPressed()), lineEdit, SLOT(clear()));
@@ -22,6 +21,13 @@ App::App(QWidget *parent)
     connect(pbConnect, SIGNAL(clicked()), this, SLOT(userTryToConnect()));
     connect(pbSurrender, SIGNAL(clicked()), this, SLOT(guiClickRetirePlayer()));
     connect(sbPort, SIGNAL(valueChanged(int)), this, SLOT(guiChangePortValue(int)));
+    QActionGroup *group = new QActionGroup(this);
+    QList<QAction *> actions = menuLanguage->actions();
+    for (int i = 0; i < actions.size(); ++i)
+    {
+        actions[i]->setActionGroup(group);
+        connect(actions[i], SIGNAL(triggered()), this, SLOT(guiTriggerLanguageAction()));
+    }
 
     // server searcher
     connect(&_serverSearcher, SIGNAL(serverInfoMessageReceived(const QHostAddress &,QList<ClientInfo>)), this, SLOT(receiveServerInfoMessage(const QHostAddress &,QList<ClientInfo>)));
@@ -499,5 +505,24 @@ void App::guiToggleCreateServer(bool value)
         lwServersList->clear();
         lwPlayersList->clear();
         _serverSearcher.start();
+    }
+}
+
+void App::guiTriggerLanguageAction()
+{
+    QAction *action = dynamic_cast<QAction *>(sender());
+    if (action && action->isChecked())
+    {
+        // load translator
+        if (action == actionEnglish)
+        {
+            // load english
+            QMessageBox::information(this, "info", "english");
+        }
+        else if (action == actionRussian)
+        {
+            // load russian
+            QMessageBox::information(this, "info", "russian");
+        }
     }
 }

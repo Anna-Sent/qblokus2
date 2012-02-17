@@ -40,6 +40,7 @@ private slots:
     void guiClickRetirePlayer();
     void guiClickServersListItem(QListWidgetItem *item);
     void guiToggleCreateServer(bool);
+    void guiTriggerLanguageAction();
 
     // from local client
     void acceptConnection();

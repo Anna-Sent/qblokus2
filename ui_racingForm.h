@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Thu Feb 16 19:24:22 2012
+** Created: Fri Feb 17 16:16:17 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -40,8 +40,7 @@ class Ui_MainWindow
 {
 public:
     QAction *actionQuit;
-    QAction *actionDisconnectFromServer;
-    QAction *actionStartGame;
+    QAction *actionNewGame;
     QAction *actionConnectionWindow;
     QAction *actionConnect;
     QAction *actionEnglish;
@@ -100,10 +99,9 @@ public:
         MainWindow->resize(1182, 670);
         actionQuit = new QAction(MainWindow);
         actionQuit->setObjectName(QString::fromUtf8("actionQuit"));
-        actionDisconnectFromServer = new QAction(MainWindow);
-        actionDisconnectFromServer->setObjectName(QString::fromUtf8("actionDisconnectFromServer"));
-        actionStartGame = new QAction(MainWindow);
-        actionStartGame->setObjectName(QString::fromUtf8("actionStartGame"));
+        actionQuit->setMenuRole(QAction::QuitRole);
+        actionNewGame = new QAction(MainWindow);
+        actionNewGame->setObjectName(QString::fromUtf8("actionNewGame"));
         actionConnectionWindow = new QAction(MainWindow);
         actionConnectionWindow->setObjectName(QString::fromUtf8("actionConnectionWindow"));
         actionConnectionWindow->setCheckable(true);
@@ -112,8 +110,11 @@ public:
         actionConnect->setObjectName(QString::fromUtf8("actionConnect"));
         actionEnglish = new QAction(MainWindow);
         actionEnglish->setObjectName(QString::fromUtf8("actionEnglish"));
+        actionEnglish->setCheckable(true);
+        actionEnglish->setChecked(true);
         actionRussian = new QAction(MainWindow);
         actionRussian->setObjectName(QString::fromUtf8("actionRussian"));
+        actionRussian->setCheckable(true);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout_11 = new QGridLayout(centralwidget);
@@ -359,7 +360,7 @@ public:
         menubar->addAction(menu->menuAction());
         menubar->addAction(menuView->menuAction());
         menubar->addAction(menuWindow->menuAction());
-        menu->addAction(actionStartGame);
+        menu->addAction(actionNewGame);
         menu->addAction(actionConnect);
         menu->addSeparator();
         menu->addAction(actionQuit);
@@ -389,8 +390,7 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "QBLOKUS", 0, QApplication::UnicodeUTF8));
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
-        actionDisconnectFromServer->setText(QApplication::translate("MainWindow", "Disconnect from the server", 0, QApplication::UnicodeUTF8));
-        actionStartGame->setText(QApplication::translate("MainWindow", "Start a new game", 0, QApplication::UnicodeUTF8));
+        actionNewGame->setText(QApplication::translate("MainWindow", "New game", 0, QApplication::UnicodeUTF8));
         actionConnectionWindow->setText(QApplication::translate("MainWindow", "Connection window", 0, QApplication::UnicodeUTF8));
         actionConnect->setText(QApplication::translate("MainWindow", "Connect to the server", 0, QApplication::UnicodeUTF8));
         actionEnglish->setText(QApplication::translate("MainWindow", "English", 0, QApplication::UnicodeUTF8));

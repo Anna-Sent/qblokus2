@@ -149,7 +149,7 @@
     <property name="title">
      <string>Menu</string>
     </property>
-    <addaction name="actionStartGame"/>
+    <addaction name="actionNewGame"/>
     <addaction name="actionConnect"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
@@ -378,15 +378,13 @@
    <property name="text">
     <string>Quit</string>
    </property>
-  </action>
-  <action name="actionDisconnectFromServer">
-   <property name="text">
-    <string>Disconnect from the server</string>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
    </property>
   </action>
-  <action name="actionStartGame">
+  <action name="actionNewGame">
    <property name="text">
-    <string>Start a new game</string>
+    <string>New game</string>
    </property>
   </action>
   <action name="actionConnectionWindow">
@@ -406,11 +404,20 @@
    </property>
   </action>
   <action name="actionEnglish">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>English</string>
    </property>
   </action>
   <action name="actionRussian">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Russian</string>
    </property>
