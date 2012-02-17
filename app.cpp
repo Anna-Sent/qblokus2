@@ -11,14 +11,14 @@ App::App(QWidget *parent)
     setTabOrder();
 
     // gui
-    connect(actionStartGame, SIGNAL(activated()), this, SLOT(userStartGame()));
-    connect(actionQuit, SIGNAL(activated()), qApp, SLOT(quit()));
     connect(actionConnect, SIGNAL(activated()), this, SLOT(userTryToConnect()));
+    connect(actionQuit, SIGNAL(activated()), qApp, SLOT(quit()));
+    connect(actionStartGame, SIGNAL(activated()), this, SLOT(userStartGame()));
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
     connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendMessage()));
     connect(lineEdit, SIGNAL(returnPressed()), lineEdit, SLOT(clear()));
-    connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(guiClickServersListItem(QListWidgetItem*)));
     connect(lwServersList, SIGNAL(currentTextChanged(QString)), this, SLOT(guiChangeServersListCurrentText(QString)));
+    connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(guiClickServersListItem(QListWidgetItem*)));
     connect(pbConnect, SIGNAL(clicked()), this, SLOT(userTryToConnect()));
     connect(pbSurrender, SIGNAL(clicked()), this, SLOT(guiClickRetirePlayer()));
     connect(sbPort, SIGNAL(valueChanged(int)), this, SLOT(guiChangePortValue(int)));
