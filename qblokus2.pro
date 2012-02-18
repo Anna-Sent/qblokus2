@@ -40,5 +40,6 @@ FORMS       +=  racingForm.ui
 
 QT          +=  network
 
-TRANSLATIONS+=  qblokus2_ru.ts
+RESOURCES   =  qblokus2.qrc
 
+TRANSLATIONS+=  qblokus2_ru.ts

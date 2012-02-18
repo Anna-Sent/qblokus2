@@ -574,7 +574,7 @@ void App::guiTriggerLanguageAction()
             }
 
             // load russian
-            if (_translator.load("qblokus2_ru"))
+            if (_translator.load(":/qblokus2_ru"))
             {
                 qApp->installTranslator(&_translator);
             }
