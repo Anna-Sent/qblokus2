@@ -40,6 +40,22 @@ FORMS       +=  racingForm.ui
 
 QT          +=  network
 
-RESOURCES   =  qblokus2.qrc
+RESOURCES   +=  qblokus2.qrc
 
 TRANSLATIONS+=  qblokus2_ru.ts
+
+isEmpty(QMAKE_LRELEASE) {
+    win32:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]\lrelease.exe
+    else:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
+}
+
+isEmpty(QMAKE_QM_FILE) {
+    win32:QMAKE_QM_FILE = ${QMAKE_FILE_PATH}\${QMAKE_FILE_BASE}.qm
+    else:QMAKE_QM_FILE = ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.qm
+}
+
+QMAKE_EXTRA_COMPILERS   +=  lrelease
+lrelease.input          =   TRANSLATIONS
+lrelease.output         =   $$QMAKE_QM_FILE
+lrelease.commands       =   $$QMAKE_LRELEASE ${QMAKE_FILE_IN} -qm $$QMAKE_QM_FILE
+lrelease.CONFIG         +=  no_link target_predeps
