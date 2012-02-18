@@ -36,7 +36,7 @@ private slots:
 
     // from user
     void userDisconnectFromServer();
-    void userSendMessage();
+    void userSendChatMessage();
     void userStartGame();
     void userTryToConnect();
 

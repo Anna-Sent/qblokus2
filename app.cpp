@@ -13,14 +13,16 @@ App::App(QWidget *parent)
     // gui
     connect(actionAboutQt, SIGNAL(activated()), qApp, SLOT(aboutQt()));
     connect(actionConnect, SIGNAL(activated()), this, SLOT(userTryToConnect()));
+    connect(actionDisconnect, SIGNAL(activated()), this, SLOT(userDisconnectFromServer()));
     connect(actionNewGame, SIGNAL(activated()), this, SLOT(userStartGame()));
     connect(actionQuit, SIGNAL(activated()), qApp, SLOT(quit()));
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
-    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendMessage()));
+    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendChatMessage()));
     connect(lineEdit, SIGNAL(returnPressed()), lineEdit, SLOT(clear()));
     connect(lwServersList, SIGNAL(currentTextChanged(QString)), this, SLOT(guiChangeServersListCurrentText(QString)));
     connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(guiClickServersListItem(QListWidgetItem*)));
     connect(pbConnect, SIGNAL(clicked()), this, SLOT(userTryToConnect()));
+    connect(pbDisconnect, SIGNAL(clicked()), this, SLOT(userDisconnectFromServer()));
     connect(pbSurrender, SIGNAL(clicked()), this, SLOT(guiClickRetirePlayer()));
     connect(sbPort, SIGNAL(valueChanged(int)), this, SLOT(guiChangePortValue(int)));
     QActionGroup *group = new QActionGroup(this);
@@ -116,7 +118,8 @@ void App::setTabOrder() const
     QWidget::setTabOrder(sbPort, lePlayerName);
     QWidget::setTabOrder(lePlayerName, cbColor);
     QWidget::setTabOrder(cbColor, pbConnect);
-    QWidget::setTabOrder(pbConnect, textEdit);
+    QWidget::setTabOrder(pbConnect, pbDisconnect);
+    QWidget::setTabOrder(pbDisconnect, textEdit);
     QWidget::setTabOrder(textEdit, lineEdit);
     QWidget::setTabOrder(lineEdit, lwServersList);
 }
@@ -161,9 +164,13 @@ void App::userDisconnectFromServer()
             emit readyToStopServer();
         }
     }
+    else
+    {
+        showInformationMessage(tr("You are not connected"));
+    }
 }
 
-void App::userSendMessage()
+void App::userSendChatMessage()
 {
     QString text = lineEdit->text();
     if (text != "")
@@ -192,7 +199,7 @@ void App::userTryToConnect()
 {
     if (_localClient.isStarted())
     {
-        userDisconnectFromServer();
+        showInformationMessage(tr("You are already connected"));
     }
     else
     {
@@ -289,8 +296,6 @@ void App::acceptConnection()
     lePlayerName->setDisabled(true);
     lColor->setDisabled(true);
     cbColor->setDisabled(true);
-    pbConnect->setText(tr("Disconnect from the server"));
-    actionConnect->setText(tr("Disconnect from the server"));
 }
 
 void App::processClientDisconnected()
@@ -309,8 +314,6 @@ void App::processClientDisconnected()
     lePlayerName->setDisabled(false);
     lColor->setDisabled(false);
     cbColor->setDisabled(false);
-    pbConnect->setText(tr("Connect to the server"));
-    actionConnect->setText(tr("Connect to the server"));
     pbSurrender->setDisabled(true);
     _game->clear();
 }
@@ -583,6 +586,7 @@ void App::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange)
     {
+
         retranslateUi(this);
     }
     else

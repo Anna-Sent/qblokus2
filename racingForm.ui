@@ -151,6 +151,7 @@
     </property>
     <addaction name="actionNewGame"/>
     <addaction name="actionConnect"/>
+    <addaction name="actionDisconnect"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -362,6 +363,13 @@
              </property>
             </widget>
            </item>
+           <item row="14" column="0">
+            <widget class="QPushButton" name="pbDisconnect">
+             <property name="text">
+              <string>Disconnect from the server</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -453,6 +461,11 @@
    </property>
    <property name="menuRole">
     <enum>QAction::AboutQtRole</enum>
+   </property>
+  </action>
+  <action name="actionDisconnect">
+   <property name="text">
+    <string>Disconnect from the server</string>
    </property>
   </action>
  </widget>

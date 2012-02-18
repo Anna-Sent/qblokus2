@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'racingForm.ui'
 **
-** Created: Fri Feb 17 21:08:35 2012
+** Created: Sat Feb 18 14:53:45 2012
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -46,6 +46,7 @@ public:
     QAction *actionEnglish;
     QAction *actionRussian;
     QAction *actionAboutQt;
+    QAction *actionDisconnect;
     QWidget *centralwidget;
     QGridLayout *gridLayout_11;
     QGridLayout *gridLayout;
@@ -91,6 +92,7 @@ public:
     QComboBox *cbColor;
     QLabel *lColor;
     QLabel *lPlayersCount;
+    QPushButton *pbDisconnect;
     QTextEdit *textEdit;
     QLineEdit *lineEdit;
 
@@ -120,6 +122,8 @@ public:
         actionAboutQt = new QAction(MainWindow);
         actionAboutQt->setObjectName(QString::fromUtf8("actionAboutQt"));
         actionAboutQt->setMenuRole(QAction::AboutQtRole);
+        actionDisconnect = new QAction(MainWindow);
+        actionDisconnect->setObjectName(QString::fromUtf8("actionDisconnect"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout_11 = new QGridLayout(centralwidget);
@@ -341,6 +345,11 @@ public:
 
         gridLayout_8->addWidget(lPlayersCount, 3, 0, 1, 1);
 
+        pbDisconnect = new QPushButton(dockWidgetContents);
+        pbDisconnect->setObjectName(QString::fromUtf8("pbDisconnect"));
+
+        gridLayout_8->addWidget(pbDisconnect, 14, 0, 1, 1);
+
 
         gridLayout_6->addLayout(gridLayout_8, 4, 0, 1, 1);
 
@@ -370,6 +379,7 @@ public:
         menubar->addAction(menuHelp->menuAction());
         menu->addAction(actionNewGame);
         menu->addAction(actionConnect);
+        menu->addAction(actionDisconnect);
         menu->addSeparator();
         menu->addAction(actionQuit);
         menuWindow->addAction(actionConnectionWindow);
@@ -423,6 +433,7 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionAboutQt->setToolTip(QApplication::translate("MainWindow", "Display information about Qt", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
+        actionDisconnect->setText(QApplication::translate("MainWindow", "Disconnect from the server", 0, QApplication::UnicodeUTF8));
         pbSurrender->setText(QApplication::translate("MainWindow", "Give up!", 0, QApplication::UnicodeUTF8));
         menu->setTitle(QApplication::translate("MainWindow", "Menu", 0, QApplication::UnicodeUTF8));
         menuWindow->setTitle(QApplication::translate("MainWindow", "Window", 0, QApplication::UnicodeUTF8));
@@ -446,6 +457,7 @@ public:
         );
         lColor->setText(QApplication::translate("MainWindow", "Color", 0, QApplication::UnicodeUTF8));
         lPlayersCount->setText(QApplication::translate("MainWindow", "Players count", 0, QApplication::UnicodeUTF8));
+        pbDisconnect->setText(QApplication::translate("MainWindow", "Disconnect from the server", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
