@@ -45,12 +45,12 @@
     </message>
     <message>
         <location filename="app.cpp" line="221"/>
-        <source>Enter the nickname</source>
+        <source>Enter your name</source>
         <translation>Введите имя</translation>
     </message>
     <message>
         <location filename="app.cpp" line="233"/>
-        <source>Your nickname is too long</source>
+        <source>Your name is too long</source>
         <translation>Ваше имя слишком длинное</translation>
     </message>
     <message>
@@ -80,7 +80,7 @@
     </message>
     <message>
         <location filename="app.cpp" line="333"/>
-        <source>This nickname is already in use</source>
+        <source>This name is already in use</source>
         <translation>Это имя уже занято</translation>
     </message>
     <message>

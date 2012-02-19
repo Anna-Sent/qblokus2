@@ -218,7 +218,7 @@ void App::userTryToConnect()
         QString name = lePlayerName->text();
         if (name == "")
         {
-            showWarningMessage(tr("Enter the nickname"));
+            showWarningMessage(tr("Enter your name"));
             if (dockWidget->isVisible())
             {
                 dockWidget->activateWindow();
@@ -230,7 +230,7 @@ void App::userTryToConnect()
 
         if (name.toUtf8().size() > 100)
         {
-            showWarningMessage(tr("Your nickname is too long"));
+            showWarningMessage(tr("Your name is too long"));
             if (dockWidget->isVisible())
             {
                 dockWidget->activateWindow();
@@ -330,7 +330,7 @@ void App::processClientErrorOccurred(int errorCode)
         reason = tr("The game is already started. Wait for finish of the game");
         break;
     case ERROR_NAME_IN_USE:
-        reason = tr("This nickname is already in use");
+        reason = tr("This name is already in use");
         break;
     case ERROR_MAX_CONNECTIONS_NUM:
         reason = tr("The maximum allowed connections number has been reached for the server");
