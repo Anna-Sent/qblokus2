@@ -1,26 +1,35 @@
 #include "app.h"
+#include "translationservice.h"
 #include <QApplication>
-#include <QLibraryInfo>
 
 #define     ERROR_INCORRECT_PLAYERS_COUNT   1
 #define     ERROR_INCORRECT_PORT_VALUE      2
 #define     ERROR_INCORRECT_CONNECTION      3
 #define     ERROR_INCORRECT_ARGUMENTS       4
 
+#define translate(x, y) qApp->translate(x, y)
+
 void usage()
 {
     QString app = QString(qApp->argv()[0]);
     QTextStream qout(stdout);
-    qout << QString::fromUtf8("Usage:") << endl;
-    qout << QString::fromUtf8("\t%1").arg(app) << endl;
-    qout << QString::fromUtf8("\t%1 [options]").arg(app) << endl;
-    qout << QString::fromUtf8("%1 without options run GUI application. QBlokus is a networking boardgame for 3 or 4 players.")
-            .arg(app) << endl;
-    qout << "Options:" << endl;
-    qout << QString::fromUtf8("\t-s <3|4> <port>") << endl;
-    qout << QString::fromUtf8("\t\tRun non-GUI game server listening on the specified port, for 3 or 4 players") << endl;
-    qout << QString::fromUtf8("\t-u") << endl;
-    qout << QString::fromUtf8("\t\tDisplay the usage and exit.") << endl;
+    qout << translate("main", "Usage:") << endl;
+    qout << QString("\t%1 [%2] [-l:ru]")
+            .arg(app)
+            .arg(translate("main", "options")) << endl;
+    qout << translate("main", "QBlokus is a networking boardgame for 3 or 4 players.") << endl;
+    qout << QString("%1 %2")
+            .arg(app)
+            .arg(translate("main", "without options run GUI application.")) << endl;
+    qout << translate("main", "By default all messages are displayed in English.") << endl;
+    qout << translate("main", "'-l:ru' option translates the application in Russian.") << endl;
+    qout << translate("main", "Options:") << endl;
+    qout << "\t-s <3|4> <port>" << endl;
+    qout << translate("main", "\t\tRun non-GUI game server.") << endl;
+    qout << translate("main", "\t\tPlayers count may be equal to 3 or 4.") << endl;
+    qout << translate("main", "\t\tServer is listening on the specified port.") << endl;
+    qout << "\t-u" << endl;
+    qout << translate("main", "\t\tDisplay the usage and exit.") << endl;
 }
 
 void error(int code)
@@ -29,21 +38,23 @@ void error(int code)
     switch (code)
     {
     case ERROR_INCORRECT_PLAYERS_COUNT:
-        qerr << QString::fromUtf8("Incorrect players count. Players count must be equal 3 or 4.") << endl;
+        qerr << translate("main", "Incorrect players count.") << endl;
+        qerr << translate("main", "Players count must be equal 3 or 4.") << endl;
         break;
     case ERROR_INCORRECT_PORT_VALUE:
-        qerr << QString::fromUtf8("Incorrect port value. Port value must be in the range from 1 to 65535.") << endl;
+        qerr << translate("main", "Incorrect port value.") << endl;
+        qerr << translate("main", "Port value must be in the range from 1 to 65535.") << endl;
         break;
     case ERROR_INCORRECT_CONNECTION:
-        qerr << QString::fromUtf8("Can't start server") << endl;
+        qerr << translate("main", "Can't start server") << endl;
         break;
     case ERROR_INCORRECT_ARGUMENTS:
-        qerr << QString::fromUtf8("Incorrect command line arguments") << endl;
+        qerr << translate("main", "Incorrect command line arguments") << endl;
         break;
     default:
         if (code != 0)
         {
-            qerr << QString::fromUtf8("Unknown error occurred") << endl;
+            qerr << translate("main", "Unknown error occurred") << endl;
         }
     };
 }
@@ -67,9 +78,13 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<QList<ClientInfo> >("QList<ClientInfo>");
 
     QApplication app(argc, argv);
-    QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    app.installTranslator(&qtTranslator);
+
+    if (argc > 1 && strcmp(argv[argc-1], "-l:ru") == 0)
+    {
+        --argc;
+        TranslationService::loadRussian();
+    }
+
     if (argc == 1)
     {
         App *dialog = new App;

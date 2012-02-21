@@ -7,7 +7,6 @@
 #include "serversearcher.h"
 #include "ui_racingForm.h"
 #include <QThread>
-#include <QTranslator>
 
 class App : public QMainWindow, public Ui::MainWindow
 {
@@ -23,7 +22,6 @@ private:
     Server _server;
     ServerSearcher _serverSearcher;
     QThread _serverThread;
-    QTranslator _translator;
     bool confirm(const QString &) const;
     void setTabOrder() const;
     void showCriticalMessage(const QString &);

@@ -1,5 +1,6 @@
 #include "app.h"
 #include "constants.h"
+#include "translationservice.h"
 #include <QMessageBox>
 
 using namespace std;
@@ -557,27 +558,13 @@ void App::guiTriggerLanguageAction()
     QAction *action = dynamic_cast<QAction *>(sender());
     if (action && action->isChecked())
     {
-        // load translator
         if (action == actionEnglish)
         {
-            // load english
-            if (!_translator.isEmpty())
-            {
-                qApp->removeTranslator(&_translator);
-            }
+            TranslationService::loadEnglish();
         }
         else if (action == actionRussian)
         {
-            if (!_translator.isEmpty())
-            {
-                qApp->removeTranslator(&_translator);
-            }
-
-            // load russian
-            if (_translator.load(":/qblokus2_ru"))
-            {
-                qApp->installTranslator(&_translator);
-            }
+            TranslationService::loadRussian();
         }
     }
 }
@@ -586,7 +573,6 @@ void App::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange)
     {
-
         retranslateUi(this);
     }
     else

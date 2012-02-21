@@ -4,147 +4,147 @@
 <context>
     <name>App</name>
     <message>
-        <location filename="app.cpp" line="129"/>
+        <location filename="app.cpp" line="130"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="134"/>
+        <location filename="app.cpp" line="135"/>
         <source>Information</source>
         <translation>Информация</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="139"/>
+        <location filename="app.cpp" line="140"/>
         <source>Warning</source>
         <translation>Предупреждение</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="161"/>
+        <location filename="app.cpp" line="162"/>
         <source>Disconnect from the server?</source>
         <translation>Отключиться от сервера?</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="169"/>
+        <location filename="app.cpp" line="170"/>
         <source>You are not connected</source>
         <translation>Вы не подключены к серверу</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="188"/>
+        <location filename="app.cpp" line="189"/>
         <source>Are you sure you want to start a new game?</source>
         <translation>Начать новую игру?</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="202"/>
+        <location filename="app.cpp" line="203"/>
         <source>You are already connected</source>
         <translation>Вы уже подключены к серверу</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="213"/>
+        <location filename="app.cpp" line="214"/>
         <source>Incorrect color</source>
         <translation>Неизвестный цвет</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="221"/>
+        <location filename="app.cpp" line="222"/>
         <source>Enter your name</source>
         <translation>Введите имя</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="233"/>
+        <location filename="app.cpp" line="234"/>
         <source>Your name is too long</source>
         <translation>Ваше имя слишком длинное</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="248"/>
+        <location filename="app.cpp" line="249"/>
         <source>Enter the server</source>
         <translation>Введите адрес игрового сервера</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="285"/>
+        <location filename="app.cpp" line="286"/>
         <source>Connected</source>
         <translation>Подключение установлено</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="303"/>
+        <location filename="app.cpp" line="304"/>
         <source>Disconnected</source>
         <translation>Соединение потеряно</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="327"/>
+        <location filename="app.cpp" line="328"/>
         <source>This color is already in use</source>
         <translation>Этот цвет уже занят</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="330"/>
+        <location filename="app.cpp" line="331"/>
         <source>The game is already started. Wait for finish of the game</source>
         <translation>Игра уже начата. Ждите окончания игры</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="333"/>
+        <location filename="app.cpp" line="334"/>
         <source>This name is already in use</source>
         <translation>Это имя уже занято</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="336"/>
+        <location filename="app.cpp" line="337"/>
         <source>The maximum allowed connections number has been reached for the server</source>
         <translation>Сервер не может принять соединение</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="339"/>
+        <location filename="app.cpp" line="340"/>
         <source>The maximum allowed number of players has been reached for the game</source>
         <translation>Игра укомплектована</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="342"/>
+        <location filename="app.cpp" line="343"/>
         <source>Wait for other players</source>
         <translation>Игра неукомплектована</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="345"/>
+        <location filename="app.cpp" line="346"/>
         <source>Only the first connected client can start a game</source>
         <translation>Игру может начать только первый подключившийся игрок</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="348"/>
+        <location filename="app.cpp" line="349"/>
         <source>Ping timeout</source>
         <translation>Соединение утеряно</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="354"/>
+        <location filename="app.cpp" line="355"/>
         <source>Unknown error</source>
         <translation>Неизвестная ошибка</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="368"/>
+        <location filename="app.cpp" line="369"/>
         <source>%1 connected</source>
         <translation>%1 присоединился к игре</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="373"/>
+        <location filename="app.cpp" line="374"/>
         <source>%1 disconnected</source>
         <translation>%1 отключился</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="432"/>
+        <location filename="app.cpp" line="433"/>
         <source>%1 surrendered</source>
         <translation>%1 сдался</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="457"/>
+        <location filename="app.cpp" line="458"/>
         <source>The winner is %1 with score %2</source>
         <translation>Игрок %1 победил со счетом %2</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="476"/>
+        <location filename="app.cpp" line="477"/>
         <source>The winners are %1 with score %2</source>
         <translation>Победили игроки %1 со счетом %2</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="482"/>
+        <location filename="app.cpp" line="483"/>
         <source>There is no winner</source>
         <translation>Победителей нет</translation>
     </message>
     <message>
-        <location filename="app.cpp" line="515"/>
+        <location filename="app.cpp" line="516"/>
         <source>Do you really want to give up and finish the game?</source>
         <translation>Сдаться и завершить игру?</translation>
     </message>
@@ -335,6 +335,99 @@
         <location filename="player.cpp" line="113"/>
         <source>I won!</source>
         <translation>Игрок победил!</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <location filename="main.cpp" line="16"/>
+        <source>Usage:</source>
+        <translation>Использование:</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="19"/>
+        <source>options</source>
+        <translation>опции</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="23"/>
+        <source>without options run GUI application.</source>
+        <translation>без опций запускает графическое приложение.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="20"/>
+        <source>QBlokus is a networking boardgame for 3 or 4 players.</source>
+        <translation>Блокус - это настольная сетевая игра на трех или четырех игроков.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="24"/>
+        <source>By default all messages are displayed in English.</source>
+        <translation>По умолчанию все сообщения выводятся на английском языке.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="25"/>
+        <source>&apos;-l:ru&apos; option translates the application in Russian.</source>
+        <translation>Опция &apos;-l:ru&apos; переводит сообщения приложения на русский язык.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="26"/>
+        <source>Options:</source>
+        <translation>Опции:</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="28"/>
+        <source>		Run non-GUI game server.</source>
+        <translation>		Запускает игровой сервер в консоли.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="29"/>
+        <source>		Players count may be equal to 3 or 4.</source>
+        <translation>		Количество игроков может быть равно 3 или 4.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="30"/>
+        <source>		Server is listening on the specified port.</source>
+        <translation>		Сервер слушает определенный в параметрах порт.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="32"/>
+        <source>		Display the usage and exit.</source>
+        <translation>		Вывести информацию об использовании и выйти.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="41"/>
+        <source>Incorrect players count.</source>
+        <translation>Некорректное количество игроков.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="42"/>
+        <source>Players count must be equal 3 or 4.</source>
+        <translation>Количество игроков должно быть равно 3 или 4.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="45"/>
+        <source>Incorrect port value.</source>
+        <translation>Некорректное значение порта.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="46"/>
+        <source>Port value must be in the range from 1 to 65535.</source>
+        <translation>Значение порта должно быть в пределах от 1 до 65535 включительно.</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="49"/>
+        <source>Can&apos;t start server</source>
+        <translation>Сервер не запускается</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="52"/>
+        <source>Incorrect command line arguments</source>
+        <translation>Некорректные аргументы командной строки</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="57"/>
+        <source>Unknown error occurred</source>
+        <translation>Произошла неизвестная ошибка</translation>
     </message>
 </context>
 </TS>

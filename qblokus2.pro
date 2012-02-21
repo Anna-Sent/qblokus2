@@ -4,11 +4,12 @@ SOURCES     =   main.cpp \
                 app.cpp \
                 clientinfo.cpp \
                 localclient.cpp \
+                message.cpp \
+                messagereceiver.cpp \
                 remoteclient.cpp \
                 server.cpp \
                 serversearcher.cpp \
-                message.cpp \
-                messagereceiver.cpp
+                translationservice.cpp
 
 HEADERS     =   app.h \
                 constants.h \
@@ -18,7 +19,8 @@ HEADERS     =   app.h \
                 messagereceiver.h \
                 remoteclient.h \
                 server.h \
-                serversearcher.h
+                serversearcher.h \
+                translationservice.h
 
 SOURCES     +=  coloritem.cpp \
                 tile.cpp \
