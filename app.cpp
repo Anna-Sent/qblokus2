@@ -20,7 +20,6 @@ App::App(QWidget *parent)
     connect(cbCreateServer, SIGNAL(toggled(bool)), this, SLOT(guiToggleCreateServer(bool)));
     connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(userSendChatMessage()));
     connect(lineEdit, SIGNAL(returnPressed()), lineEdit, SLOT(clear()));
-    connect(lwServersList, SIGNAL(currentTextChanged(QString)), this, SLOT(guiChangeServersListCurrentText(QString)));
     connect(lwServersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(guiClickServersListItem(QListWidgetItem*)));
     connect(pbConnect, SIGNAL(clicked()), this, SLOT(userTryToConnect()));
     connect(pbDisconnect, SIGNAL(clicked()), this, SLOT(userDisconnectFromServer()));
@@ -503,14 +502,6 @@ void App::guiChangePortValue(int value)
     lwPlayersList->clear();
 }
 
-void App::guiChangeServersListCurrentText(const QString &text)
-{
-    if (text != "")
-    {
-        leServerAddress->setText(text);
-    }
-}
-
 void App::guiClickRetirePlayer()
 {
     if (confirm(tr("Do you really want to give up and finish the game?")))
@@ -531,6 +522,12 @@ void App::guiClickServersListItem(QListWidgetItem *item)
         item->setForeground(brush);
         item->setText(clients[i].name());
         lwPlayersList->addItem(item);
+    }
+
+    QString text = lwServersList->currentItem()->text();
+    if (text != "")
+    {
+        leServerAddress->setText(text);
     }
 }
 
